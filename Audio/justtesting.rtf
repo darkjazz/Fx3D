@@ -1,0 +1,40 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 var\cf0  arr = \cf2 Array\cf0 (), currentIndex = -1, lowest = 0, spread = 14;\
+~atsdata.collect(\cf2 _\cf0 .nparts).sort.doAdjacentPairs(\{\cf2 |a, b|\cf0 \
+	if (a - lowest <= spread) \
+		\{ arr[currentIndex] = arr[currentIndex].add(a) \}\
+		\{ arr = arr.add(\cf2 Array\cf0 .with(a)); lowest = a; currentIndex = currentIndex + 1; \}\
+\});\
+\
+arr.postln\
+\
+\
+~adef.value(\cf3 \\plse_35\cf0 , ~awr[\cf3 \\plse\cf0 ], 35)\
+\
+~atsdefs\
+\
+p = \cf2 Pbind\cf0 (\
+	\cf3 \\data\cf0 , \cf2 Pseq\cf0 (~atsdata, 1),\
+	\cf3 \\value\cf0 , \cf2 Pfunc\cf0 (\{\cf2 |me|\cf0  me.data.nparts \})\
+).asStream;\
+\
+p.next(())\
+\
+p = 381;\
+\
+~arr.collect(\cf2 _\cf0 .[0]).detectIndex(\{\cf2 |it, i|\cf0  (it <= p).and(~arr.collect(_.[0]).clipAt(i + 1) >= p) \})\
+\
+~arr.collect(\cf2 _\cf0 .[0]).select(\{\cf2 |num|\cf0  num > 123 \})\
+\
+~fx = \cf2 FxLive\cf0 ().gui\
+\
+a = \\45\
+a.asInteger.class\
+\
+a.class\
+\
+(1 / Array.geom(11, 1.0, 2**(1/11))).reverse ++ Array.geom(11, 1.0, 2**(1/11))}

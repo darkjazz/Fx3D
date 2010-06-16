@@ -1,0 +1,47 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 (\
+\
+s = \cf2 Server\cf0 .internal;\
+\cf2 Server\cf0 .default = s;\
+\
+\cf2 Routine\cf0 (\{\
+	\cf2 var\cf0  file, dur, num, sect = 15;\
+	file = \cf2 Buffer\cf0 .readChannel(s, \
+		\cf3 "/Users/alo/sounds/fxv1.aif"\cf0 ,\
+		s.sampleRate,\
+		channels:[0]\
+	);\
+	s.sync;\
+	dur = file.numFrames / file.sampleRate;\
+	num = (dur / sect).asInt;\
+	num.do(\{\cf2 |i|\cf0 \
+		\cf2 var\cf0  buf, start, end;\
+		buf = \cf2 Buffer\cf0 .alloc(s, 5.rand + 1 * s.sampleRate);\
+		s.sync;\
+		start = sect * s.sampleRate * i;\
+		end = start + (sect * s.sampleRate - buf.numFrames);\
+		file.copyData(\
+			buf, \
+			0, \
+			rrand(start, end),\
+			buf.numFrames\
+		);\
+		buf.write(\cf3 "/Users/alo/sounds/fx_loops/fxloop_"\cf0  ++ (i + 1).asString ++ \cf3 ".aif"\cf0 );\
+		s.sync;\
+		(\cf3 "Wrote "\cf0  ++ \cf3 "/Users/alo/sounds/fx_loops/fxloop_"\cf0  ++ (i + 1).asString ++ \cf3 ".aif"\cf0 ).postln;\
+	\})\
+\}).play\
+\
+)\
+\
+(\
+	f = \cf2 FileToAts\cf0 (\cf3 "/Users/alo/sounds/fx_loops/det*"\cf0 .pathMatch);\
+	f.process\
+)\
+\
+\
+}

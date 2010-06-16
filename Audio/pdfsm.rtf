@@ -1,0 +1,200 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf420
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red0\green115\blue0;\red96\green96\blue96;}
+\deftab720
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs18 \cf2 //global def wrapper\cf3 \
+~def = \{\cf4 |fn, name|\cf3 \
+	\cf4 SynthDef\cf3 (name, \{\cf4 |out, efx, aamp, eamp, dur, azm, elv, rho, doneAction = 2|\cf3 \
+		\cf4 var\cf3  env, sig, args, bf;\
+		env = \cf4 Control\cf3 .names([\cf5 \\env\cf3 ]).kr(\cf4 Env\cf3 .newClear(8).asArray);\
+		args = \cf4 Comntrol\cf3 .names([\cf5 \\args\cf3 ]).kr(\cf4 Array\cf3 .fill(8, 0));\
+		sig = \cf4 SynthDef\cf3 .wrap(fn, \cf4 nil\cf3 , args) \
+			* \cf4 EnvGen\cf3 .kr(env, timeScale: dur, doneAction: doneAction);\
+		\cf4 Out\cf3 .ar(efx, sig * eamp);\
+		bf = \cf4 BFEncode1\cf3 .ar(sig, azm, elv, rho);\
+		\cf4 Out\cf3 .ar(out, bf * aamp);\
+	\}).store;\
+\};\
+\cf2 //harm\cf3 \
+~harmf = (\
+\cf5 \\harm_ats_sin\cf3 : \{\cf4 |buf, rate, pstart, pnum, pskip|\cf3 \
+	\cf4 var\cf3  freqs, amps, ptr, parts;\
+	parts = \cf4 Array\cf3 .series(pnum, pstart, pskip);\
+	ptr = \cf4 LFSaw\cf3 .kr(rate, 0, 0.5, 0.5);\
+	freqs = \cf4 AtsFreq\cf3 .kr(buf, parts, ptr);\
+	amps = \cf4 AtsAmp\cf3 .kr(buf, parts, ptr);\
+	\cf4 SinOsc\cf3 .ar(freqs, 0, amps);\
+\},\
+\
+\cf5 \\harm_ats_saw\cf3 : \{\cf4 |buf, rate, pstart, pnum, pskip|\cf3 \
+	\cf4 var\cf3  freqs, amps, ptr, parts;\
+	parts = \cf4 Array\cf3 .series(pnum, pstart, pskip);\
+	ptr = \cf4 LFSaw\cf3 .kr(rate, 0, 0.5, 0.5);\
+	freqs = \cf4 AtsFreq\cf3 .kr(buf, parts, ptr);\
+	amps = \cf4 AtsAmp\cf3 .kr(buf, parts, ptr);\
+	\cf4 VarSaw\cf3 .ar(freqs, 0, amps, amps);\
+\},\
+\
+\cf5 \\harm_ats_form\cf3 : \{\cf4 |buf, fund, rate, pstart, pnum, pskip|\cf3 \
+	\cf4 var\cf3  freqs, amps, ptr, parts;\
+	parts = \cf4 Array\cf3 .series(pnum, pstart, pskip);\
+	ptr = \cf4 LFSaw\cf3 .kr(rate, 0, 0.5, 0.5);\
+	freqs = \cf4 AtsFreq\cf3 .kr(buf, parts, ptr);\
+	amps = \cf4 AtsAmp\cf3 .kr(buf, parts, ptr);\
+	\cf4 Formant\cf3 .ar(fund, freqs, fund, amps);	\
+\}\
+\
+);\
+\cf2 // cliq\cf3 \
+~cliqf = (\
+\
+\cf5 \\cliq_pulse\cf3 : \{\cf4 |pdur, hipass, lopass, hiamp, loamp|\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf3 	\cf4 var\cf3  imp, sig, lo, hi;\
+	imp = \cf4 Impulse\cf3 .ar(8, 0, 1) * \cf4 XLine\cf3 .kr(1.0, 0.001, pdur, doneAction: 2);\
+	hi = \cf4 HPF\cf3 .ar(imp, hipass, hiamp);\
+	lo = \cf4 LPF\cf3 .ar(imp, lopass, loamp);\
+	sig = \cf4 Compander\cf3 .ar(hi, hi, 0.8, 1.0, 0.01, 0.01, 0.1);\
+	sig = \cf4 Mix\cf3 (\cf4 GVerb\cf3 .ar(sig + lo, 100, 1, 0.9, 0.9, 1, 1.0, 0.3, 0.1, 100));\
+	\cf4 Compander\cf3 .ar(sig ** 0.7, sig ** 0.7, 1.0, 1.0, 0.001, 0.001, 0.01);\
+\pard\pardeftab720\ql\qnatural
+\cf3 \},\
+\
+\cf5 \\cliq_res\cf3 : \{\cf4 |fund = 30, add = 100, ring = 0.1, rmul = 0.95, amp = 1.0, amul = 0.95, \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf4 	dfreq = 500.0 |\cf3 \
+	\
+	\cf4 var\cf3  sig, num = 7, src;\
+	src = \cf4 Crackle\cf3 .ar(1.95) * \cf4 XLine\cf3 .kr(1.0, 0.001, 0.05, doneAction: 2);\
+	sig = \cf4 Klank\cf3 .ar(`[\
+		\cf4 Array\cf3 .series(num, fund, add),\
+		\cf4 Array\cf3 .geom(num, ring, rmul),\
+		\cf4 Array\cf3 .geom(num, amp, amul)\
+	], src);\
+	\cf4 Compander\cf3 .ar(sig + src, sig, 0.4, 1.0, 0.001, 0.01, 0.1);\
+\pard\pardeftab720\ql\qnatural
+\cf3 \},\
+\
+\cf5 \\cliq_bass\cf3 : \{\cf4 |freq, amp, cutoff|\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf3 \
+	\cf4 var\cf3  sig, tseq, trig, env;\
+	sig = \cf4 SinOsc\cf3 .ar(\cf4 LFNoise2\cf3 .kr(100, freq / 2, freq).round(20), 0, amp);\
+	sig = \cf4 LPF\cf3 .ar(sig, cutoff);\
+	sig = \cf4 Compander\cf3 .ar(sig, sig, 0.25, 0.9, 0.01, 0.001, 0.1)\
+\pard\pardeftab720\ql\qnatural
+\cf3 \}\
+\
+);\
+\
+~noisef = (\
+	\
+\cf5 \\noise_striae\cf3 : \{\cf4 |cfreq, bw, amp, frac|\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf3 	\cf4 var\cf3  sig, frq, frqs, frqsc, num = 4;\
+	sig = \cf4 Crackle\cf3 .ar([\cf4 LFNoise1\cf3 .kr(0.5, 0.15, 1.8), \cf4 LFNoise2\cf3 .kr(0.4, 0.06, 1.91)]);\
+	frq = \cf4 LFNoise1\cf3 .kr(300, 200, cfreq);\
+	frqsc = \cf4 Array\cf3 .geom(num, 1.0, frac);\
+	\cf4 Mix\cf3 .fill(num, \{\cf4 |i|\cf3  \cf4 BPF\cf3 .ar(sig, frq * frqsc[i], bw/(frq * frqsc[i])) \}) * amp;\
+\pard\pardeftab720\ql\qnatural
+\cf3 \},\
+\
+\cf5 \\noise_impact\cf3 : \{\cf4 |buf1, freq1, buf2, freq2, wsz, which = 0, pch, amp, wrate, pd, td|\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf3 	\
+	\cf4 var\cf3  sig, bf, winsize;\
+	winsize = \cf4 Select\cf3 .kr(which, [wsz, \cf4 TRand\cf3 .kr(0.01, 0.2, \cf4 Impulse\cf3 .kr(wrate))]);\
+	\cf4 PitchShift\cf3 .ar(\cf4 Osc\cf3 .ar(buf1, freq1, \cf4 Osc\cf3 .ar(buf2, freq2)), \
+		winsize, pch, pd, td);\
+\pard\pardeftab720\ql\qnatural
+\cf3 \},\
+\
+\cf5 \\noise_mod\cf3 : \{\cf4 |buf1, buf2, rate1, rate2, amp1, amp2, ramp1, ramp2, rt1, rt2, a1, a2, a3, a4, pow|\cf3 \
+	\cf4 var\cf3  sig1, rev1, sig2, rev2, out, sig;\
+	sig1 = \cf4 PlayBuf\cf3 .ar(1, buf1, rate1) * amp1;\
+	sig2 = \cf4 PlayBuf\cf3 .ar(1, buf2, rate2) * amp2;\
+	rev1 = \cf4 Reverb\cf3 .ar(sig1, rt1) * ramp1;\
+	rev2 = \cf4 Reverb\cf3 .ar(sig2, rt2) * ramp2;\
+	out = (sig1 * sig2 * a1) + \
+	(sig2 * rev1 * a2) + \
+	(rev1 * sig2 * a3) + \
+	(rev2 * rev1 * a4);\
+	out = out ** pow;\
+	\cf4 Compander\cf3 .ar(out, out, 0.5, 1.0, 0.01, 0.01, 0.1)\
+\}\
+\
+	\
+);\
+\
+~bass: \{\
+\
+\cf5 \\bass_wave\cf3 : \{\cf4 |buf, fromLo, fromHi, toFreqLo, toFreqHi, amp, ramp, revtime, revamp, rate|\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf3 			\
+	\cf4 var\cf3  sig, freq, input, reverb;\
+	input = \cf4 PlayBuf\cf3 .ar(1, buf, rate);\
+	freq = \cf4 LinLin\cf3 .ar(input, -1.0, 1.0, toFreqLo, toFreqHi);\
+	sig = \cf4 SinOsc\cf3 .ar(freq);\
+	reverb = \cf4 Reverb\cf3 .ar(sig, revtime) * revamp;\
+	sig + reverb\
+\pard\pardeftab720\ql\qnatural
+\cf3 \},\
+\
+\cf5 \\bass_pluck\cf3 : \{\cf4 |fstep = 12, mul = 200, fund = 30, clip = 0.5, cutfreq = 400, lpf = 1, lpfz = 0|\cf3 \
+\pard\pardeftab560\ql\qnatural
+\cf3 	\cf4 var\cf3  freq, numparts;\
+	numparts = 7;\
+	freq = \cf4 SinOsc\cf3 .kr(\cf4 Array\cf3 .fill(numparts, \{\cf4 Rand\cf3 (0.05, 0.2)\}), \
+		\cf4 Array\cf3 .fill(numparts, \{\cf4 Rand\cf3 (0, 1.0)\})).range(fund, fund * 2).round(2**1/fstep);\
+	\cf4 LPF\cf3 .ar(\
+		\cf4 LeakDC\cf3 .ar(\
+			\cf4 Pluck\cf3 .ar(\
+				\cf4 PinkNoise\cf3 .ar(0.1).dup(numparts), \
+				\cf4 Impulse\cf3 .kr(\cf4 Array\cf3 .fill(numparts, \{\cf4 Rand\cf3 (10, 12)\})), \
+				100.reciprocal, freq.reciprocal, 2, \cf4 Rand\cf3 (0.01, 0.2), mul: mul\
+			).sum\
+		).softclip.clip2(clip),\
+		\cf4 SinOsc\cf3 .kr(lpf, lpfz).range(cutfreq / 1.5, cutfreq * 1.5)\
+	);\
+\pard\pardeftab720\ql\qnatural
+\cf3 \}\
+\
+\}\
+\
+\
+~chords = \cf4 Pdfsm\cf3 (\
+	[\
+	\cf4 Pfunc\cf3 (\{ rrand(1, 3) \}),\
+	(\
+		1: [2, \cf4 Pseq\cf3 ([\cf5 \\i0_s1_p1\cf3 , \cf5 \\i0_s1_p2\cf3 ], 2)],\
+		2: [0, \cf4 Pseq\cf3 ([\cf5 \\i0_s2_p1\cf3 ], 3)],\
+		3: [1, \cf4 Pseq\cf3 ([\cf5 \\i0_s3_p1\cf3 , \cf5 \\i0_s3_p2\cf3 , \cf5 \\i0_s3_p3\cf3 ], 1)]\
+	),\
+	(\
+		1: [0, \cf4 Pseq\cf3 ([\cf5 \\i1_s1_p1\cf3 , \cf5 \\i1_s1_p2\cf3 ], 2)],\
+		2: [1, \cf4 Pseq\cf3 ([\cf5 \\i1_s2_p1\cf3 ], 3)],\
+		3: [2, \cf4 Pseq\cf3 ([\cf5 \\i1_s3_p1\cf3 , \cf5 \\i1_s3_p2\cf3 , \cf5 \\i1_s3_p3\cf3 ], 1)]\
+	),\
+	(\
+		1: [1, \cf4 Pseq\cf3 ([\cf5 \\i2_s1_p1\cf3 , \cf5 \\i2_s1_p2\cf3 ], 2)],\
+		2: [0, \cf4 Pseq\cf3 ([\cf5 \\i2_s2_p1\cf3 ], 3)],\
+		3: [2, \cf4 Pseq\cf3 ([\cf5 \\i2_s3_p1\cf3 , \cf5 \\i2_s3_p2\cf3 , \cf5 \\i2_s3_p3\cf3 ], 1)]\
+	)\
+	], \
+	0, \
+	1\
+).asStream;\
+\
+r = \cf4 Routine\cf3 (\{\
+	\cf4 var\cf3  val;\
+	100.do(\{\
+		val = p.next;\
+		(\cf6 "current state: "\cf3  ++ val.asString).postln;	\
+		0.5.wait;\
+	\})\
+\}).play(\cf4 AppClock\cf3 ) \'a0\'a0\
+\
+}

@@ -1,0 +1,669 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 (\
+\cf3 var\cf2  bufpath = \cf4 "/Users/alo/sounds/fx_loops/*"\cf2 ;\
+\
+~serv = \cf3 Server\cf2 .internal;\
+\cf3 Server\cf2 .default = ~serv;\
+\
+~serv.options.memSize = 2**16;\
+~serv.options.numAudioBusChannels = 1024;\
+\
+if (~serv.serverRunning.not)\
+\{\
+	\cf4 "BOOTING SERVER..."\cf2 .postln;\
+	~serv.boot\
+\}\
+\{\
+	~loops = \cf3 Array\cf2 .newClear(bufpath.pathMatch.size);\
+	\cf3 Routine\cf2 (\{\
+		\cf3 var\cf2  prog, paths;\
+		\
+		paths = bufpath.pathMatch;\
+		prog = \cf3 ProgBar\cf2 (paths.size);\
+		\
+		paths.do(\{\cf3 |path, i|\cf2 \
+			~loops = ~loops.add( \cf3 Buffer\cf2 .read(~serv, path) );\
+			~serv.sync;\
+			prog.next;\
+			0.001.wait;\
+		\});\
+		prog.close;\
+		prog = \cf3 nil\cf2 ;\
+		\
+		~loops = ~loops.select(\cf3 _\cf2 .notNil);\
+				\
+	\}).play(\cf3 AppClock\cf2 )\
+\}\
+)\
+\
+\
+\
+(\
+\pard\pardeftab720\ql\qnatural
+\cf2 \
+\cf3 SynthDef\cf2 (\cf5 \\swarpfld\cf2 , \{\cf3 |out, efx, gate, aamp, eamp, dur, buf, str, end, wrp, frq, wsz, dns, rnd, doneAction = 2|\cf2 \
+	\cf3 var\cf2  ptr, sig, env;\
+	env = \cf3 Control\cf2 .names([\cf5 \\env\cf2 ]).kr(\cf3 Env\cf2 .newClear(16).asArray);	\
+	ptr = \cf3 LFSaw\cf2 .kr(wrp).range(str, end);\
+	sig = \cf3 SndWarp\cf2 .ar(buf, ptr, frq, wsz, dns, rnd) * \
+		\cf3 EnvGen\cf2 .kr(env, gate, timeScale: dur, doneAction: doneAction);\
+	sig = \cf3 LeakDC\cf2 .ar(sig ** 0.5);\
+	\cf6 //Out.ar(efx, sig * eamp);\cf2 \
+	\cf3 Out\cf2 .ar(out, sig * aamp);\
+\}).memStore;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf2 \
+\pard\pardeftab720\ql\qnatural
+\cf3 SynthDef\cf2 (\cf5 \\rwarpfld\cf2 , \{\cf3 |out, efx, gate, aamp, eamp, dur, buf, str, end, wrp, frq, wsz, dns, rnd, doneAction = 2|\cf2 \
+	\cf3 var\cf2  ptr, sig, env, bf;\
+	env = \cf3 Control\cf2 .names([\cf5 \\env\cf2 ]).kr(\cf3 Env\cf2 .newClear(16).asArray);	\
+	ptr = \cf3 LFSaw\cf2 .kr(wrp).range(str, end);\
+	sig = \cf3 LeakDC\cf2 .ar(\cf3 Warp1\cf2 .ar(1, buf, ptr, frq, wsz, -1, dns, rnd)) * \
+		\cf3 EnvGen\cf2 .kr(env, gate, timeScale: dur, doneAction: doneAction);\
+	sig = \cf3 LeakDC\cf2 .ar(sig ** 0.5);\
+	\cf6 //Out.ar(efx, sig * eamp);\cf2 \
+	\cf3 Out\cf2 .ar(out, sig * aamp)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf5 \\atkencodedel\cf2 , \{\cf3 |out, in|\cf2 \
+	\cf3 var\cf2  src, del, azm, elv, sig, a, b, c, d;\
+	src = \cf3 In\cf2 .ar(in);\
+	del = \cf3 EnvControl\cf2 .kr(\cf5 \\del\cf2 , 4, \cf3 false\cf2 );\
+	azm = \cf3 EnvControl\cf2 .kr(\cf5 \\azm\cf2 , 4, \cf3 false\cf2 );\
+	elv = \cf3 EnvControl\cf2 .kr(\cf5 \\elv\cf2 , 4, \cf3 false\cf2 );\
+	sig = \cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2 \
+\cf6 //		DelayC.ar(src, delaytime: SinOsc.kr(1, pi / 4 * i).range(0, del@i))\cf2 \
+		\cf3 DelayC\cf2 .ar(src, delaytime: del@i)\
+	\});\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 	 a = \cf3 BLowShelf\cf2 .ar(\cf3 AtkMonoToB\cf2 .ar(sig@0, azm@0, elv@0), 100.0, 0.65, 0.0);\
+	 b = \cf3 BPeakEQ\cf2 .ar(\cf3 AtkMonoToB\cf2 .ar(sig@1, azm@1, elv@1), 600.0, 2.0, 0.0 );\
+	 c = \cf3 BPeakEQ\cf2 .ar(\cf3 AtkMonoToB\cf2 .ar(sig@2, azm@2, elv@2), 2000.0, 2.0, 0.0 );\
+	 d = \cf3 BHiShelf\cf2 .ar(\cf3 AtkMonoToB\cf2 .ar(sig@3, azm@3, elv@3), 7500.0, 1, 0.0 );\
+	 \cf3 Out\cf2 .ar(out, a + b + c + d);\
+\pard\pardeftab720\ql\qnatural
+\cf2 \}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf5 \\atkmove\cf2 , \{\cf3 |out, in, dur|\cf2 \
+	\cf3 var\cf2  w, x, y, z, x_ang, y_ang, z_ang;\
+	x_ang = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr(\cf5 \\xang\cf2 ), timeScale: dur);\
+	y_ang = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr(\cf5 \\yang\cf2 ), timeScale: dur);\
+	z_ang = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr(\cf5 \\zang\cf2 ), timeScale: dur);\
+	#w, x, y, z = \cf3 In\cf2 .ar(in, 4);\
+	#w, x, y, z = \cf3 AtkTilt\cf2 .ar(w, x, y, z, x_ang);\
+	#w, x, y, z = \cf3 AtkTumble\cf2 .ar(w, x, y, z, y_ang);\
+	#w, x, y, z = \cf3 AtkRotate\cf2 .ar(w, x, y, z, z_ang);\
+	\cf3 Out\cf2 .ar(out, [w, x, y, z])\
+\}).memStore;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 \
+\pard\pardeftab720\ql\qnatural
+\cf3 SynthDef\cf2 (\cf5 \\atkmove_static\cf2 , \{\cf3 |out, in, xang = 0.0, yang = 0.0, zang = 0.0|\cf2 \
+	\cf3 var\cf2  w, x, y, z;\
+	#w, x, y, z = \cf3 In\cf2 .ar(in, 4);\
+	#w, x, y, z = \cf3 AtkTilt\cf2 .ar(w, x, y, z, xang);\
+	#w, x, y, z = \cf3 AtkTumble\cf2 .ar(w, x, y, z, yang);\
+	#w, x, y, z = \cf3 AtkRotate\cf2 .ar(w, x, y, z, zang);\
+	\cf3 Out\cf2 .ar(out, [w, x, y, z])\
+\}).memStore;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 \
+\
+\cf3 SynthDef\cf2 (\cf5 \\verb\cf2 , \{\cf3 |in, rtime, damp, inbw, spr, dry, early, tail, amp|\cf2 \
+	\cf3 var\cf2  sig, input, actr, fb;\
+	input = \cf3 In\cf2 .ar(in) * \
+		\cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf5 \\sine\cf2 ), \
+			\cf3 Impulse\cf2 .kr(0.04), timeScale:0.04.reciprocal);\
+	fb = \cf3 LocalIn\cf2 .ar;\
+	sig = \cf3 GVerb\cf2 .ar(input + fb, 1500, rtime, damp, inbw, spr, dry, early, tail, 1500);\
+	\cf3 LocalOut\cf2 .ar(\cf3 Mix\cf2 (sig) * 0.01);\
+	sig = sig + \cf3 PitchShift\cf2 .ar(sig, 0.1, [0.5, 0.25], mul: 0.1);\
+	\cf3 Out\cf2 .ar(0, (sig ++ sig) * amp)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf5 \\bf2decode\cf2 , \{\cf3 |bus, amp = 1|\cf2 \
+	\cf3 var\cf2  w, x, y, z;\
+	#w, x, y, z = \cf3 In\cf2 .ar(bus, 4);\
+	\cf3 Out\cf2 .ar( 0, \cf3 BFDecode1\cf2 .ar(w, x, y, z, \cf3 IbiSpeakers\cf2 .quad.azimuth, (0 ! 4) ) * amp )\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf5 \\bfcollect\cf2 , \{\cf3 |bus, amp = 1|\cf2 \
+	\cf3 Out\cf2 .ar(0, \cf3 In\cf2 .ar(bus, 4) * amp)\
+\}).memStore\
+\
+)\
+\
+(\
+~abus = \cf3 Bus\cf2 .audio(~serv, 4);\
+~rbus = \cf3 Bus\cf2 .audio(~serv);\
+~agrp = \cf3 Group\cf2 ();\
+~rev = \cf3 Synth\cf2 .after(~agrp, \cf5 \\verb\cf2 , [\cf5 \\in\cf2 , ~rbus, \cf5 \\rtime\cf2 , 3, \cf5 \\damp\cf2 , 0.5, \cf5 \\inbw\cf2 , 0.5, \cf5 \\spr\cf2 , 20, \
+	\cf5 \\dry\cf2 , 0.0, \cf5 \\early\cf2 , 0.4, \cf5 \\tail\cf2 , 1.0, \cf5 \\amp\cf2 , 0.5]);	\
+\cf6 //~decode = Synth.after(~rev, \\bf2decode, [\\bus, ~abus, \\amp, 1.0]);\cf2 \
+~decode = \cf3 Synth\cf2 .after(~rev, \cf5 \\bfcollect\cf2 , [\cf5 \\bus\cf2 , ~abus, \cf5 \\amp\cf2 , 1.0]);\
+~bps = 140 / 60;\
+~div = ~bps.reciprocal;\
+)\
+\
+(\
+\
+~serv.scope(4);\
+\
+~eq = \cf3 MasterEQ\cf2 (4)\
+\
+)\
+\
+~stateresp.remove\
+~fx = \cf3 FxLive\cf2 ().gui\
+\
+\
+(\
+	~invalues = \cf3 Event\cf2 ();\
+	~fxparams = [\
+		\cf3 FxParam\cf2 (\cf5 \\aamp\cf2 , \cf5 \\aamp\cf2 , \cf3 ControlSpec\cf2 (0.2, 1.0, \cf5 \\exp\cf2 ), \cf3 false\cf2 ),\
+\cf0 		\cf7 FxParam\cf0 (\cf8 \\str\cf0 , \cf8 \\str\cf0 , \cf7 ControlSpec\cf0 (0.0, 0.5), \cf7 false\cf0 ),\
+		\cf7 FxParam\cf0 (\cf8 \\end\cf0 , \cf8 \\end\cf0 , \cf7 ControlSpec\cf0 (0.5, 1.0), \cf7 false\cf0 ),\
+\cf2 		\cf3 FxParam\cf2 (\cf5 \\wrp\cf2 , \cf5 \\wrp\cf2 , \cf3 ControlSpec\cf2 (0.001, 0.001, \cf5 \\exp\cf2 ), \cf3 false\cf2 ),\
+		\cf3 FxParam\cf2 (\cf5 \\wsz\cf2 , \cf5 \\wsz\cf2 , \cf3 ControlSpec\cf2 (0.01, 0.1, \cf5 \\exp\cf2 ), \cf3 false\cf2 ),\
+		\cf3 FxParam\cf2 (\cf5 \\ax\cf2 , \cf5 \\ax\cf2 , \cf3 ControlSpec\cf2 (-pi, pi, \cf5 \\exp\cf2 ), \cf3 false\cf2 ),\
+		\cf3 FxParam\cf2 (\cf5 \\az\cf2 , \cf5 \\az\cf2 , \cf3 ControlSpec\cf2 (-pi, pi, \cf5 \\exp\cf2 ), \cf3 false\cf2 ),\
+		\cf3 FxParam\cf2 (\cf5 \\ay\cf2 , \cf5 \\ay\cf2 , \cf3 ControlSpec\cf2 (-pi, pi, \cf5 \\exp\cf2 ), \cf3 false\cf2 )\
+	];\
+\
+	~mapParams = \{\
+			\
+		if (~activeSynths.notNil)\
+		\{\
+			\cf3 var\cf2  states;\
+			states = ~invalues.states.clump(8);\
+			~activeSynths.do(\{\cf3 |active, i|\cf2 \
+				\cf3 var\cf2  map, params;\
+				params = \cf3 Array\cf2 .newClear(8);\
+				~fxparams.do(\{\cf3 |param, j|\cf2 \
+					params[j] = (\
+						name: ~fxparams.wrapAt(j).name, \
+						pvalue: ~fxparams.wrapAt(j).mapValue(states.wrapAt(i).wrapAt(j))\
+					)\
+				\});\
+				active.src.set(\
+					params[0].name, params[0].pvalue,\
+					params[1].name, params[1].pvalue,\
+					params[2].name, params[2].pvalue\
+\cf6 //					params[3].name, params[3].pvalue,\cf2 \
+\cf6 //					params[4].name, params[4].pvalue\cf2 \
+				);\
+				active.trn.set(\
+					params[5].name, params[5].pvalue,\
+					params[6].name, params[6].pvalue,\
+					params[7].name, params[7].pvalue\
+				)\
+			\})\
+		\}\
+		\
+	\};\
+\
+	~subloops = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "detloop"\cf2 ) \});\
+	~b_bus = \cf3 Array\cf2 .fill(8, \{ \cf3 Bus\cf2 .audio(~serv) \});\
+	~t_bus = \cf3 Array\cf2 .fill(8, \{ \cf3 Bus\cf2 .audio(~serv, 4) \});\
+\
+)\
+\
+~serv.queryAllNodes\
+\
+(\
+\
+~activeSynths.do(\{\cf3 |ev|\cf2 \
+	ev.keysValuesDo(\{\cf3 |key, val|\cf2 \
+		val.free\
+	\})\
+\});\
+\
+~stateresp.remove;\
+\
+~freqs = \cf3 nil\cf2 ;\
+)\
+\
+~activeSynths.do(\{\cf3 |ev, i|\cf2 \
+	ev.src.set(\cf5 \\frq\cf2 , ~freqs@i)\
+\})\
+\
+(\
+	~stateresp = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf5 '/fx/states'\cf2 , \{\cf3 |ti, re, ms|\cf2 \
+		~invalues.states = ms[1..64];\
+		~mapParams.value;\
+	\}).add;\
+	\
+	~freqs = \cf3 Array\cf2 .geom(8, 0.125, 1.5);\
+\
+	~activeSynths = \cf3 Array\cf2 .newClear(8);\
+\
+	8.do(\{\cf3 |i|\cf2 \
+		\cf3 var\cf2  trans, grp, s_src, s_enc, s_trn, buf;\
+		grp = \cf3 Group\cf2 ();\
+		s_src = \cf3 Synth\cf2 .head(grp, \cf5 \\rwarpfld\cf2 , [\cf5 \\out\cf2 , ~b_bus@i, \cf5 \\gate\cf2 , 1.0, \cf5 \\aamp\cf2 , 0.5, \cf5 \\dur\cf2 , 1.0, \cf5 \\buf\cf2 , ~subloops@i, \cf5 \\str\cf2 , 0, \
+			\cf5 \\end\cf2 , 1.0, \cf5 \\wrp\cf2 , 0.001, \cf5 \\frq\cf2 , ~freqs@i, \cf5 \\wsz\cf2 , 0.1, \cf5 \\dns\cf2 , rrand(2, 10), \cf5 \\rnd\cf2 , 0.01, \cf5 \\doneAction\cf2 , 2])\
+			.setn(\cf5 \\env\cf2 , \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.001, 1.0, 0.001], \cf5 \\sine\cf2 , 2, 1).asArray);\
+		s_enc = \cf3 Synth\cf2 .tail(grp, \cf5 \\atkencodedel\cf2 , [\cf5 \\out\cf2 , ~t_bus@i, \cf5 \\in\cf2 , ~b_bus@i])\
+			.setn(\cf5 \\del\cf2 , [0.0, 0.001, 0.002, 0.003])\
+			.setn(\cf5 \\azm\cf2 , [0,   0, 	0.667, -0.667] * 2pi)\
+			.setn(\cf5 \\elv\cf2 , [0.5pi] ++ (acos(2*2.sqrt / 3).neg ! 3) * pi);\
+		s_trn = \cf3 Synth\cf2 .tail(grp, \cf5 \\atkmove_static\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\in\cf2 , ~t_bus@i]);\
+		~activeSynths.put(i, (\cf5 \\src\cf2 : s_src, \cf5 \\enc\cf2 : s_enc, \cf5 \\trn\cf2 : s_trn, \cf5 \\grp\cf2 : grp));\
+	\});\
+\
+)\
+\
+~serv.sendMsg(\cf5 '/n_free'\cf2 , 1009)\
+\
+\cf6 //	~rout = Routine(\{\cf2 \
+\cf6 //		var stand, move, permute, durp, dur, next, bufs;\cf2 \
+\cf6 //		durp = Pxrand(Array.geom(6, 0.125, 2), inf).asStream;\cf2 \
+\cf6 //		next = Pxrand(Array.geom(5, 0.0625, 2), inf).asStream;\cf2 \
+\cf6 //		bufs = Pstutter(Pwhite(3, 6, inf), Pseq(~subloops, 1)).asStream;\cf2 \
+\cf6 //		stand = Env([0, 0], [0]);\cf2 \
+\cf6 //		move = Env([-pi, 0, pi], [0.5, 0.5]);\cf2 \
+\cf6 //		permute = [move, stand, stand];\cf2 \
+\cf6 //		100.do(\{|i|\cf2 \
+\cf6 //			var trans, grp, s_src, s_enc, s_trn, s_ev, buf;\cf2 \
+\cf6 //			buf = bufs.next;\cf2 \
+\cf6 //			trans = permute.permute(i);\cf2 \
+\cf6 //			grp = Group();\cf2 \
+\cf6 //			dur = durp.next;\cf2 \
+\cf6 //			s_src = Synth.head(grp, \\rwarpfld, [\\out, ~b_bus@@i, \\aamp, 0.5, \\dur, dur, \\buf, buf, \\str, 0, \cf2 \
+\cf6 //				\\end, 1.0, \\wrp, 0.001, \\frq, 0.5, \\wsz, 0.1, \\dns, rrand(2, 10), \\rnd, 0.01, \\doneAction, 14])\cf2 \
+\cf6 //				.setn(\\env, Env([0.001, 1.0, 1.0, 0.001], [0.001, 1.0, 0.001], \\sine).asArray);\cf2 \
+\cf6 //			s_enc = Synth.tail(grp, \\atkencodedel, [\\out, ~t_bus@@i, \\in, ~b_bus@@i])\cf2 \
+\cf6 //				.setn(\\del, [0.0, 0.001, 0.002, 0.003])\cf2 \
+\cf6 //				.setn(\\azm, [0,   0, 	0.667, -0.667] * 2pi)\cf2 \
+\cf6 //				.setn(\\elv, [0.5pi] ++ (acos(2*2.sqrt / 3).neg ! 3) * pi);\cf2 \
+\cf6 //			s_trn = Synth.tail(grp, \\atkmove, [\\out, ~abus, \\in, ~t_bus@@i, \\dur, dur])\cf2 \
+\cf6 //				.setn(\\xang, trans[0].asArray)\cf2 \
+\cf6 //				.setn(\\yang, trans[1].asArray)\cf2 \
+\cf6 //				.setn(\\zang, trans[2].asArray);\cf2 \
+\cf6 //			s_ev = (\\src: s_src, \\enc: s_enc, \\trn: s_trn);\cf2 \
+\cf6 //			~activeSynths = ~activeSynths.add(s_ev);\cf2 \
+\cf6 //			SystemClock.sched(dur, \{ ~activeSynths.remove(s_ev); nil \});\cf2 \
+\cf6 //			next.next.wait;\cf2 \
+\cf6 //		\});\cf2 \
+\cf6 //	\}).play	\cf2 \
+)\
+\
+\
+\
+\
+~rout.stop\
+\
+~s_enc.free\
+~s_src.free\
+\
+~decode.set(\cf5 \\amp\cf2 , 0.2)\
+~rev.set(\cf5 \\amp\cf2 , 0.8)\
+\
+~rev.free\
+~decode.free\
+\
+(\
+~gsize = 256;\
+~cpuLimit = 40.0;\
+\
+\cf3 Atk\cf2 \
+\
+\
+~fxparams = [\
+	\cf3 FxParam\cf2 (\cf5 \\aamp\cf2 , \cf5 \\aamp\cf2 , \cf3 ControlSpec\cf2 (0.1, 1.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\wrp\cf2 , \cf5 \\wrp\cf2 , \cf3 ControlSpec\cf2 (0.001, 1.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\frq\cf2 , \cf5 \\frq\cf2 , \cf3 ControlSpec\cf2 (0.25, 4.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\wsz\cf2 , \cf5 \\wsz\cf2 , \cf3 ControlSpec\cf2 (0.005, 0.5), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\rnd\cf2 , \cf5 \\rnd\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.2), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\azm\cf2 , \cf5 \\azm\cf2 , \cf3 ControlSpec\cf2 (-pi, pi), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\elv\cf2 , \cf5 \\elv\cf2 , \cf3 ControlSpec\cf2 (-0.5pi, 0.5pi), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\rho\cf2 , \cf5 \\rho\cf2 , \cf3 ControlSpec\cf2 (0.0, 2.0), \cf3 false\cf2 )\
+];\
+\
+~fxglobals = [\
+	\cf3 FxParam\cf2 (\cf5 \\rtime\cf2 , \cf5 \\rtime\cf2 , \cf3 ControlSpec\cf2 (0.0, 10.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\damp\cf2 , \cf5 \\damp\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\inbw\cf2 , \cf5 \\inbw\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\spr\cf2 , \cf5 \\spr\cf2 , \cf3 ControlSpec\cf2 (1, 20), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\dry\cf2 , \cf5 \\dry\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.4), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\early\cf2 , \cf5 \\early\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.8), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\tail\cf2 , \cf5 \\tail\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf5 \\amp\cf2 , \cf5 \\amp\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.75), \cf3 false\cf2 )\
+];\
+\
+~mappedInputs = [\cf5 \\\cf5 \CocoaLigature0 lbf\cf2 , \cf5 \\rbf\cf2 , \cf5 \\rbb\cf2 , \cf5 \\lbb\cf2 , \cf5 \\ltf\cf2 , \cf5 \\rtf\cf2 , \cf5 \\rtb\cf2 , \cf5 \\ltb\cf2 , \
+	\cf5 \\avglbf\cf2 , \cf5 \\avgrbf\cf2 , \cf5 \\avgrbb\cf2 , \cf5 \\avglbb\cf2 , \cf5 \\avgltf\cf2 , \cf5 \\avgrtf\cf2 , \cf5 \\avgrtb\cf2 , \cf5 \\avgltb\cf2 \CocoaLigature1 ];\
+\
+~parameters = (\
+	arr: (1..32).stutter(8),\
+	buf: (0..255),\
+	dns: \cf3 Array\cf2 .series(~gsize / 4, 0.5, 16 / (~gsize / 4)).stutter(4),\
+	dur: \cf3 Array\cf2 .series(~gsize / 2, 0.125, 8.125 - 0.125 / (~gsize / 2)).stutter(2),\
+	end: (\cf3 Array\cf2 .series(~gsize / 2, 0.0, 0.5 / (~gsize / 2)) + 0.5).stutter(2),\
+	frq: \cf3 Array\cf2 .geom(~gsize / 4, 0.25, 2**(1/16)).stutter(4),\
+	rnd: \cf3 Array\cf2 .series(~gsize / 4, 0.0, 0.1 / (~ gsize / 4)).stutter(4),\
+	str: \cf3 Array\cf2 .series(~gsize / 2, 0.0, 0.5 / (~gsize / 2)).stutter(2),\
+	wrp: \cf3 Array\cf2 .series(~gsize / 2, 0.001, 0.1 / (~gsize / 2)).stutter(2),\
+	wsz: \cf3 Array\cf2 .series(~gsize / 4, 0.01, 0.3 / (~gsize / 4)).stutter(4),\
+	azm: [\
+		\cf3 Array\cf2 .series(~gsize / 4, 0, pi / (~gsize / 4) ), \
+		\cf3 Array\cf2 .series(~gsize / 4, 0, (pi / (~gsize / 4)) * -1) \
+	].lace(128).stutter(2)\
+);\
+\
+\cf6 //~indexArray = [0, 31, 63, 127, 255];\cf2 \
+\
+~order = ~parameters.keys(\cf3 Array\cf2 ).sort;\
+\
+~genes = \cf3 GA\cf2 (128, 4, 4, ~order.size + 1); \
+\
+~chromoSize = ~genes.population[0].size;\
+~quant = ~bps / 32;\
+~staticArgs = [\cf5 \\out\cf2 , ~abus, \cf5 \\efx\cf2 , ~rbus, \cf5 \\aamp\cf2 , 1.0, \cf5 \\eamp\cf2 , 1.0];\
+~mutationRate = 1 / 16;\
+~maxPopulation = 512;\
+~collectArgs = \{\cf3 |chromo|\cf2 \
+	\cf3 var\cf2  args;\
+	args = \cf3 Array\cf2 ();\
+	chromo.code.clump(4).do(\{\cf3 |code, i|\cf2  \
+		if (i < ~order.size)\
+		\{\
+			args = args.add(~order@i);\
+			args = args.add(~parameters[~order@i][code.convertDigits(4)])\
+		\}\
+	\});\
+	args\
+\};\
+\
+~win = \cf3 Window\cf2 (\cf4 "..::::____::::.."\cf2 , \cf3 Rect\cf2 (200, 200, 660, 290)).front;\
+~win.background = \cf3 Color\cf2 .black;\
+\
+~win.drawHook = \{\
+	\cf3 var\cf2  scX, scY;\
+	scX = ~win.bounds.width - 20 / ~genes.population.size;\
+	scY = ~win.bounds.height - 20 / (~chromoSize / 4);\
+	~genes.population.do(\{\cf3 |chromo, i|\cf2 \
+		chromo.code.clump(4).do(\{\cf3 |gene, j|\cf2 \
+			\cf3 var\cf2  col;\
+			col = gene.convertDigits(4);\
+			\cf3 Pen\cf2 .color = \cf3 Color\cf2 .new255(col, col, col);\
+			\cf3 Pen\cf2 .fillRect(\cf3 Rect\cf2 ( i * scX + 10, j * scY + 10, scX, scY) );\
+		\})\
+	\})\
+\};\
+\
+~invalues = \cf3 Event\cf2 ();\
+\
+~invalues.avgstate = 0;\
+~invalues.stddev = 0;\
+\
+~invalues.avglbf = 0;\
+~invalues.avgrbf = 0;\
+~invalues.avgrbb = 0;\
+~invalues.avglbb = 0;\
+~invalues.avgltf = 0;\
+~invalues.avgrtf = 0;\
+~invalues.avgrtb = 0;\
+~invalues.avgltb = 0;\
+\
+~invalues.states = \cf3 Array\cf2 .newClear(64);\
+\
+~fx = \cf3 Event\cf2 ();\
+\
+~fx.invalues = ~invalues;\
+\
+~mapGlobals = \{\
+	~rev.set(\
+		~fxglobals[0].name, ~fxglobals[0].mapValue(~invalues.avglbf),\
+		~fxglobals[1].name, ~fxglobals[1].mapValue(~invalues.avgrbf),\
+		~fxglobals[2].name, ~fxglobals[2].mapValue(~invalues.avgrbb),\
+		~fxglobals[3].name, ~fxglobals[3].mapValue(~invalues.avglbb),\
+		~fxglobals[4].name, ~fxglobals[4].mapValue(~invalues.avgltf),\
+		~fxglobals[5].name, ~fxglobals[5].mapValue(~invalues.avgrtf),\
+		~fxglobals[6].name, ~fxglobals[6].mapValue(~invalues.avgrtb),\
+		~fxglobals[7].name, ~fxglobals[7].mapValue(~invalues.avgltb)\
+	);\
+\};\
+\
+~mapParams = \{\
+		\
+	if (~actives.notNil)\
+	\{\
+		~actives.do(\{\cf3 |active, i|\cf2 \
+			\cf3 var\cf2  map, params;\
+			params = \cf3 Array\cf2 .newClear(8);\
+			map = active.code.clump(4).keep(8);\
+			map.do(\{\cf3 |code, j|\cf2 \
+				\cf3 var\cf2  ind;\
+				ind = code.convertDigits(4);\
+				params[j] = [~fxparams.wrapAt(ind).name, ~fxparams.wrapAt(ind).mapValue(\
+					~invalues.states.clump(8).wrapAt(ind)\
+				)]\
+			\});\
+			active.synth.set(\
+				params[0][0], params[0][1],\
+				params[1][0], params[1][1],\
+				params[2][0], params[2][1],\
+				params[3][0], params[3][1],\
+				params[4][0], params[4][1],\
+				params[5][0], params[5][1],\
+				params[6][0], params[6][1],\
+				params[7][0], params[7][1]\
+			)\
+		\})\
+	\}\
+	\
+\};\
+\
+~avgresp = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf5 '/fx/stats'\cf2 , \{\cf3 |ti, re, ms|\cf2 \
+\pard\tx480\pardeftab480\ql\qnatural\pardirnatural
+\cf2 \CocoaLigature0 	\cf3 var\cf2  cmd, avg, sdev, albf, arbf, arbb, albb, altf, artf, artb, altb;\
+		\CocoaLigature1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 	#cmd, \CocoaLigature0 avg, sdev, albf, arbf, arbb, albb, altf, artf, artb, altb\CocoaLigature1  = ms;\
+	~invalues.avgstate = avg;\
+	~invalues.stddev = sdev;\
+\
+	~invalues.avglbf = albf;\
+	~invalues.avgrbf = arbf;\
+	~invalues.avgrbb = arbb;\
+	~invalues.avglbb = albb;\
+	~invalues.avgltf = altf;\
+	~invalues.avgrtf = artf;\
+	~invalues.avgrtb = artb;\
+	~invalues.avgltb = altb;\
+	\
+	~mapGlobals.value;\
+\
+\}).add;\
+\
+~stateresp = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf5 '/fx/states'\cf2 , \{\cf3 |ti, re, ms|\cf2 \
+	~invalues.states = ms[1..64];\
+	~mapParams.value;\
+\}).add\
+\
+)\
+\
+~fx = \cf3 FxLive\cf2 ().gui\
+\
+~invalues.postln\
+\
+~avgresp.remove\
+\
+\
+(\
+~rout = \cf3 Routine\cf2 (\{\
+	\cf3 var\cf2  cpuTrend;\
+	256.do(\{\cf3 |ind|\cf2 \
+		\cf3 var\cf2  weights, avgdur;\
+		cpuTrend = ~serv.peakCPU;\
+		32.do(\{\cf3 |step|\cf2 \
+			\cf3 var\cf2  dur, args, chromo, synth, index, actives, dead, scores, cr, def;\
+			\cf3 var\cf2  env;\
+			cr = ~genes.select(\{\cf3 |it|\cf2  \
+				~parameters[\cf5 \\arr\cf2 ][it.code.keep(4).convertDigits(4)] == (step + 1)\
+			\});\
+			weights = cr.collect(\cf3 _\cf2 .score).normalizeSum;\
+			\
+			index = weights.windex;\
+			\
+\cf6 //			Post << "step: " << step << Char.nl;\cf2 \
+			\
+			if ((index > -1).and(index < cr.size))\
+			\{			\
+				chromo = cr@index;\
+				\
+\cf6 //				Post << "score: " << chromo.score << Char.nl;\cf2 \
+				\
+				dur = ~parameters[\cf5 \\dur\cf2 ][chromo.code.copyRange(12, 15).convertDigits(4)];\
+				args = ~staticArgs ++ ~collectArgs.value(chromo);\
+				if (dur < 0.75)\
+				\{\
+					env = \cf3 Env\cf2 ([0.001, 2.0, 0.001], [0, 1], [0, 4]).asArray;\
+				\}\
+				\{\
+				 	env = \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.01, 0.6, 0.19], \cf5 \\sine\cf2 ).asArray;\
+				\};\
+				\
+				if (chromo.code[0] > 1) \{ def = \cf5 \\swarp\cf2  \} \{ def = \cf5 \\rwarp\cf2  \};\
+				\
+				synth = \cf3 Synth\cf2 .head(~agrp, def, args ++ [\cf5 \\elv\cf2 , 0, \cf5 \\rho\cf2 , 0.4])\
+					.setn(\cf5 \\env\cf2 , env);\
+					\
+				chromo.activate(synth);\
+				\
+				\cf3 SystemClock\cf2 .sched(dur, \{ chromo.deactivate; \cf3 nil\cf2  \});\
+								\
+				\cf6 //crossover\cf2 \
+				\
+				weights = ~genes.population.collect(\cf3 _\cf2 .score).normalizeSum;\
+				\
+				~genes.crossover(chromo, \{ ~genes.population.wchoose(weights) \});\
+				\
+				\cf6 //mutation\cf2 \
+				if(~mutationRate.coin) \{\
+					chromo.mutate\
+				\};\
+				\
+			\
+			\};\
+			\
+			\cf6 //score\cf2 \
+			\
+			~actives = ~genes.population.select(\cf3 _\cf2 .active);\
+			\
+			~actives.do(\{\cf3 |inc|\cf2  inc.score = inc.score + 1; \});\
+			\
+			\cf3 SystemClock\cf2 .sched(0.25, \{\
+				if (cpuTrend > 0) \{\
+					~actives.do(\{\cf3 |dec|\cf2  dec.score = dec.score - 1;  \})\
+				\}\
+				\{\
+					~actives.do(\{\cf3 |dec|\cf2  dec.score = dec.score + 1;  \})\
+				\};\
+				\cf3 nil\cf2 \
+			\});\
+						\
+			~quant.wait;\
+			\
+			\cf6 // if resource limit is reached, kill the synth\cf2 \
+\
+			if ((~serv.peakCPU > ~cpuLimit).and(chromo.notNil)) \{\
+				chromo.deactivate;\
+				chromo.score = 0;\
+				synth.free;\
+			\};\
+			\
+			\cf6 // discourage longer durations\cf2 \
+			\
+			if (index < ~genes.size)\
+			\{\
+				actives = ~genes.population.select(\cf3 _\cf2 .active);\
+				if (actives.size > 0)\
+				\{\
+					actives.wchoose(actives.collect(\{\cf3 |inc|\cf2  \
+						~parameters[\cf5 \\dur\cf2 ][inc.code.copyRange(8, 11).convertDigits(4)]\
+					\}).normalizeSum).deactivate;					\};	\
+			\};\
+							\
+			\cf6 // death, the closer genepool size reaches to max population, the more likely to occur\cf2 \
+			\
+			if ((~genes.population.size / ~maxPopulation).coin)\
+			\{\
+				\
+				dead = \cf3 nil\cf2 ;\
+				scores = ~genes.population.collect(\cf3 _\cf2 .score);\
+				dead = scores.indexOf(scores.minItem);\
+				~genes.population.removeAt(dead);\
+			\};\
+									\
+			cpuTrend = ~serv.peakCPU - cpuTrend;\
+			\
+			\{~win.refresh\}.defer\
+		\});\
+		avgdur = ~genes.population.collect(\{\cf3 |ch|\cf2  \
+			~parameters[\cf5 \\dur\cf2 ][ch.code.copyRange(12, 15).convertDigits(4)]\
+		\}).sum / ~genes.size;\
+\cf6 //		~genes.do(\{|gene|\cf2 \
+\cf6 //			if ((gene.score - avgdur).abs < (avgdur * 0.1))\cf2 \
+\cf6 //			\{\cf2 \
+\cf6 //				gene.score = max(gene.score - 2, 1);\cf2 \
+\cf6 //			\};\cf2 \
+\cf6 //			if ((gene.score - avgdur).abs > (avgdur * 0.5))\cf2 \
+\cf6 //			\{\cf2 \
+\cf6 //				gene.score = gene.score + 2\cf2 \
+\cf6 //			\}\cf2 \
+\cf6 //		\});\cf2 \
+		(\cf4 "------ generation "\cf2  ++ ind.asString ++ \cf4 " # "\cf2  \
+			++ ~genes.population.size.asString ++ \cf4 " ## "\cf2  ++ avgdur.asString ++ \cf4 " ---------"\cf2 ).postln;\
+		~quant.wait;		\
+	\})\
+\}).play\
+)\
+\
+~genes.do(\{\cf3 |ch|\cf2  ch.score.postln \})\
+\
+~rout.stop\
+\
+~cpuLimit = 24\
+~genes.size\
+\
+~maxPopulation = 256\
+\
+~genes.do(\{\cf3 |ch|\cf2  \
+	\cf3 var\cf2  par;\
+	par = ch.code.clump(4);\
+	[\
+		~parameters[\cf5 \\dur\cf2 ][par[2].convertDigits(4)],\
+		~parameters[\cf5 \\dns\cf2 ][par[1].convertDigits(4)] \
+	].postln\
+		\
+\})\
+\
+~genes.do(\{\cf3 |g|\cf2  g.score.postln\})\
+\
+~genes.do(\{\cf3 |it|\cf2 \
+	it.code.put( ~chromoSize.rand, 4.rand)\
+\})\
+\
+~genes.sort(\{\cf3 |a, b|\cf2  a.score > b.score \})\
+\
+~serv.prepareForRecord(\cf4 "/Users/alo/sounds/genfx_2.aif"\cf2 )\
+~serv.record\
+\
+~serv.stopRecording\
+\cf3 Server\cf2 .default.queryAllNodes\
+~win.refresh\
+~resp.remove\
+~serv.scope\
+\
+~genes.do(\{\cf3 |it|\cf2  \
+	~parameters[\cf5 \\arr\cf2 ][it.code.keep(4).convertDigits(4)].postln\
+\});\
+\
+}

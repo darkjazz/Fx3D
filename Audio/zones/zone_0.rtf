@@ -1,0 +1,72 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 ~loadAts = \cf3 true\cf2 ;\
+\cf4 "/Users/alo/SuperCollider/Fx/zones/initiate_zones.rtf"\cf2 .loadPath;\
+\
+(\
+\cf3 SynthDef\cf2 (\cf5 \\higrain\cf2 , \{\cf3 |out, tfrq, tdel, gdr, genv, egate, amp, dur|\cf2 \
+	\cf3 var\cf2  trig, sig, freq, env, fsize = 24, dels, azm, elv, freqa, freqc;\
+	freqc = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr(\cf5 \\freqc\cf2 ), egate);\
+	freqa = \cf3 ArrayControl\cf2 .kr(\cf5 \\freqa\cf2 , fsize, 1);\
+	dels = \cf3 ArrayControl\cf2 .kr(\cf5 \\dels\cf2 , 4, 1);\
+	azm = \cf3 ArrayControl\cf2 .kr(\cf5 \\azm\cf2 , 4, 1);\
+	elv = \cf3 ArrayControl\cf2 .kr(\cf5 \\elv\cf2 , 4, 1);\
+	env = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr(\cf5 \\env\cf2 ), timeScale: dur, doneAction: 2);\
+	trig = \cf3 DelayN\cf2 .kr(\cf3 Impulse\cf2 .kr(tfrq), 1/tfrq, \cf3 TRand\cf2 .kr(dels, tdel, \cf3 Impulse\cf2 .kr(tfrq*2)));\
+	sig = \cf3 SinGrainB\cf2 .ar(trig, gdr, freqc * \cf3 Select\cf2 .kr(\cf3 TIRand\cf2 .kr(0, fsize - 1, trig), freqa), genv, amp)\
+		* env;\
+	\cf3 Out\cf2 .ar(out, sig)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf5 \\atsgrain\cf2 , \{\cf3 | out, buffer, dur, rate, bw, modrate, modhi=36, modlo=35 |\cf2 \
+	\cf3 var\cf2  azm, elv, env, pointer, partials, amps, freqs, sig, numparts = 40;\
+	azm = \cf3 ArrayControl\cf2 .kr(\cf5 \\azm\cf2 , 4, 1);\
+	elv = \cf3 ArrayControl\cf2 .kr(\cf5 \\elv\cf2 , 4, 1);\
+	env = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr, timeScale: dur, doneAction: 2);\
+	pointer = \cf3 LFSaw\cf2 .kr(rate, 1, 0.5, 0.5);\
+	partials = \cf3 ArrayControl\cf2 .ir(\cf5 \\partials\cf2 , numparts, \{\cf3 |i|\cf2  i\});\
+	amps = \cf3 AtsAmp\cf2 .kr(buffer, partials, pointer);\
+	freqs = \cf3 AtsFreq\cf2 .kr(buffer, partials, pointer);\
+	sig = \cf3 BPF\cf2 .ar(\
+		\cf3 SinOsc\cf2 .ar(\cf3 LFNoise2\cf2 .kr(modrate).range(freqs*modlo/modhi, freqs*modhi/modlo), amps * pi, amps), \
+		freqs.reverse, bw / freqs.reverse, amps.reverse\
+	) * env;\
+	sig = sig.clump(4);\
+	sig = \cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2  \cf3 Mix\cf2 (sig[i]) \});\
+	\cf3 Out\cf2 .ar(out, \
+		\cf3 AtkMonoToB\cf2 .ar(sig@0, azm@0, elv@0) + \
+		\cf3 AtkMonoToB\cf2 .ar(sig@1, azm@1, elv@1) + \
+		\cf3 AtkMonoToB\cf2 .ar(sig@2, azm@2, elv@2) + \
+		\cf3 AtkMonoToB\cf2 .ar(sig@3, azm@3, elv@3)\
+	)\
+\}).memStore;\
+\
+\pard\pardeftab720\ql\qnatural
+\cf3 SynthDef\cf2 (\cf5 \\atk_zone0\cf2 , \{\cf3 |out, in |\cf2 \
+	\cf3 var\cf2  w, x, y, z, rotate, zoom, push, squish, focus, press, dominate;\
+	rotate = \cf3 ArrayControl\cf2 .kr(\cf5 \\rotate\cf2 , 3, 0.0);\
+	zoom = \cf3 ArrayControl\cf2 .kr(\cf5 \\zoom\cf2 , 3, 0.0);\
+	push = \cf3 ArrayControl\cf2 .kr(\cf5 \\push\cf2 , 3, 0.0);\
+	squish = \cf3 ArrayControl\cf2 .kr(\cf5 \\squish\cf2 , 3, 0.0);\
+	focus = \cf3 ArrayControl\cf2 .kr(\cf5 \\focus\cf2 , 3, 0.0);\
+	press = \cf3 ArrayControl\cf2 .kr(\cf5 \\press\cf2 , 3, 0.0);\
+	dominate = \cf3 ArrayControl\cf2 .kr(\cf5 \\dominate\cf2 , 3, 0.0);\
+	#w, x, y, z = \cf3 In\cf2 .ar(in, 4);\
+	#w, x, y, z = \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, rotate@0, rotate@1, rotate@2 );\
+	#w, x, y, z = \cf3 AtkZoom\cf2 .ar(w, x, y, z, zoom@0, zoom@1, zoom@2 );\
+	#w, x, y, z = \cf3 AtkPush\cf2 .ar(w, x, y, z, push@0, push@1, push@2 );\
+	#w, x, y, z = \cf3 AtkSquish\cf2 .ar(w, x, y, z, squish@0, squish@1, squish@2 );\
+	#w, x, y, z = \cf3 AtkFocus\cf2 .ar(w, x, y, z, focus@0, focus@1, focus@2 );\
+	#w, x, y, z = \cf3 AtkPress\cf2 .ar(w, x, y, z, press@0, press@1, press@2 );\
+	#w, x, y, z = \cf3 AtkDominate\cf2 .ar(w, x, y, z, dominate@0, dominate@1, dominate@2 );\
+	\cf3 Out\cf2 .ar(out, \cf3 Array\cf2 .with(w, x, y, z))\
+\}).memStore;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 \
+\pard\pardeftab720\ql\qnatural
+\cf2 )\
+}

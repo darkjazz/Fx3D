@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'Fx' target in the 'Fx' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif

@@ -1,0 +1,101 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf420
+{\fonttbl\f0\fnil\fcharset238 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green115\blue0;\red0\green0\blue191;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs18 \cf2 (\
+	\cf3 \\kanji\cf2 : \{\cf4 |state, size, x, y, red, green, blue, alpha|\cf2 \
+		(state * size).asInt.clip(5, 8).do(\{\
+			\cf4 Pen\cf2 .width = 1;\
+			\cf4 Pen\cf2 .strokeColor = \cf4 Color\cf2 .new(red, green, blue, alpha);\
+			\cf4 Pen\cf2 .moveTo((x + size.rand)@(y + size.rand));\
+			\cf4 Pen\cf2 .lineTo((x + size.rand)@(y + size.rand));\
+			\cf4 Pen\cf2 .stroke\
+			\
+		\})		\
+	\},\
+	\
+	\cf3 \\rings\cf2 : \{\cf4 |state, size, x, y, red, green, blue, alpha|\cf2 \
+		\cf4 Pen\cf2 .color = \cf4 Color\cf2 .new(red, green, blue, alpha);\
+		\cf4 Pen\cf2 .fillOval(\cf4 Rect\cf2 (x, y, size, size));\
+		\cf4 Pen\cf2 .color = \cf4 Color\cf2 .new(1 - red, 1 - green, 1 - blue, 1 - alpha);\
+		\cf4 Pen\cf2 .fillOval(\cf4 Rect\cf2 (x + (size / 4), y + (size / 4), size / 2, size / 2));\
+	\},\
+	\
+	\cf3 \\wobble\cf2 :\{\cf4 |state, size, x, y, red, green, blue, alpha|\cf2 \
+		\cf4 Pen\cf2 .color = \cf4 Color\cf2 .new(1 - red, 1 - green, 1 - blue, alpha);\
+		\cf4 Pen\cf2 .strokeOval(\
+			\cf4 Rect\cf2 (\
+				x + (state * 2.8).rand2, \
+				y + (state * 2.8).rand2, \
+				size * state * 1.4,\
+				size * state * 1.4\
+			)\
+		);\
+		\cf4 Pen\cf2 .color = \cf4 Color\cf2 .new(red, green, blue, alpha);\
+		\cf4 Pen\cf2 .fillOval(\
+			\cf4 Rect\cf2 (\
+				x + (size * (1 - state) / 2),\
+				y + (size * (1 - state) / 2),\
+				size * state,\
+				size * state\
+			)\
+		)\
+	\},\
+	\
+	\cf3 \\grid\cf2 : \{\cf4 |state, size, x, y, red, green, blue, alpha|\cf2 \
+		\cf4 Pen\cf2 .color = \cf4 Color\cf2 .new(red, green, blue, alpha);\
+		\cf4 Pen\cf2 .strokeRect( \cf4 Rect\cf2 (x, y, size * state, size * state) );\
+		\cf4 Pen\cf2 .color = \cf4 Color\cf2 .new(1 - red, 1 - green, 1 - blue, 1 - alpha);\
+		\cf4 Pen\cf2 .fillRect(\cf4 Rect\cf2 (x + (size / 4), y + (size / 4), size / 2, size / 2));\
+	\},\
+	\
+	\cf3 \\horizons\cf2 : \{\cf4 |state, size, x, y, red, green, blue, alpha|\cf2 \
+		\cf4 Pen\cf2 .color = \cf4 Color\cf2 .new(red, green, blue, 1 - alpha);\
+		\cf4 Pen\cf2 .width = state * size;\
+		\cf4 Pen\cf2 .line(x@(y + (size / 2)), (x + size)@(y + (size / 2)));\
+		\cf4 Pen\cf2 .stroke;	\
+	\},\
+	\
+	\cf3 \\blinds\cf2 : \{\cf4 |state, size, x, y, red, green, blue, alpha|\cf2 \
+		\cf4 Pen\cf2 .color = \cf4 Color\cf2 .new(red, green, blue, alpha);\
+		\cf4 Pen\cf2 .width = 1 - state * size;\
+		\cf4 Pen\cf2 .line((x + (size / 2))@y,(x + (size / 2))@(y + size)); \
+		\cf4 Pen\cf2 .stroke;	\
+	\},\
+	\
+	\cf3 \\axial\cf2 : \{\cf4 |state, size, x, y, red, green, blue, alpha|\cf2 \
+		\cf4 SCPen\cf2 .addRect(\cf4 Rect\cf2 (x, y, size, size));\
+		\cf4 SCPen\cf2 .fillAxialGradient(\
+			\cf4 Point\cf2 (x, y), \
+			\cf4 Point\cf2 (x + size, y + size), \
+			\cf4 Color\cf2 .new(red, green, blue, alpha), \
+			\cf4 Color\cf2 .new(1 - red, 1 - green, 1 - blue, alpha)\
+		);\
+	\},\
+	\
+	\cf3 \\radial\cf2 : \{\cf4 |state, size, x, y, red, green, blue, alpha|\cf2 \
+		\cf4 SCPen\cf2 .addOval(\cf4 Rect\cf2 (x, y, size, size));\
+		\cf4 SCPen\cf2 .fillRadialGradient(\
+			\cf4 Point\cf2 (x + (size / 2), y + (size / 2)), \
+			\cf4 Point\cf2 (x + (size / 2), y + (size / 2)), \
+			0, \
+			size * state,\
+			\cf4 Color\cf2 .new(red, green, blue, alpha), \
+			\cf4 Color\cf2 .new(1 - red, 1 - green, 1 - blue, 1 - alpha));\
+	\},\
+	\
+	\cf3 \\wedges\cf2 : \{\cf4 |state, size, x, y, red, green, blue, alpha|\cf2 \
+		\cf4 SCPen\cf2 .color = \cf4 Color\cf2 .new(red, green, blue, alpha);\
+		\cf4 SCPen\cf2 .addAnnularWedge(\
+			\cf4 Point\cf2 (x + (size / 2), y + (size / 2)),\
+			1 + (state * (size / 2)),\
+			1 + (state * (size / 2)) + (state * size),\
+			[0, 2pi, \cf3 \\sin\cf2 ].asSpec.map(1 - state),\
+			[0, 2pi, \cf3 \\sin\cf2 ].asSpec.map(state)\
+		);\
+		if (state < 0.5) \{\cf4 SCPen\cf2 .perform(\cf3 \\fill\cf2 )\} \{\cf4 SCPen\cf2 .perform(\cf3 \\stroke\cf2 ) \}\
+	\}\
+	\
+)}

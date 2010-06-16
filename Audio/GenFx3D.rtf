@@ -1,0 +1,356 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 (\
+\cf3 var\cf2  bufpath = \cf4 "/Users/alo/sounds/fx_loops/*"\cf2 ;\
+\
+~serv = \cf3 Server\cf2 .internal;\
+\cf3 Server\cf2 .default = ~serv;\
+\
+~serv.options.memSize = 2**16;\
+\
+if (~serv.serverRunning.not)\
+\{\
+	\cf4 "BOOTING SERVER..."\cf2 .postln;\
+	~serv.boot\
+\}\
+\{\
+	~loops = \cf3 Array\cf2 .newClear(bufpath.pathMatch.size);\
+	\cf3 Routine\cf2 (\{\
+		\cf3 var\cf2  prog, paths;\
+		\
+		paths = bufpath.pathMatch;\
+		prog = \cf3 ProgBar\cf2 (paths.size);\
+		\
+		paths.do(\{\cf3 |path, i|\cf2 \
+			~loops = ~loops.add( \cf3 Buffer\cf2 .read(~serv, path) );\
+			~serv.sync;\
+			prog.next;\
+			0.001.wait;\
+		\});\
+		prog.close;\
+		prog = \cf3 nil\cf2 ;\
+		\
+		~loops = ~loops.select(\cf3 _\cf2 .notNil);\
+		\
+	\}).play(\cf3 AppClock\cf2 )\
+\}\
+)\
+\
+(\
+\pard\pardeftab720\ql\qnatural
+\cf2 \
+\cf3 SynthDef\cf2 (\cf5 \\swarp\cf2 , \{\cf3 |out, efx, aamp, eamp, dur, buf, str, end, wrp, frq, wsz, dns, rnd, azm, elv, rho|\cf2 \
+	\cf3 var\cf2  ptr, sig, env, bf;\
+	env = \cf3 Control\cf2 .names([\cf5 \\env\cf2 ]).kr(\cf3 Env\cf2 .newClear(16).asArray);	\
+	ptr = \cf3 LFSaw\cf2 .kr(wrp).range(str, end);\
+	sig = \cf3 SndWarp\cf2 .ar(buf, ptr, frq, wsz, dns, rnd) * \
+		\cf3 EnvGen\cf2 .kr(env, timeScale: dur, doneAction: 2);\
+	sig = \cf3 LeakDC\cf2 .ar(sig ** 0.5);\
+	\cf3 Out\cf2 .ar(efx, sig * eamp);\
+	bf = \cf3 BFEncode1\cf2 .ar(sig, \
+		\cf3 LFNoise2\cf2 .ar(\cf3 Rand\cf2 (0.1, 20.0)).range(-pi, pi),\
+		\cf3 LFNoise2\cf2 .ar(\cf3 Rand\cf2 (0.1, 0.5)).range(-0.5pi, 0.5pi), \
+		\cf3 LFNoise2\cf2 .ar(\cf3 Rand\cf2 (0.2, 4.0)).range(0.2, 2.0)\
+	);\
+	\cf3 Out\cf2 .ar(out, bf * aamp)\
+\}).memStore;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf2 \
+\pard\pardeftab720\ql\qnatural
+\cf3 SynthDef\cf2 (\cf5 \\rwarp\cf2 , \{\cf3 |out, efx, aamp, eamp, dur, buf, str, end, wrp, frq, wsz, dns, rnd, azm, elv, rho|\cf2 \
+	\cf3 var\cf2  ptr, sig, env, bf;\
+	env = \cf3 Control\cf2 .names([\cf5 \\env\cf2 ]).kr(\cf3 Env\cf2 .newClear(16).asArray);	\
+	ptr = \cf3 LFSaw\cf2 .kr(wrp).range(str, end);\
+	sig = \cf3 LeakDC\cf2 .ar(\cf3 Warp1\cf2 .ar(1, buf, ptr, frq, wsz, -1, dns, rnd)) * \
+		\cf3 EnvGen\cf2 .kr(env, timeScale: dur, doneAction: 2);\
+	sig = sig ** 0.5;\
+	\cf3 Out\cf2 .ar(efx, sig * eamp);\
+	bf = \cf3 BFEncode1\cf2 .ar(sig, azm, elv, rho);\
+	\cf3 Out\cf2 .ar(out, bf * aamp)\
+\}).memStore;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 \
+\cf3 SynthDef\cf2 (\cf5 \\verb\cf2 , \{\cf3 |in, rtime, damp, inbw, spr, dry, early, tail, amp|\cf2 \
+	\cf3 var\cf2  sig, input, actr, fb;\
+	input = \cf3 In\cf2 .ar(in) * \
+		\cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf5 \\sine\cf2 ), \
+			\cf3 Impulse\cf2 .kr(0.04), timeScale:0.04.reciprocal);\
+	fb = \cf3 LocalIn\cf2 .ar;\
+	sig = \cf3 GVerb\cf2 .ar(input + fb, 1500, rtime, damp, inbw, spr, dry, early, tail, 1500);\
+	\cf3 LocalOut\cf2 .ar(\cf3 Mix\cf2 (sig) * 0.01);\
+	sig = sig + \cf3 PitchShift\cf2 .ar(sig, 0.1, [0.5, 2.0], mul: 0.1);\
+	\cf3 Out\cf2 .ar(0, [sig ++ sig] * amp)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf5 \\bf2decode\cf2 , \{\cf3 |bus, amp = 1|\cf2 \
+	\cf3 var\cf2  w, x, y, z;\
+	#w, x, y, z = \cf3 In\cf2 .ar(bus, 4);\
+	\cf3 Out\cf2 .ar( 0, \cf3 BFDecode1\cf2 .ar(w, x, y, z, \cf3 IbiSpeakers\cf2 .quad.azimuth, (0 ! 4) ) * amp )\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf5 \\bfcollect\cf2 , \{\cf3 |bus, amp = 1|\cf2 \
+	\cf3 Out\cf2 .ar(0, \cf3 In\cf2 .ar(bus, 4) * amp)\
+\}).memStore\
+\
+)\
+\
+(\
+~abus = \cf3 Bus\cf2 .audio(~serv, 4);\
+~rbus = \cf3 Bus\cf2 .audio(~serv);\
+~agrp = \cf3 Group\cf2 ();\
+~rev = \cf3 Synth\cf2 .after(~agrp, \cf5 \\verb\cf2 , [\cf5 \\in\cf2 , ~rbus, \cf5 \\rtime\cf2 , 3, \cf5 \\damp\cf2 , 0.5, \cf5 \\inbw\cf2 , 0.5, \cf5 \\spr\cf2 , 20, \
+	\cf5 \\dry\cf2 , 0.0, \cf5 \\early\cf2 , 0.4, \cf5 \\tail\cf2 , 1.0, \cf5 \\amp\cf2 , 0.5]);	\
+~decode = \cf3 Synth\cf2 .after(~rev, \cf5 \\bf2decode\cf2 , [\cf5 \\bus\cf2 , ~abus, \cf5 \\amp\cf2 , 1.0]);\
+\cf6 //~decode = Synth.after(~rev, \\bfcollect, [\\bus, ~abus, \\amp, 1.0]);\cf2 \
+~bps = 140 / 60;\
+~div = ~bps.reciprocal;\
+\
+~serv.scope;\
+\
+~eq = \cf3 MasterEQ\cf2 (2)\
+)\
+\
+~rev.set(\cf5 \\early\cf2 , 0.0)\
+~rev.free\
+~decode.free\
+\
+\
+(\
+~gsize = 256;\
+~cpuLimit = 40.0;\
+\
+~parameters = (\
+	arr: (1..32).stutter(8),\
+	buf: (0..255),\
+	dns: \cf3 Array\cf2 .series(~gsize / 4, 0.5, 16 / (~gsize / 4)).stutter(4),\
+	dur: \cf3 Array\cf2 .series(~gsize / 2, 0.125, 8.125 - 0.125 / (~gsize / 2)).stutter(2),\
+	end: (\cf3 Array\cf2 .series(~gsize / 2, 0.0, 0.5 / (~gsize / 2)) + 0.5).stutter(2),\
+	frq: \cf3 Array\cf2 .geom(~gsize / 4, 0.25, 2**(1/16)).stutter(4),\
+	rnd: \cf3 Array\cf2 .series(~gsize / 4, 0.0, 0.1 / (~ gsize / 4)).stutter(4),\
+	str: \cf3 Array\cf2 .series(~gsize / 2, 0.0, 0.5 / (~gsize / 2)).stutter(2),\
+	wrp: \cf3 Array\cf2 .series(~gsize / 2, 0.001, 0.1 / (~gsize / 2)).stutter(2),\
+	wsz: \cf3 Array\cf2 .series(~gsize / 4, 0.01, 0.3 / (~gsize / 4)).stutter(4),\
+	azm: [\
+		\cf3 Array\cf2 .series(~gsize / 4, 0, pi / (~gsize / 4) ), \
+		\cf3 Array\cf2 .series(~gsize / 4, 0, (pi / (~gsize / 4)) * -1) \
+	].lace(128).stutter(2)\
+);\
+\
+\cf6 //~indexArray = [0, 31, 63, 127, 255];\cf2 \
+\
+~order = ~parameters.keys(\cf3 Array\cf2 ).sort;\
+\
+~genes = \cf3 Array\cf2 .fill(128, \{\cf3 |i|\cf2 \
+	\cf3 var\cf2  chromo;\
+	chromo = \cf3 Chromosome\cf2 (~parameters.size * 4, 1);\
+	~order.size.do(\{\cf3 |j|\cf2 \
+		if (j == 0)\
+		\{\
+			chromo.code = chromo.code.addAll(~gsize.rand.asDigits(4, 4))\
+		\}\
+		\{\
+			chromo.code = chromo.code.addAll((~gsize / 4).asInt.rand.asDigits(4, 4))\
+		\}\
+	\});\
+	chromo\
+\});\
+\
+~chromoSize = ~genes[0].code.size;\
+~quant = ~bps / 32;\
+~staticArgs = [\cf5 \\out\cf2 , ~abus, \cf5 \\efx\cf2 , ~rbus, \cf5 \\aamp\cf2 , 1.0, \cf5 \\eamp\cf2 , 1.0];\
+~mutationRate = 1 / 16;\
+~maxPopulation = 512;\
+~collectArgs = \{\cf3 |chromo|\cf2 \
+	\cf3 var\cf2  args;\
+	args = \cf3 Array\cf2 ();\
+	chromo.code.clump(4).do(\{\cf3 |code, i|\cf2  \
+		args = args.add(~order@i);\
+		args = args.add(~parameters[~order@i][code.convertDigits(4)])\
+	\});\
+	args\
+\};\
+\
+~win = \cf3 Window\cf2 (\cf4 "..::::____::::.."\cf2 , \cf3 Rect\cf2 (200, 200, 660, 290)).front;\
+~win.background = \cf3 Color\cf2 .black;\
+\
+~win.drawHook = \{\
+	\cf3 var\cf2  scX, scY;\
+	scX = ~win.bounds.width - 20 / ~genes.size;\
+	scY = ~win.bounds.height - 20 / (~chromoSize / 4);\
+	~genes.do(\{\cf3 |chromo, i|\cf2 \
+		chromo.code.clump(4).do(\{\cf3 |gene, j|\cf2 \
+			\cf3 var\cf2  col;\
+			col = gene.convertDigits(4);\
+			\cf3 Pen\cf2 .color = \cf3 Color\cf2 .new255(col, col, col);\
+			\cf3 Pen\cf2 .fillRect(\cf3 Rect\cf2 ( i * scX + 10, j * scY + 10, scX, scY) );\
+		\})\
+	\})\
+\}\
+\
+)\
+\
+(\
+~rout = \cf3 Routine\cf2 (\{\
+	\cf3 var\cf2  cpuTrend;\
+	256.do(\{\cf3 |ind|\cf2 \
+		\cf3 var\cf2  weights, avgdur;\
+		cpuTrend = ~serv.peakCPU;\
+		32.do(\{\cf3 |step|\cf2 \
+			\cf3 var\cf2  dur, crossx, add, crosspoint, args, chromo, synth, index, actives, dead, scores, cr;\
+			\cf3 var\cf2  env;\
+			cr = ~genes.select(\{\cf3 |it|\cf2  \
+				~parameters[\cf5 \\arr\cf2 ][it.code.keep(4).convertDigits(4)] == (step + 1)\
+			\});\
+			weights = cr.collect(\cf3 _\cf2 .score).normalizeSum;\
+			\
+			index = weights.windex;\
+			\
+			if ((index > 0).and(index < cr.size))\
+			\{			\
+				chromo = cr@index;\
+				dur = ~parameters[\cf5 \\dur\cf2 ][chromo.code.copyRange(12, 15).convertDigits(4)];\
+				chromo.active = \cf3 true\cf2 ;\
+				args = ~staticArgs ++ ~collectArgs.value(chromo);\
+				if (dur < 0.75)\
+				\{\
+					env = \cf3 Env\cf2 ([0.001, 2.0, 0.001], [0, 1], [0, 4]).asArray;\
+				\}\
+				\{\
+				 	env = \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.01, 0.6, 0.19], \cf5 \\sine\cf2 ).asArray;\
+				\};\
+				synth = \cf3 Synth\cf2 .head(~agrp, \cf5 \\swarp\cf2 , args ++ [\cf5 \\elv\cf2 , 0, \cf5 \\rho\cf2 , 0.4])\
+					.setn(\cf5 \\env\cf2 , env);\
+				\cf3 SystemClock\cf2 .sched(dur, \{ chromo.active = \cf3 false\cf2 ; \cf3 nil\cf2  \});\
+				\
+				\cf6 //mutation\cf2 \
+				if(~mutationRate.coin) \{\
+					chromo.code.put( ~chromoSize.rand, 4.rand)\
+				\};\
+				\
+				\cf6 //crossover\cf2 \
+				crossx = cr.wchoose(weights);\
+				\
+				if ((crossx != chromo).and(crossx.notNil))\
+				\{	\
+					add = \cf3 Array\cf2 .newClear(~parameters.size * 4);\
+					crosspoint = ~chromoSize.rand;\
+					add.putEach((0..crosspoint), chromo.code.copyRange(0, crosspoint));\
+					add.putEach((crosspoint..add.lastIndex), \
+						crossx.code.copyRange(crosspoint, crossx.code.lastIndex));\
+					~genes = ~genes.add(\
+						\cf3 Chromosome\cf2 (~parameters.size * 4, (chromo.score + crossx.score / 2).floor \
+					).code_(add));\
+				\};\
+			\
+			\};\
+			\
+			\cf6 //score\cf2 \
+			\
+			actives = ~genes.select(\cf3 _\cf2 .active);\
+			\
+			actives.do(\{\cf3 |inc|\cf2  inc.score = inc.score + 1; \});\
+			\
+			\cf3 SystemClock\cf2 .sched(0.25, \{\
+				if (cpuTrend > 0) \{\
+					actives.do(\{\cf3 |dec|\cf2  dec.score = dec.score - 1;  \})\
+				\}\
+				\{\
+					actives.do(\{\cf3 |dec|\cf2  dec.score = dec.score + 1;  \})\
+				\};\
+				\cf3 nil\cf2 \
+			\});\
+						\
+			~quant.wait;\
+			\
+			\cf6 // if resource limit is reached, kill the synth\cf2 \
+\
+			if ((~serv.peakCPU > ~cpuLimit).and(chromo.notNil)) \{\
+				chromo.active = \cf3 false\cf2 ;\
+				chromo.score = 1;\
+				synth.free;\
+			\};\
+			\
+			\cf6 // discourage longer durations\cf2 \
+			\
+			if (index < ~genes.size)\
+			\{\
+				actives = ~genes.select(\cf3 _\cf2 .active);\
+				if (actives.size > 0)\
+				\{\
+					actives.wchoose(actives.collect(\{\cf3 |inc|\cf2  \
+						~parameters[\cf5 \\dur\cf2 ][inc.code.copyRange(8, 11).convertDigits(4)]\
+					\}).normalizeSum).active_(\cf3 false\cf2 );					\};	\
+			\};\
+							\
+			\cf6 // death, the closer genepool size reaches to max population, the more likely to occur\cf2 \
+			\
+			if ((~genes.size / ~maxPopulation).coin)\
+			\{\
+				\
+				dead = \cf3 nil\cf2 ;\
+				scores = ~genes.collect(\cf3 _\cf2 .score);\
+				dead = scores.indexOf(scores.minItem);\
+				~genes.removeAt(dead);\
+			\};\
+						\
+			cpuTrend = ~serv.peakCPU - cpuTrend;\
+			\
+			\{~win.refresh\}.defer\
+		\});\
+		avgdur = ~genes.collect(\{\cf3 |ch|\cf2  \
+			~parameters[\cf5 \\dur\cf2 ][ch.code.copyRange(12, 15).convertDigits(4)]\
+		\}).sum / ~genes.size;\
+		~genes.do(\{\cf3 |gene|\cf2 \
+			if ((gene.score - avgdur).abs < (avgdur * 0.1))\
+			\{\
+				gene.score = max(gene.score - 2, 1);\
+			\};\
+			if ((gene.score - avgdur).abs > (avgdur * 0.5))\
+			\{\
+				gene.score = gene.score + 2\
+			\}\
+		\});\
+		(\cf4 "------ generation "\cf2  ++ ind.asString ++ \cf4 " # "\cf2  \
+			++ ~genes.size.asString ++ \cf4 " ## "\cf2  ++ avgdur.asString ++ \cf4 " ---------"\cf2 ).postln;\
+		~quant.wait;		\
+	\})\
+\}).play\
+)\
+\
+~rout.stop\
+\
+~cpuLimit = 24\
+~genes.size\
+\
+~maxPopulation = 640\
+\
+~genes.do(\{\cf3 |ch|\cf2  \
+	\cf3 var\cf2  par;\
+	par = ch.code.clump(4);\
+	[\
+		~parameters[\cf5 \\dur\cf2 ][par[2].convertDigits(4)],\
+		~parameters[\cf5 \\dns\cf2 ][par[1].convertDigits(4)] \
+	].postln\
+		\
+\})\
+\
+~genes.do(\{\cf3 |g|\cf2  g.score.postln\})\
+\
+~genes.do(\{\cf3 |it|\cf2 \
+	it.code.put( ~chromoSize.rand, 4.rand)\
+\})\
+\
+~genes.sort(\{\cf3 |a, b|\cf2  a.score > b.score \})\
+\
+~serv.prepareForRecord(\cf4 "/Users/alo/sounds/genfx_2.aif"\cf2 )\
+~serv.record\
+\
+~serv.stopRecording\
+\
+~win.refresh\
+\
+~serv.scope}

@@ -1,0 +1,260 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf420
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs18 \cf2 // film music\cf0 \
+(\
+\cf3 SynthDef\cf0 (\cf4 \\filmwarp\cf0 , \{\cf3 |out, aux, bufnum, dur, wrp, frq, wsz, dns, rnd, att, sus, rel, curve, amp|\cf0 \
+	\cf3 var\cf0  sig, ptr, env, bf;\
+	ptr = \cf3 LFSaw\cf0 .kr(wrp, 1, 0.5, 0.5);\
+	env = \cf3 Env\cf0 .linen(att, sus, rel, amp, curve);\
+	sig = \cf3 Warp1\cf0 .ar(1, bufnum, ptr, frq, wsz, -1, dns, rnd, 4) \
+		* \cf3 EnvGen\cf0 .kr(env, levelScale: amp, timeScale: dur, doneAction: 2);\
+	\cf3 Out\cf0 .ar(aux, sig);\
+	\cf3 Out\cf0 .ar(out, sig)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf0 (\cf4 \\filmplay\cf0 , \{\cf3 |out, aux, bufnum, rate, pdr, att, sus, rel, curve, amp|\cf0 \
+	\cf3 var\cf0  sig, dur, env;\
+	dur = \cf3 BufDur\cf0 .kr(bufnum) * rate.reciprocal * pdr;\
+	env = \cf3 Env\cf0 .linen(att, sus, rel, amp, curve);\
+	sig = \cf3 LPF\cf0 .ar(\cf3 PlayBuf\cf0 .ar(1, bufnum, rate), 500) * \cf3 EnvGen\cf0 .kr(env, timeScale: dur, doneAction: 2);\
+	\cf3 Out\cf0 .ar(aux, sig);\
+	\cf3 Out\cf0 .ar(out, sig)	\
+\}).memStore;\
+\
+\cf3 SynthDef\cf0 (\cf4 \\filmsineats\cf0 , \{\cf3 |out, aux, buffer, dur, amp, wrp, att, curve, freqsc, scale = 1.0, bw = 2|\cf0 \
+	\cf3 var\cf0  sig, freqs, amps, parts, ptr, env, afr;\
+	ptr = \cf3 LFSaw\cf0 .kr(wrp, 1, 0.5, 0.5);\
+\cf2 //	env = Control.names([\\env]).kr(Env.newClear(8));\cf0 \
+\cf2 //	parts = Control.names([\\parts]).kr(Array.fill(30, 0));\cf0 \
+	env = \cf3 Env\cf0 .perc(att, 1.0 - att, 1.0, curve);\
+	parts = (0..29);\
+	freqs = \cf3 AtsFreq\cf0 .kr(buffer, parts, ptr);\
+	amps = \cf3 AtsAmp\cf0 .kr(buffer, parts, ptr) ** 0.5;\
+	afr = freqs[0] * scale;\
+	sig = \cf3 Mix\cf0 (\cf3 SinOsc\cf0 .ar(freqs * freqsc, 0, amps))\
+		* \cf3 EnvGen\cf0 .kr(env, timeScale: dur, levelScale: amp, doneAction: 2);\
+	\cf3 Out\cf0 .ar(aux, sig);\
+	\cf3 Out\cf0 .ar(out, sig)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf0 (\cf4 \\filmsawats\cf0 , \{\cf3 |out, aux, buffer, dur, amp, wrp, att, curve, freqsc, scale = 1.0, bw = 2|\cf0 \
+	\cf3 var\cf0  sig, freqs, amps, parts, ptr, env, afr;\
+	ptr = \cf3 LFSaw\cf0 .kr(wrp, 1, 0.5, 0.5);\
+\cf2 //	env = Control.names([\\env]).kr(Env.newClear(8));\cf0 \
+\cf2 //	parts = Control.names([\\parts]).kr(Array.fill(30, 0));\cf0 \
+	env = \cf3 Env\cf0 .perc(att, 1.0 - att, 1.0, curve);\
+	parts = (0..29);\
+	freqs = \cf3 AtsFreq\cf0 .kr(buffer, parts, ptr);\
+	amps = \cf3 AtsAmp\cf0 .kr(buffer, parts, ptr) ** 0.5;\
+	afr = freqs[0] * scale;	\
+	sig = \cf3 Mix\cf0 (\cf3 VarSaw\cf0 .ar(freqs * freqsc, 0, amps)) * \cf3 EnvGen\cf0 .kr(env, timeScale: dur, levelScale: amp, doneAction: 2);\
+	\cf3 Out\cf0 .ar(aux, sig);\
+	\cf3 Out\cf0 .ar(out, sig)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf0 (\cf4 \\filmdustats\cf0 , \{\cf3 |out, aux, buffer, dur, amp, wrp, bw, att, curve, freqsc|\cf0 \
+	\cf3 var\cf0  sig, freqs, amps, parts, ptr, env;\
+	ptr = \cf3 LFSaw\cf0 .kr(wrp, 1, 0.5, 0.5);\
+\cf2 //	env = Control.names([\\env]).kr(Env.newClear(8));\cf0 \
+\cf2 //	parts = Control.names([\\parts]).kr(Array.fill(30, 0));\cf0 \
+	env = \cf3 Env\cf0 .perc(att, 1.0 - att, 1.0, curve);\
+	parts = (0..29);\
+	freqs = \cf3 AtsFreq\cf0 .kr(buffer, parts, ptr) * freqsc;\
+	amps = \cf3 AtsAmp\cf0 .kr(buffer, parts, ptr);\
+	sig = \cf3 Mix\cf0 (\cf3 BPF\cf0 .ar(\cf3 Dust\cf0 .ar(freqs, amps), freqs, bw / freqs, amps)) \
+		* \cf3 EnvGen\cf0 .kr(env, timeScale: dur, levelScale: amp * 0.01, doneAction: 2);\
+	\cf3 Out\cf0 .ar(aux, sig);\
+	\cf3 Out\cf0 .ar(out, sig)\
+\}).memStore;\
+\
+\
+\cf3 SynthDef\cf0 (\cf4 \\reverb\cf0 , \{\cf3 |out, in, rtime, hfd, amp|\cf0 \
+	\cf3 var\cf0  input, rev;\
+	input = \cf3 In\cf0 .ar(in);\
+	rev = \cf3 Reverb\cf0 .ar(input, rtime, hfd) * amp;\
+	\cf3 Out\cf0 .ar(out, rev)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf0 (\cf4 \\delay\cf0 , \{\cf3 |out, in, maxdel, del, dec, freq, amp = 1, gate = 1|\cf0 \
+	\cf3 var\cf0  input, sig, env;\
+	input = \cf3 LPF\cf0 .ar(\cf3 In\cf0 .ar(in), freq);\
+	sig = \cf3 CombC\cf0 .ar(input, maxdel, del, dec) * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 (#[1, 1, 0], #[1, 0], 0, releaseNode: 1), gate, levelScale: amp, doneAction: 2);\
+	\cf3 Out\cf0 .ar(out, sig)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf0 (\cf4 \\encoder\cf0 , \{\cf3 |out, in, ang, elv, rad, amp = 1, gate = 1|\cf0 \
+	\cf3 var\cf0  mono, bf;\
+	mono = \cf3 In\cf0 .ar(in) * amp;\
+	bf = \cf3 BFEncode1\cf0 .ar(mono, ang, elv, rad) * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 (#[1, 1, 0], #[1, 0], 0, releaseNode: 1), gate, doneAction: 2);\
+	\cf3 Out\cf0 .ar(out, bf)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf0 (\cf4 \\decoder\cf0 , \{\cf3 |in|\cf0 \
+	\cf3 var\cf0  w, x, y, z, spkr;\
+	#w, x, y, z = \cf3 In\cf0 .ar(in, 4);\
+	spkr = \cf3 IbiSpeakers\cf0 .quad;\
+	\cf3 Out\cf0 .ar(2, \cf3 BFDecode1\cf0 .ar(w, x, y, z, spkr.azimuth, spkr.elevation))\
+\}).memStore;\
+\
+~atsfnc = \{\cf3 |defname, filename, ugen|\cf0 \
+	\cf3 SynthDef\cf0 (defname, \{\cf3 |out, aux, bufnum, pfreq, rate, amp, dur, att, sus, rel, curve|\cf0 \
+		\cf3 var\cf0  env, sig, ptr, amps, freqs, parts;\
+		env = \cf3 Env\cf0 .linen(att, sus, rel, amp, curve);\
+		parts = (0..~ats[filename].numPartials - 1);\
+		ptr = \cf3 LFSaw\cf0 .kr(pfreq, 1, 0.5, 0.5);\
+		amps = \cf3 AtsAmp\cf0 .kr(bufnum, parts, ptr);\
+		freqs = \cf3 AtsFreq\cf0 .kr(bufnum, parts, ptr) * rate;\
+		sig = \cf3 Mix\cf0 .ar( \cf3 SynthDef\cf0 .wrap(ugen, prependArgs: [freqs, amps] ) ) \
+			* \cf3 EnvGen\cf0 .kr(env, levelScale: amp, timeScale: dur, doneAction: 2);\
+		\cf3 Out\cf0 .ar(aux, sig);\
+		\cf3 Out\cf0 .ar(out, sig);\
+	\}).memStore;\
+\
+\};\
+\
+~atsugens = (\
+	\cf4 \\sine\cf0  : \{\cf3 |freqs, amps|\cf0  \cf3 SinOsc\cf0 .ar(freqs, 0, amps) \},\
+	\cf4 \\varsaw\cf0  : \{\cf3 |freqs, amps|\cf0  \cf3 VarSaw\cf0 .ar(freqs, 0, 0.5, amps) \},\
+	\cf4 \\bpf\cf0  : \{\cf3 |freqs, amps|\cf0  \cf3 BPF\cf0 .ar(\cf3 Dust\cf0 .ar(freqs), freqs, 3 / freqs, amps) \},\
+	\cf4 \\pulse\cf0  : \{\cf3 |freqs, amps|\cf0  \cf3 Pulse\cf0 .ar(freqs, 0.5, amps) \}\
+\
+\
+);\
+\
+~bufs = \cf3 Event\cf0 ();\
+~ats = \cf3 Event\cf0 ();\
+\
+\cf5 "/Users/alo/sounds/who/mono*.aif"\cf0 .pathMatch.do(\{\cf3 |path|\cf0 \
+	~bufs = ~bufs.put(path.basename.split($.)[0].asSymbol, \cf3 Buffer\cf0 .read(s, path))\
+\});\
+\
+\cf5 "/Users/alo/sounds/who/*.ats"\cf0 .pathMatch.do(\{\cf3 |path|\cf0 \
+	~ats = ~ats.put(path.basename.split($.)[0].asSymbol, \cf3 AtsFile\cf0 (path).loadToBuffer)\
+\});\
+\
+)\
+\
+(\
+~atsfnc.value(\cf4 \\filmatssine\cf0 , \cf4 \\monotheme\cf0 , ~atsugens[\cf4 \\sine\cf0 ]);\
+~atsfnc.value(\cf4 \\filmatssaw\cf0 , \cf4 \\monotheme\cf0 , ~atsugens[\cf4 \\varsaw\cf0 ]);\
+~bps = 130 / 60;\
+~grp = \cf3 Group\cf0 ();\
+~efx = \cf3 Group\cf0 .after(~grp);\
+~bfb = \cf3 Bus\cf0 .audio(s, 4);\
+~dec = \cf3 Synth\cf0 .after(~efx, \cf4 \\decoder\cf0 , [\cf4 \\in\cf0 , ~bfb]);\
+\cf2 //Server.default.prepareForRecord("/Users/alo/recordings/thething");\cf0 \
+)\
+\
+\
+(\
+\cf2 //Server.default.record;\cf0 \
+\
+~patch = (\
+	\cf4 \\bass\cf0 : \cf3 true\cf0 ,\
+	\cf4 \\warp\cf0 : \cf3 true\cf0 ,\
+	\cf4 \\tune\cf0 : \cf3 true\cf0 ,\
+	\cf4 \\rhythm\cf0 : \cf3 false\cf0 \
+);\
+\
+if (~patch.bass) \{\
+\
+	~bbf = \cf3 Bus\cf0 .audio(s);\
+	~bfx = \cf3 Bus\cf0 .audio(s);\
+	\
+	\cf3 Pbind\cf0 (\cf4 \\instrument\cf0 , \cf4 \\filmplay\cf0 , \cf4 \\group\cf0 , ~grp, \cf4 \\addAction\cf0 , 0, \cf4 \\out\cf0 , \cf3 Pseq\cf0 ([~bbf, ~bbf, ~bbf, ~bfx], \cf3 inf\cf0 ), \cf4 \\aux\cf0 , ~bfx,\
+		\cf4 \\bufnum\cf0 , \cf3 Pstutter\cf0 (2, \cf3 Pseq\cf0 ([~bufs.monobar_2, ~bufs.monobar_1, ~bufs.monolo], \cf3 inf\cf0 )),\
+		\cf4 \\rate\cf0 , \cf3 Pn\cf0 (0.5, \cf3 inf\cf0 ), \
+		\cf4 \\pdr\cf0 , \cf3 Pseq\cf0 ([\cf3 Place\cf0 ([0.75, 0.5, 1.0], 6)], \cf3 inf\cf0 ), \cf4 \\att\cf0 , 0.1, \cf4 \\sus\cf0 , 0.8, \cf4 \\rel\cf0 , 0.1, \cf4 \\curve\cf0 , 0, \
+		\cf4 \\amp\cf0 , 0.5, \cf4 \\delta\cf0 , \cf3 Pseq\cf0 (~bps / [2, 2, 2, 4, 2], \cf3 inf\cf0 )\
+	).play;\
+	\
+\cf2 //	Pmono(\\delay, \\group, ~grp, \\addAction, 0, \\out, ~bbf, \\in, ~bfx, \\freq, 500.0, \\maxdel, ~bps / 4, \cf0 \
+\cf2 //		\\del, ~bps / 4 * 0.667, \\dec, ~bps, \\amp, 0.4, \\gate, 1.0).play;\cf0 \
+\cf2 //	Pmono(\\delay, \\group, ~efx, \\addAction, 0, \\out, ~bbf, \\in, ~bfx, \\freq, 400.0, \\maxdel, ~bps / 4, \cf0 \
+\cf2 //		\\del, ~bps / 4 * 0.5, \\dec, ~bps, \\amp, 0.3, \\gate, 1.0).play;\cf0 \
+	\cf3 Pmono\cf0 (\cf4 \\delay\cf0 , \cf4 \\group\cf0 , ~efx, \cf4 \\addAction\cf0 , 0, \cf4 \\out\cf0 , ~bbf, \cf4 \\in\cf0 , ~bfx, \cf4 \\freq\cf0 , 300.0, \cf4 \\maxdel\cf0 , ~bps / 4, \
+		\cf4 \\del\cf0 , ~bps / 4 * 0.333, \cf4 \\dec\cf0 , ~bps, \cf4 \\amp\cf0 , 0.1, \cf4 \\gate\cf0 , 1.0).play;\
+\cf2 //	Pmono(\\delay, \\group, ~grp, \\addAction, 0, \\out, ~bbf, \\in, ~bfx, \\freq, 200.0, \\maxdel, ~bps / 4, \cf0 \
+\cf2 //		\\del, ~bps / 4 * 0.125, \\dec, ~bps, \\amp, 0.1, \\gate, 1.0).play;\cf0 \
+	\
+	\cf3 Pmono\cf0 (\cf4 \\encoder\cf0 , \cf4 \\group\cf0 , ~efx, \cf4 \\addAction\cf0 , 1, \cf4 \\out\cf0 , ~bfb, \cf4 \\in\cf0 , ~bbf, \cf4 \\ang\cf0 , \cf3 Pwhite\cf0 (-pi, pi, \cf3 inf\cf0 ), \cf4 \\elv\cf0 , 0, \cf4 \\rad\cf0 , 0.1, \cf4 \\gate\cf0 , 1, \
+		\cf4 \\dur\cf0 , \cf3 Pseq\cf0 (~bps / [2, 2, 2, 4, 2], \cf3 inf\cf0 ), \cf4 \\amp\cf0 , \cf3 Pbrown\cf0 (0.1, 0.8, 0.05, \cf3 inf\cf0 ) ).play;\
+\
+\};\
+\
+if (~patch.warp) \{\
+\
+	~tbf = \cf3 Bus\cf0 .audio(s);\
+	~tfx = \cf3 Bus\cf0 .audio(s);\
+	\
+	\cf3 Pbind\cf0 (\cf4 \\instrument\cf0 , \cf4 \\filmwarp\cf0 , \cf4 \\group\cf0 , ~grp, \cf4 \\addAction\cf0 , 0, \cf4 \\out\cf0 , ~tbf, \cf4 \\aux\cf0 , ~tfx, \cf4 \\bufnum\cf0 , ~bufs.monofrag, \cf4 \\frq\cf0 , 1.0, \
+		\cf4 \\dur\cf0 , \cf3 Pseq\cf0 ([\cf3 Pn\cf0 (0, 3), \cf3 Pseq\cf0 ([\cf3 Pn\cf0 (~bps * 0.9, 1), \cf3 Pn\cf0 (0, 4), \cf3 Pn\cf0 (~bps * 1.5, 1), \cf3 Pn\cf0 (0, 4), \cf3 Pn\cf0 (~bps * 0.9, 1), \cf3 Pn\cf0 (0, 8)], \cf3 inf\cf0 )], 1), \
+		\cf4 \\wrp\cf0 , ~bufs.monofrag.numFrames / ~bufs.monofrag.sampleRate, \cf4 \\wsz\cf0 , 0.2, \cf4 \\dns\cf0 , 4, \cf4 \\rnd\cf0 , 0.01, \cf4 \\att\cf0 , 0.5, \
+		\cf4 \\sus\cf0 , 0.3, \cf4 \\rel\cf0 , 0.2, \cf4 \\curve\cf0 , 0, \cf4 \\amp\cf0 , 0.3, \cf4 \\delta\cf0 , ~bps, \
+		\cf4 \\type\cf0 , \cf3 Pseq\cf0 ([\cf3 Pn\cf0 (\cf4 \\rest\cf0 , 3), \cf3 Pseq\cf0 ([\cf3 Pn\cf0 (\cf4 \\note\cf0 , 1), \cf3 Pn\cf0 (\cf4 \\rest\cf0 , 4), \cf3 Pn\cf0 (\cf4 \\note\cf0 , 1), \cf3 Pn\cf0 (\cf4 \\rest\cf0 , 4), \cf3 Pn\cf0 (\cf4 \\note\cf0 , 1), \cf3 Pn\cf0 (\cf4 \\rest\cf0 , 8)], \cf3 inf\cf0 )], 1)\
+	).play;\
+	\
+	\cf3 Pmono\cf0 (\cf4 \\reverb\cf0 , \cf4 \\group\cf0 , ~efx, \cf4 \\addAction\cf0 , 0, \cf4 \\out\cf0 , ~tbf, \cf4 \\in\cf0 , ~tfx, \cf4 \\rtime\cf0 , 20, \cf4 \\hfd\cf0 , 0.2, \cf4 \\amp\cf0 , 0.2).play;\
+	\
+	\cf3 Pmono\cf0 (\cf4 \\encoder\cf0 , \cf4 \\group\cf0 , ~efx, \cf4 \\addAction\cf0 , 1, \cf4 \\out\cf0 , ~bfb, \cf4 \\in\cf0 , ~tbf, \cf4 \\ang\cf0 , \cf3 Pbrown\cf0 (-pi, pi, 0.01, \cf3 inf\cf0 ), \
+		\cf4 \\elv\cf0 , 0, \cf4 \\rad\cf0 , 0.1, \cf4 \\gate\cf0 , 1, \cf4 \\amp\cf0 , 1.0 ).play;\
+\
+\};\
+\
+if (~patch.tune) \{\
+\
+	~abf = \cf3 Bus\cf0 .audio(s);\
+	~afx = \cf3 Bus\cf0 .audio(s);\
+	\
+	\cf3 Pbind\cf0 (\cf4 \\instrument\cf0 , \cf3 Pseq\cf0 ([\cf4 \\filmatssaw\cf0 , \cf4 \\filmatssine\cf0 ], \cf3 inf\cf0 ), \cf4 \\group\cf0 , ~grp, \cf4 \\addAction\cf0 , 0, \cf4 \\out\cf0 , ~abf, \cf4 \\aux\cf0 , ~afx, \cf4 \\bufnum\cf0 , ~ats.monotheme.buffer, \
+		\cf4 \\pfreq\cf0 , ~bps.reciprocal * 0.5, \cf4 \\rate\cf0 , 1.5,\cf4 \\amp\cf0 , 0.1, \cf4 \\dur\cf0 , ~bps, \cf4 \\att\cf0 , 0.2, \cf4 \\sus\cf0 , 0.6, \cf4 \\rel\cf0 , 0.2, \cf4 \\curve\cf0 , 0, \
+		\cf4 \\delta\cf0 , \cf3 Pseq\cf0 (~bps / [4, 2, 4, 4, 2], \cf3 inf\cf0 ), \cf4 \\type\cf0 , \cf3 Pseq\cf0 ([\cf3 Pn\cf0 (\cf4 \\note\cf0 , 1), \cf3 Pn\cf0 (\cf4 \\rest\cf0 , 8)], \cf3 inf\cf0 )\
+	).play;\
+	\
+	\cf3 Pbind\cf0 (\cf4 \\instrument\cf0 , \cf4 \\filmatssine\cf0 , \cf4 \\group\cf0 , ~grp, \cf4 \\addAction\cf0 , 0, \cf4 \\out\cf0 , ~abf, \cf4 \\aux\cf0 , ~afx, \cf4 \\bufnum\cf0 , ~ats.monotheme.buffer, \
+		\cf4 \\pfreq\cf0 , ~bps.reciprocal * 0.75, \cf4 \\rate\cf0 , 1.0,\cf4 \\amp\cf0 , 0.2, \cf4 \\dur\cf0 , ~bps, \cf4 \\att\cf0 , 0.2, \cf4 \\sus\cf0 , 0.6, \cf4 \\rel\cf0 , 0.2, \cf4 \\curve\cf0 , 0, \
+		\cf4 \\delta\cf0 , \cf3 Pseq\cf0 (~bps / [4, 4, 2, 4, 2], \cf3 inf\cf0 ), \cf4 \\type\cf0 , \cf3 Pseq\cf0 ([\cf3 Pn\cf0 (\cf4 \\note\cf0 , 1), \cf3 Pn\cf0 (\cf4 \\rest\cf0 , 7)], \cf3 inf\cf0 )\
+	).play;\
+	\
+	\cf3 Pbind\cf0 (\cf4 \\instrument\cf0 , \cf3 Pseq\cf0 ([\cf4 \\filmatssaw\cf0 , \cf4 \\filmatssine\cf0 ], \cf3 inf\cf0 ), \cf4 \\group\cf0 , ~grp, \cf4 \\addAction\cf0 , 0, \cf4 \\out\cf0 , ~abf, \cf4 \\aux\cf0 , ~afx, \
+		\cf4 \\bufnum\cf0 , ~ats.monotheme.buffer, \
+		\cf4 \\pfreq\cf0 , ~bps.reciprocal, \cf4 \\rate\cf0 , 0.5,\cf4 \\amp\cf0 , 0.4, \cf4 \\dur\cf0 , ~bps, \cf4 \\att\cf0 , 0.2, \cf4 \\sus\cf0 , 0.6, \cf4 \\rel\cf0 , 0.2, \cf4 \\curve\cf0 , 0, \
+		\cf4 \\delta\cf0 , \cf3 Pseq\cf0 (~bps / [2, 4, 2, 4, 2], \cf3 inf\cf0 ), \cf4 \\type\cf0 , \cf3 Pseq\cf0 ([\cf3 Pn\cf0 (\cf4 \\note\cf0 , 1), \cf3 Pn\cf0 (\cf4 \\rest\cf0 , 5)], \cf3 inf\cf0 )\
+	).play;\
+\
+	\cf3 Pbind\cf0 (\cf4 \\instrument\cf0 , \cf4 \\filmatssine\cf0 , \cf4 \\group\cf0 , ~grp, \cf4 \\addAction\cf0 , 0, \cf4 \\out\cf0 , ~abf, \cf4 \\aux\cf0 , ~afx, \cf4 \\bufnum\cf0 , ~ats.monotheme.buffer, \
+		\cf4 \\pfreq\cf0 , ~bps.reciprocal, \cf4 \\rate\cf0 , 0.333,\cf4 \\amp\cf0 , 0.2, \cf4 \\dur\cf0 , ~bps, \cf4 \\att\cf0 , 0.2, \cf4 \\sus\cf0 , 0.6, \cf4 \\rel\cf0 , 0.2, \cf4 \\curve\cf0 , 0, \
+		\cf4 \\delta\cf0 , \cf3 Pseq\cf0 (~bps / [2, 2, 4, 4, 2], \cf3 inf\cf0 ), \cf4 \\type\cf0 , \cf3 Pseq\cf0 ([\cf3 Pn\cf0 (\cf4 \\note\cf0 , 1), \cf3 Pn\cf0 (\cf4 \\rest\cf0 , 3)], \cf3 inf\cf0 )\
+	).play;	\
+	\
+	\cf3 Pmono\cf0 (\cf4 \\reverb\cf0 , \cf4 \\group\cf0 , ~efx, \cf4 \\addAction\cf0 , 0, \cf4 \\out\cf0 , ~abf, \cf4 \\in\cf0 , ~afx, \cf4 \\rtime\cf0 , 4, \cf4 \\hfd\cf0 , 0.8, \cf4 \\amp\cf0 , 0.04).play;\
+		\
+	\cf3 Pmono\cf0 (\cf4 \\encoder\cf0 , \cf4 \\group\cf0 , ~efx, \cf4 \\addAction\cf0 , 1, \cf4 \\out\cf0 , ~bfb, \cf4 \\in\cf0 , ~abf, \cf4 \\ang\cf0 , 0, \cf4 \\elv\cf0 , 0, \cf4 \\rad\cf0 , 0.1, \cf4 \\gate\cf0 , 1, \cf4 \\amp\cf0 , 1.0).play;\
+\
+\};\
+\
+if (~patch.rhythm) \{\
+\
+	~rbf = \cf3 Bus\cf0 .audio(s);\
+	~rfx = \cf3 Bus\cf0 .audio(s);\
+	\
+	\cf3 Pbind\cf0 (\cf4 \\instrument\cf0 , \cf3 Pseq\cf0 ([\cf4 \\filmsineats\cf0 , \cf4 \\filmsawats\cf0 ], \cf3 inf\cf0 ), \cf4 \\group\cf0 , ~grp, \cf4 \\addAction\cf0 , 0, \cf4 \\out\cf0 , ~rbf, \
+		\cf4 \\aux\cf0 , ~rfx, \cf4 \\buffer\cf0 , \cf3 Pfunc\cf0 (\{\}), \cf4 \\dur\cf0 , \cf3 Pwhite\cf0 (0.1, 0.2, \cf3 inf\cf0 ),\
+		\cf4 \\amp\cf0 , \cf3 Pwhite\cf0 (0.001, 0.005, \cf3 inf\cf0 ), \cf4 \\wrp\cf0 , 1.0, \cf4 \\att\cf0 , 0.2, \cf4 \\curve\cf0 , \cf3 Pseq\cf0 ([\cf3 Pn\cf0 (-2, 8), \cf3 Pn\cf0 (-16, 2)], \cf3 inf\cf0 ), \
+		\cf4 \\freqsc\cf0 , \cf3 Pseq\cf0 ([2.0, 0.25, 0.5, 0.25, 1.0, 2.0], \cf3 inf\cf0 ),\
+		\cf4 \\delta\cf0 , \cf3 Pseq\cf0 (~bps / [32, 32, 32, 32, 8, 24, 16, 8, 16, 16, 16, 8, 24, 16, 8, 8, 8, 8, 32, 16, 16, 8, 8], \cf3 inf\cf0 )\
+		).play;\
+	\
+	\cf3 Pmono\cf0 (\cf4 \\encoder\cf0 , \cf4 \\group\cf0 , ~efx, \cf4 \\addAction\cf0 , 1, \cf4 \\out\cf0 , ~bfb, \cf4 \\in\cf0 , ~rbf, \cf4 \\ang\cf0 , \cf3 Pwhite\cf0 (-pi, pi, \cf3 inf\cf0 ), \cf4 \\elv\cf0 , 0, \cf4 \\rad\cf0 , 0.1, \cf4 \\gate\cf0 , 1, \
+		\cf4 \\dur\cf0 , \cf3 Pseq\cf0 (~bps / [12, 8, 12, 8, 8, 12, 12, 8], \cf3 inf\cf0 ), \cf4 \\amp\cf0 , \cf3 Pseq\cf0 ([0.8, 0.1], \cf3 inf\cf0 ) ).play;\
+	\
+\}	\
+)\
+\
+\
+\cf2 //Server.default.stopRecording\cf0 \
+}

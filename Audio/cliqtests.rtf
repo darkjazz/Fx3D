@@ -1,0 +1,126 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf420
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs18 \cf2 \
+\cf3 Server\cf2 .default = \cf3 Server\cf2 .internal\
+\
+\cf3 SynthDef\cf2 (\cf4 \\imp\cf2 , \{\
+	\cf3 var\cf2  imp, sig, lo, hi;\
+	imp = \cf3 Impulse\cf2 .ar(8, 0, 1).dup * \cf3 XLine\cf2 .kr(1.0, 0.001, 0.2, doneAction: 2);\
+	hi = \cf3 HPF\cf2 .ar(imp, 800, 4.0);\
+	lo = \cf3 LPF\cf2 .ar(imp, 100, 4.0);\
+	sig = \cf3 Compander\cf2 .ar(hi, hi, 0.8, 1.0, 0.01, 0.01, 0.1);\
+	sig = \cf3 Mix\cf2 (\cf3 GVerb\cf2 .ar(sig + lo, 100, 1, 0.9, 0.9, 1, 1.0, 0.3, 0.1, 100));\
+	sig = \cf3 Compander\cf2 .ar(sig ** 0.7, sig ** 0.7, 1.0, 1.0, 0.001, 0.001, 0.01);\
+	\cf3 Out\cf2 .ar(0, sig * 2)\
+\}).store\
+\
+\cf3 Pbind\cf2 (\cf4 \\instrument\cf2 , \cf4 \\imp\cf2 , \cf4 \\dur\cf2 , \
+	\cf3 Pseq\cf2 ([0.0625, 0.0625, 0.125, 0.25, 0.25, 0.25, 0.125, 0.25, 0.25, 0.125, 0.25],4)).play\
+\
+\
+\
+\cf3 SynthDef\cf2 (\cf4 \\klank\cf2 , \{\cf3 |fund = 30, add = 100, ring = 0.1, rmul = 0.95, amp = 1.0, amul = 0.95, \
+	dfreq = 500.0 |\cf2 \
+	\
+	\cf3 var\cf2  sig, num = 7, src;\
+	src = \cf3 Crackle\cf2 .ar(1.95) * \cf3 XLine\cf2 .kr(1.0, 0.001, 0.05, doneAction: 2);\
+	sig = \cf3 Klank\cf2 .ar(`[\
+		\cf3 Array\cf2 .series(num, fund, add),\
+		\cf3 Array\cf2 .geom(num, ring, rmul),\
+		\cf3 Array\cf2 .geom(num, amp, amul)\
+	], src);\
+	sig = \cf3 Compander\cf2 .ar(sig + src, sig + src, 0.4, 1.0, 0.001, 0.01, 0.1);\
+	\cf3 Out\cf2 .ar(0, sig.dup)\
+\}).store\
+\
+\cf3 Pbind\cf2 (\cf4 \\instrument\cf2 , \cf4 \\klank\cf2 , \cf4 \\dur\cf2 , \
+	\cf3 Pseq\cf2 ([0.0625, 0.0625, 0.125, 0.25, 0.25, 0.25, 0.125, 0.25, 0.25, 0.125, 0.25],4),\
+	\cf4 \\fund\cf2 , \cf3 Pseq\cf2 ([20, 22, 24], \cf3 inf\cf2 ), \cf4 \\add\cf2 , \cf3 Pseq\cf2 ([100, 50, 10], \cf3 inf\cf2 ), \cf4 \\ring\cf2 , \cf3 Pseq\cf2 ([0.1, 1.0, 0.01, 0.2], \cf3 inf\cf2 ), \
+	\cf4 \\rmul\cf2 , \cf3 Pseq\cf2 ([0.95, 0.8, 0.99, 0.95], \cf3 inf\cf2 )\
+	).play\
+	\
+	\
+\cf3 SynthDef\cf2 (\cf4 \\bass\cf2 , \{\cf3 |freq, amp|\cf2 \
+\
+	\cf3 var\cf2  sig, tseq, trig, env;\
+	sig = \cf3 SinOsc\cf2 .ar(\cf3 LFNoise2\cf2 .kr(100, freq / 2, freq).round(20), 0, amp)\
+		* \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .perc(0.01, 0.4, -16), \cf3 Impulse\cf2 .kr(2), doneAction: 2);\
+	sig = \cf3 LPF\cf2 .ar(sig, 100);\
+	sig = \cf3 Compander\cf2 .ar(sig, sig, 0.25, 0.9, 0.01, 0.001, 0.1);\
+	sig = \cf3 Pan2\cf2 .ar(sig);\
+	\cf3 Out\cf2 .ar(0, sig)\
+	\
+\}).store;\
+\
+\cf3 Pbind\cf2 (\cf4 \\instrument\cf2 , \cf4 \\bass\cf2 , \cf4 \\freq\cf2 , \cf3 Pseq\cf2 ([30, 60, 40, 50], 4), \cf4 \\amp\cf2 , 0.2).play\
+\
+\
+\cf3 SynthDef\cf2 (\cf4 \\striae\cf2 , \{\cf3 |cfreq, bw, amp, frac|\cf2 \
+	\cf3 var\cf2  sig, frq, frqs, frqsc;\
+	sig = \cf3 Crackle\cf2 .ar([\cf3 LFNoise1\cf2 .kr(0.5, 0.15, 1.8), \cf3 LFNoise2\cf2 .kr(0.4, 0.06, 1.91)]);\
+	frq = \cf3 LFNoise1\cf2 .kr(300, 200, cfreq);\
+	frqsc = \cf3 Array\cf2 .geom(4, 1.0, frac);\
+	sig = \cf3 Mix\cf2 .fill(4, \{\cf3 |i|\cf2  \cf3 BPF\cf2 .ar(sig, frq * frqsc[i], bw/(frq * frqsc[i])) \}) * amp;\
+	\cf3 Out\cf2 .ar(0, sig.dup * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [3, 4, 3], \cf4 \\sine\cf2 ), doneAction: 2))\
+\}).store;\
+\
+\cf3 Pbind\cf2 (\cf4 \\instrument\cf2 , \cf4 \\striae\cf2 , \cf4 \\cfreq\cf2 , \cf3 Pshuf\cf2 (\cf3 Array\cf2 .geom(24, 1823, 2**(1/17)) ++ \cf3 Array\cf2 .geom(24, 3646, 2**(1/19)), \cf3 inf\cf2 ), \cf4 \\bw\cf2 , \cf3 Pwhite\cf2 (10, 100, \cf3 inf\cf2 ), \cf4 \\delta\cf2 , 5, \cf4 \\amp\cf2 , \cf3 Pseq\cf2 ([0.4, 0.6], 6), \cf4 \\frac\cf2 , 16 / 15\
+).play\
+\
+(\
+~paths = \cf5 "/Users/alo/sounds/loops/*"\cf2 .pathMatch;\
+~bufs = ~paths.collect(\{\cf3 |path|\cf2  \cf3 Buffer\cf2 .read(\cf3 Server\cf2 .default, path) \});\
+)\
+\
+(\
+\pard\pardeftab720\ql\qnatural
+\cf3 SynthDef\cf2 (\cf4 \\mod\cf2 , \{\cf3 |buf1, buf2, rate1, rate2, amp1, amp2, ramp1, ramp2, rt1, rt2, a1, a2, a3, a4, dur|\cf2 \
+	\cf3 var\cf2  sig1, rev1, sig2, rev2, out, sig;\
+	sig1 = \cf3 PlayBuf\cf2 .ar(1, buf1, rate1) * amp1;\
+	sig2 = \cf3 PlayBuf\cf2 .ar(1, buf2, rate2) * amp2;\
+	rev1 = \cf3 Reverb\cf2 .ar(sig1, rt1) * ramp1;\
+	rev2 = \cf3 Reverb\cf2 .ar(sig2, rt2) * ramp2;\
+	out = (sig1 * sig2 * a1) + \
+	(sig2 * rev1 * a2) + \
+	(rev1 * sig2 * a3) + \
+	(rev2 * rev1 * a4);\
+	\cf3 Line\cf2 .kr(dur: dur, doneAction: 2);\
+	out = out ** 0.5;\
+	\cf3 Out\cf2 .ar(0, \cf3 Compander\cf2 .ar(out, out, 0.5, 1.0, 0.01, 0.01, 0.1).dup)\
+\}).memStore;\
+\
+~amps = (1..4).reciprocal;\
+)\
+\
+(\
+\cf3 Pbind\cf2 (\cf4 \\instrument\cf2 , \cf4 \\mod\cf2 , \cf4 \\buf1\cf2 , \cf3 Pseq\cf2 (~bufs, 1), \cf4 \\buf2\cf2 , \cf3 Pshuf\cf2 (~bufs, 1), \
+	\cf4 \\rate1\cf2 , \cf3 Pwrand\cf2 (\cf3 Array\cf2 .geom(4.0, 1.0, 0.5).reverse ++ \cf3 Array\cf2 .geom(4.0, 1.0, 2.0), \
+		\cf3 Array\cf2 .geom(4.0, 1.0, 0.5).reverse.mirror2.normalizeSum, \cf3 inf\cf2 ),\
+	\cf4 \\rate2\cf2 , \cf3 Pseq\cf2 (\cf3 Array\cf2 .geom(7, 15/19, 16/15), \cf3 inf\cf2 ), \cf4 \\amp1\cf2 , \cf3 Pseq\cf2 (~amps, \cf3 inf\cf2 ),\
+	\cf4 \\amp2\cf2 , \cf3 Pseq\cf2 (~amps.permute(1), \cf3 inf\cf2 ), \cf4 \\ramp1\cf2 , \cf3 Pseq\cf2 (~amps.permute(2) * 0.1, \cf3 inf\cf2 ), \
+	\cf4 \\ramp2\cf2 , \cf3 Pseq\cf2 (~amps.permute(3) * 0.1, \cf3 inf\cf2 ),\
+	\cf4 \\rt1\cf2 , \cf3 Prand\cf2 ((1..6), \cf3 inf\cf2 ), \cf4 \\rt2\cf2 , \cf3 Prand\cf2 ((2..7), \cf3 inf\cf2 ), \
+	\cf4 \\a1\cf2 , \cf3 Pseq\cf2 (~amps.permute(5), \cf3 inf\cf2 ), \cf4 \\a2\cf2 , \cf3 Pseq\cf2 (~amps.permute(6), \cf3 inf\cf2 ), \
+	\cf4 \\a3\cf2 , \cf3 Pseq\cf2 (~amps.permute(7), \cf3 inf\cf2 ), \cf4 \\a4\cf2 , \cf3 Pseq\cf2 (~amps.permute(8), \cf3 inf\cf2 ),\
+	\cf4 \\delta\cf2 , \cf3 Pwhite\cf2 (4, 8, \cf3 inf\cf2 ), \cf4 \\dur\cf2 , \cf3 Pwhite\cf2 (10, 15, \cf3 inf\cf2 )\
+).play\
+\
+)\
+\
+\
+(\
+\cf3 SynthDef\cf2 (\cf4 \\bass_fmgrain\cf2 , \{\cf3 |lo, hi, gsize, carr, mod, ind, envbuf, freq, bdel|\cf2 \
+	\cf3 var\cf2  sig, trig, num = 4, del;\
+	trig = \cf3 Schmidt\cf2 .kr(\cf3 LocalIn\cf2 .ar, lo, hi);\
+	sig = \cf3 GrainFM\cf2 .ar(1, gsize, carr, mod, ind, 0, envbuf) \
+		* \cf3 LFPulse\cf2 .kr(freq, 0, 0.5).range(lo, hi);\
+	\cf3 LocalOut\cf2 .ar(sig);\
+	del = 1 / \cf3 Array\cf2 .series(num, 1.0 + bdel, bdel);\
+	sig = \cf3 Mix\cf2 (\cf3 CombC\cf2 .ar(sig, 1.0, del, dec));\
+\}).memStore;\
+)\
+}

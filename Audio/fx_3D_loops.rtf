@@ -1,0 +1,111 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 (\
+\cf3 var\cf2  bufpath = \cf4 "/Users/alo/sounds/fx_loops/*"\cf2 ;\
+\
+~serv = \cf3 Server\cf2 .internal;\
+\cf3 Server\cf2 .default = ~serv;\
+\
+if (~serv.serverRunning.not)\
+\{\
+	\cf4 "BOOTING SERVER..."\cf2 .postln;\
+	~serv.boot\
+\}\
+\{\
+	~loops = \cf3 Array\cf2 ();\
+	\cf3 Routine\cf2 (\{\
+		\cf3 var\cf2  prog = \cf3 ProgBar\cf2 (bufpath.pathMatch.size);\
+		bufpath.pathMatch.do(\{\cf3 |path, i|\cf2 \
+			~loops = ~loops.add( \cf3 Buffer\cf2 .read(~serv, path) );\
+			~serv.sync;\
+			prog.next;\
+			0.001.wait;\
+		\});\
+		prog.close;\
+		prog = \cf3 nil\cf2 \
+		\
+	\}).play(\cf3 AppClock\cf2 )\
+\}\
+)\
+\
+(\
+\
+\pard\pardeftab720\ql\qnatural
+\cf3 SynthDef\cf2 (\cf5 \\swarp\cf2 , \{\cf3 |out, efx, aamp, eamp, dur, buf, str, end, wrp, frq, wsz, dns, rnd, azm, elv, rho|\cf2 \
+	\cf3 var\cf2  ptr, sig, env, bf;\
+	env = \cf3 Control\cf2 .names([\cf5 \\env\cf2 ]).kr(\cf3 Env\cf2 .newClear(8).asArray);	\
+	ptr = \cf3 LFSaw\cf2 .kr(wrp).range(str, end);\
+	sig = \cf3 SndWarp\cf2 .ar(buf, ptr, frq, wsz, dns, rnd) * \
+		\cf3 EnvGen\cf2 .kr(env, timeScale: dur, doneAction: 2);\
+	sig = sig ** 0.5;\
+	\cf3 Out\cf2 .ar(efx, sig * eamp);\
+	bf = \cf3 BFEncode1\cf2 .ar(sig, azm, elv, rho);\
+	\cf3 Out\cf2 .ar(out, bf * aamp)\
+\}).memStore;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 \
+\pard\pardeftab720\ql\qnatural
+\cf3 SynthDef\cf2 (\cf5 \\rwarp\cf2 , \{\cf3 |out, efx, aamp, eamp, dur, buf, str, end, wrp, frq, wsz, dns, rnd, azm, elv, rho|\cf2 \
+	\cf3 var\cf2  ptr, sig, env, bf;\
+	env = \cf3 Control\cf2 .names([\cf5 \\env\cf2 ]).kr(\cf3 Env\cf2 .newClear(8).asArray);	\
+	ptr = \cf3 LFSaw\cf2 .kr(wrp).range(str, end);\
+	sig = \cf3 LeakDC\cf2 .ar(\cf3 Warp1\cf2 .ar(1, buf, ptr, frq, wsz, -1, dns, rnd)) * \
+		\cf3 EnvGen\cf2 .kr(env, timeScale: dur, doneAction: 2);\
+	sig = sig ** 0.5;\
+	\cf3 Out\cf2 .ar(efx, sig * eamp);\
+	bf = \cf3 BFEncode1\cf2 .ar(sig, azm, elv, rho);\
+	\cf3 Out\cf2 .ar(out, bf * aamp)\
+\}).memStore;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 \
+\
+\cf3 SynthDef\cf2 (\cf5 \\verb\cf2 , \{\cf3 |in, rtime, damp, inbw, spr, tail, amp|\cf2 \
+	\cf3 var\cf2  sig, input, actr;\
+	input = \cf3 In\cf2 .ar(in);\
+	sig = \cf3 GVerb\cf2 .ar(input, 1500, rtime, damp, inbw, spr, 0.0, 0.01, tail, 1500);\
+	\cf3 Out\cf2 .ar(0, sig * amp)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf5 \\bf2decode\cf2 , \{\cf3 |bus, amp = 1|\cf2 \
+	\cf3 var\cf2  w, x, y, z;\
+	#w, x, y, z = \cf3 In\cf2 .ar(bus, 4);\
+	\cf3 Out\cf2 .ar( 0, \cf3 BFDecode1\cf2 .ar(w, x, y, z, \cf3 IbiSpeakers\cf2 .quad.azimuth, (0 ! 4) ) * amp )\
+\}).memStore;\
+)\
+\
+(\
+~abus = \cf3 Bus\cf2 .audio(~serv, 4);\
+~rbus = \cf3 Bus\cf2 .audio(~serv);\
+~agrp = \cf3 Group\cf2 ();\
+~rev = \cf3 Synth\cf2 .after(~agrp, \cf5 \\verb\cf2 , [\cf5 \\in\cf2 , ~rbus, \cf5 \\rtime\cf2 , 20, \cf5 \\damp\cf2 , 0.9, \cf5 \\inbw\cf2 , 0.1, \cf5 \\spr\cf2 , 10, \
+	\cf5 \\tail\cf2 , 1.0, \cf5 \\amp\cf2 , 1.0]);	\
+~decode = \cf3 Synth\cf2 .after(~rev, \cf5 \\bf2decode\cf2 , [\cf5 \\bus\cf2 , ~abus, \cf5 \\amp\cf2 , 1.0]);\
+~bps = 140 / 60;\
+~div = ~bps.reciprocal;\
+)\
+(\
+~bind = \cf3 Pbind\cf2 (\cf5 \\instrument\cf2 , \cf3 Prand\cf2 ([\cf5 \\swarp, \\rwarp\cf2 ], \cf3 inf\cf2 ), \cf5 \\group\cf2 , ~agrp, \cf5 \\addAction\cf2 , \cf5 \\addToHead\cf2 , \
+	\cf5 \\out\cf2 , ~abus, \cf5 \\efx\cf2 , ~rbus, \
+	\cf5 \\aamp\cf2 , 1, \cf5 \\eamp\cf2 , 0.5, \cf5 \\dur\cf2 , \cf3 Pxrand\cf2 (\cf3 Array\cf2 .geom(24, 5, 4**(1/24)), \cf3 inf\cf2 ), \
+	\cf5 \\buf\cf2 , \cf3 Pstutter\cf2 (\cf3 Pwhite\cf2 (3, 6), \cf3 Pseq\cf2 (~loops, \cf3 inf\cf2 )), \cf5 \\str\cf2 , \cf3 Pwhite\cf2 (0.0, 0.5), \
+	\cf5 \\end\cf2 , \cf3 Pkey\cf2 (\cf5 \\str\cf2 ) + \cf3 Pxrand\cf2 ([0.125, 0.25, 0.5], \cf3 inf\cf2 ), \cf5 \\wrp\cf2 , \cf3 Pbrown\cf2 (0.001, 0.1, 0.001), \
+	\cf5 \\wsz\cf2 , \cf3 Pbrown\cf2 (0.01, 0.2, 0.005), \cf5 \\dns\cf2 , \cf3 Pxrand\cf2 (7.fib, \cf3 inf\cf2 ), \
+	\cf5 \\rnd\cf2 , \cf3 Pkey\cf2 (\cf5 \\wsz\cf2 ) * \cf3 Prand\cf2 (\cf3 Array\cf2 .geom(6, 0.1, 2**(1/6)), \cf3 inf\cf2 ),\
+	\cf5 \\frq\cf2 , \cf3 Prand\cf2 (\cf3 Array\cf2 .geom(5, 0.5, 2**(1/5)) ++ \cf3 Array\cf2 .geom(5, 1, 2**(1/5)), \cf3 inf\cf2  ),\
+	\cf5 \\azm\cf2 , \cf3 Pwhite\cf2 (-pi, pi, \cf3 inf\cf2 ), \cf5 \\elv\cf2 , 0, \cf5 \\rho\cf2 , \cf3 Pwhite\cf2 (0.01, 2.0, \cf3 inf\cf2 ), \
+	\cf5 \\delta\cf2 , \cf3 Pkey\cf2 (\cf5 \\dur\cf2 ) * \cf3 Pbrown\cf2 (0, 0.25, 0.015625),\
+	\cf5 \\env\cf2 , [\cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.2, 0.6, 0.2], \cf5 \\sine\cf2 )]\
+).play;\
+)\
+\
+~bind.stop\
+\
+\cf3 MasterEQ\cf2 (4)\
+\
+~decode.set(\cf5 \\amp\cf2 , 1.0)\
+\
+~serv.scope(4)}

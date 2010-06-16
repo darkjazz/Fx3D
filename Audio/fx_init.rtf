@@ -1,0 +1,103 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf420
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs18 \cf2 s = \cf3 Server\cf2 .internal;\
+\cf3 Server\cf2 .default = s;\
+\
+(\
+\cf3 SynthDef\cf2 (\cf4 \\fxingrain\cf2 , \{\cf3 |out, in, tfreq, gdur, e1, e2, ifac, azm, elv, rho|\cf2 \
+	\cf3 var\cf2  sig, trig, input, verb;\
+	input = \cf3 In\cf2 .ar(in);\
+	trig = \cf3 Impulse\cf2 .kr(tfreq);\
+	sig = \cf3 InGrainIBF\cf2 .ar(trig, gdur, input, e1, e2, ifac, azm, elv, rho);\
+	\cf3 Out\cf2 .ar(out, sig);\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf4 \\fxwarp\cf2 , \{\cf3 |out, buffer, wrp, rate, wsize, e, dns, rnd, int, azm, elv, rho|\cf2 \
+	\cf3 var\cf2  sig, ptr, bf;\
+	ptr = \cf3 LFNoise2\cf2 .kr(wrp, 0.5, wrp * 0.5);\
+	sig = \cf3 Warp1\cf2 .ar(1, buffer, ptr, rate, wsize, e, dns, rnd, int);\
+	bf = \cf3 BFEncode1\cf2 .ar(sig, azm, elv, rho);\
+	\cf3 Out\cf2 .ar(out, bf);\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf4 \\fxats\cf2 , \{\cf3 |out, buffer, num, start, skip, wrp, rate, azm, elv, rho|\cf2 \
+	\cf3 var\cf2  sig, ptr, bf;\
+	ptr = \cf3 LFNoise2\cf2 .kr(wrp, 0.5, wrp * 0.5);\
+	sig = \cf3 AtsSynth\cf2 .ar(buffer, num, start, skip, ptr, rate);\
+	bf = \cf3 BFEncode1\cf2 .ar(sig, azm, elv, rho);\
+	\cf3 Out\cf2 .ar(out, bf)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf4 \\fxlivefb\cf2 , \{\cf3 |out, in, room, rtime, damp, bw, spr, dry, ref, tail, famp, samp, azm, elv, rho, \
+						fbamp, wsz, freqsc, pch, tm|\cf2 \
+	\cf3 var\cf2  input, ol, or, fl, fr, sl, sr, bf, fb, fct, sct, l, r;\
+	input = \cf3 In\cf2 .ar(in);\
+	fb = \cf3 LocalIn\cf2 .ar(1) * fbamp;\
+	#ol, or = \cf3 GVerb\cf2 .ar(input + fb, room, rtime, damp, bw, spr, dry, ref, tail, room);\
+	fct =  \cf3 LFNoise1\cf2 .kr(1/11, 0.2, 0.3);\
+	sct = \cf3 LFNoise2\cf2 .kr(1/13, 0.2, 0.7);\
+	#fl, fr = \cf3 GVerb\cf2 .ar(ol, 40, 10, fct, fct, 5, 0.0, famp, famp, 40) \
+		* \cf3 Dust\cf2 .ar(\cf3 LFPar\cf2 .kr(0.25, 0, 1990, 2000), \cf3 Amplitude\cf2 .kr(input));\
+	#sl, sr = \cf3 GVerb\cf2 .ar(or, 10, 20, sct, sct, 15, 0.0, samp, samp, 10);\
+	#l, r = \cf3 PitchShift\cf2 .ar([ol + fl + sl, or + fr + sr], wsz, freqsc, pch, tm);\
+	\cf3 LocalOut\cf2 .ar(fl + sr + l);\
+	bf = \cf3 BFEncodeSter\cf2 .ar(l, r, azm, 0.25pi, elv, rho);\
+	\cf3 Out\cf2 .ar(out, bf)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf4 \\fxdel\cf2 , \{\cf3 |out, in, dtime, decay, tfreq|\cf2 \
+	\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf4 \\fxinput\cf2 , \{\cf3 |out, in, amp|\cf2 \
+	\cf3 var\cf2  input;\
+	input = \cf3 SoundIn\cf2 .ar([0, 1]) * amp;\
+	\cf3 Out\cf2 .ar(out, input)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf4 \\fxdisk\cf2 , \{\cf3 |out, buffer, amp = 1.0|\cf2 \
+	\cf3 var\cf2  input;\
+	input = \cf3 DiskIn\cf2 .ar(2, buffer);\
+	\cf3 Out\cf2 .ar(out, \cf3 Mix\cf2 (input));\
+	\cf3 Out\cf2 .ar(0, input * amp)\
+\}).memStore;\
+\
+\cf3 SynthDef\cf2 (\cf4 \\fxdecoder\cf2 , \{\cf3 |out, in, amp = 1.0|\cf2 \
+	\cf3 var\cf2  w, x, y, z, spkr;\
+	spkr = \cf3 IbiSpeakers\cf2 .quad;\
+	#w, x, y, z = \cf3 In\cf2 .ar(in, 4) * amp;\
+	\cf3 Out\cf2 .ar(out, \cf3 BFDecode1\cf2 .ar(w, x, y, z, spkr.azimuth, spkr.elevation))\
+\}).memStore;\
+)\
+\
+\
+~ib.free;\
+~bfb.free;\
+~buffer.free;\
+~buffer.close\
+\
+~buffer = \cf3 Buffer\cf2 .cueSoundFile(s, \cf5 "/Users/alo/sounds/simon_tag.aiff"\cf2 , 240 * s.sampleRate, 2);\
+\
+~ib = \cf3 Bus\cf2 .audio(s);\
+~bfb = \cf3 Bus\cf2 .audio(s, 4);\
+\
+\
+~decoder = \cf3 Synth\cf2 (\cf4 \\fxdecoder\cf2 , [\cf4 \\out\cf2 , 0, \cf4 \\in\cf2 , ~bfb]);\
+~input = \cf3 Synth\cf2 .before(~decoder, \cf4 \\fxdisk\cf2 , [\cf4 \\out\cf2 , ~ib, \cf4 \\buffer\cf2 , ~buffer, \cf4 \\amp\cf2 , 0.0]);\
+\
+~vrb = \cf3 Synth\cf2 .after(~input, \cf4 \\fxlivefb\cf2 , [\cf4 \\out\cf2 , ~bfb, \cf4 \\in\cf2 , ~ib, \cf4 \\room\cf2 , 300, \cf4 \\rtime\cf2 , 2, \cf4 \\damp\cf2 , 0.5, \
+	\cf4 \\bw\cf2 , 0.5, \cf4 \\spr\cf2 , 20, \cf4 \\dry\cf2 , 0.0, \cf4 \\ref\cf2 , 0.05, \cf4 \\tail\cf2 , 0.1, \cf4 \\famp\cf2 , 0.07, \cf4 \\samp\cf2 , 0.08, \cf4 \\azm\cf2 , 0, \
+	\cf4 \\elv\cf2 , 0, \cf4 \\rho\cf2 , 0.3, \cf4 \\fbamp\cf2 , 0.2, \cf4 \\wsz\cf2 , 0.1, \cf4 \\freqsc\cf2 , 2.0, \cf4 \\pch\cf2 , 0.0, \cf4 \\tm\cf2 , 0.1]);\
+\
+~input.set(\cf4 \\amp\cf2 , 0.3);\
+~vrb.set(\cf4 \\freqsc\cf2 , 0.25)\
+\
+~vrb.set(\cf4 \\fbamp\cf2 , 0.1)\
+~vrb.set(\cf4 \\damp\cf2 , 0.4)\
+~vrb.set(\cf4 \\rtime\cf2 , 5)\
+\
+~vrb.set(\cf4 \\tail\cf2 , 0.5)}

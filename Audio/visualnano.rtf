@@ -1,0 +1,37 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 ~nano = \cf3 NanoKONTROL\cf2 ();\
+\
+~chld = ~fx.oglGui.glPanel.children.select(\cf3 _\cf2 .isKindOf(\cf3 SmoothSlider\cf2 ));\
+\
+~nano.sliders[0].do(\{\cf3 |nanoSlider, i|\cf2 \
+	nanoSlider.action = \{\cf3 |slider|\cf2 \
+		~chld[i].value = slider.value;\
+		~chld[i].doAction;\
+	\}\
+\})\
+\
+~patchAlpha = ~fx.oglGui.ptPanel.children.select(\cf3 _\cf2 .isKindOf(\cf3 SmoothSlider\cf2 )).select(\{\cf3 |it, i|\cf2  i.even\});\
+\
+~nano.knobs[0].do(\{\cf3 |nanoKnob, i|\cf2 \
+	nanoKnob.action = \{\cf3 |knob|\cf2 \
+		~patchAlpha[i].value = knob.value;\
+		~patchAlpha[i].doAction;\
+	\}\
+\})\
+\
+~patchActive = ~fx.oglGui.ptPanel.children.select(\cf3 _\cf2 .isKindOf(\cf3 RoundButton\cf2 ))\
+	.select(\{\cf3 |it, i|\cf2  i%4 == 0 \});\
+\
+~nano.buttons[0][0..8].do(\{\cf3 |nanoButton, i|\cf2 \
+	nanoButton.action = \{\cf3 |button|\cf2 \
+		~patchActive[i].value = button.value;\
+		~patchActive[i].doAction;\
+	\}\
+\})\
+\
+~fx.startFx\
+24.do(\{\cf3 |i|\cf2  [i, (i%4)].postln \})}

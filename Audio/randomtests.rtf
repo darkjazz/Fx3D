@@ -1,0 +1,90 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf420
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red191\green0\blue0;\red0\green115\blue0;\red9\green16\blue186;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs18 \cf2 s = Server.internal;\
+Server.default = s;\
+\
+\pard\pardeftab720\ql\qnatural
+\cf3 SynthDef\cf0 ( \cf4 "hoover"\cf0 , \{ \cf3 |freq = 220, amp = 0.1, lgu = 0.1, lgd = 1, gate = 1|\cf0 \
+\cf3 	var\cf0  pwm, mix, env;\
+	\
+	freq = freq.cpsmidi.lag(lgu,lgd).midicps;\
+	freq = \cf3 SinOsc\cf0 .kr( \{ 2.9 rrand: 3.1 \}!3, \{2pi.rand\}!3 ).exprange( 0.995, 1.005 ) * freq;\
+	pwm = \cf3 SinOsc\cf0 .kr( \{2.0 rrand: 4.0\}!3 ).range(0.125,0.875);\
+	\
+	\cf5 // the saw/pulses\cf0 \
+	mix = (\cf3 LFSaw\cf0 .ar( freq * [0.25,0.5,1], 1 ).range(0,1)\
+			* (1 - \cf3 LFPulse\cf0 .ar(freq * [0.5,1,2], 0, pwm))).sum * 0.1;\
+	\
+	\cf5 // the bass\cf0 \
+	mix = mix + \cf3 LFPar\cf0 .ar( freq * 0.25, 0, 0.1 );\
+	\
+	\cf5 // eq for extra sharpness\cf0 \
+	mix = \cf3 BPeakEQ\cf0 .ar( mix, 6000, 1, 3 );\
+	mix = \cf3 BPeakEQ\cf0 .ar( mix, 3500, 1, 6 );\
+	\
+	\cf5 // kind of chorus\cf0 \
+	mix = mix + \cf3 CombC\cf0 .ar( mix.dup, 1/200,\
+				\cf3 SinOsc\cf0 .kr( 3, [0.5pi, 1.5pi] ).range(1/300,1/200),\
+			0.0 ) * 0.5;\
+	\
+	env = \cf3 EnvGen\cf0 .kr( \cf3 Env\cf0 .asr, gate );\
+	\
+	\cf3 Out\cf0 .ar( 0, mix * env * amp );\
+\}).store;\
+\
+\cf2 (\cf0 \
+p = \cf3 Pmono\cf0 (\cf6 \\hoover\cf0 ,\
+		\cf6 \\dur\cf0 , \cf3 Pseq\cf0 ([0.25,0.5,7, 0.25]* 0.24, \cf3 inf\cf0 ),\
+		\cf6 \\lgu\cf0 , 0.15,\
+		\cf6 \\lgd\cf0 , \cf3 Pseq\cf0 ([ 0.1, 0.1, 1.5, 0.25], \cf3 inf\cf0  ),\
+		\cf6 \\freq\cf0 , \cf3 Pseq\cf0 ([60, 120, 60, 120] , \cf3 inf\cf0 )).play;\
+\cf2 )\
+\
+\pard\pardeftab560\ql\qnatural
+\cf0 (\
+	\{\
+		\cf7 var\cf0  freq, numparts;\
+		numparts = 5;\
+		freq = \cf7 SinOsc\cf0 .kr(\cf7 Array\cf0 .fill(numparts, \{\cf7 Rand\cf0 (0.05, 0.2)\}), \
+			\cf7 Array\cf0 .fill(numparts, \{\cf7 Rand\cf0 (0, 1.0)\})).range(30, 60).round(2**1/12);\
+		LPF.ar(\
+			\cf7 LeakDC\cf0 .ar(\
+			\cf7 Pan2\cf0 .ar(\
+				\cf7 Pluck\cf0 .ar(\
+					\cf7 PinkNoise\cf0 .ar(0.1).dup(numparts), \
+					\cf7 Impulse\cf0 .kr(\cf7 Array\cf0 .fill(numparts, \{\cf7 Rand\cf0 (10, 12)\})), \
+					100.reciprocal, freq.reciprocal, 2, Rand(0.01, 0.2), mul: 200),\
+				Array.fill(numparts, \{\cf7 Rand\cf0 .new(-1.0, 1.0)\}))\
+			.sum\
+			).softclip.clip2(0.5),\
+		LFNoise2.kr(0.1, 300, 400));\
+		\}.play(s);\
+)\
+\
+\
+\
+\
+\
+\
+\pard\pardeftab720\ql\qnatural
+\cf3 \{|fstep = 12, mul = 200, fund = 30, clip = 0.5, cutfreq = 400, lpf = 1, lpfz = 0|\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 	\cf3 var\cf0  freq, numparts;\
+	numparts = 7;\
+	freq = \cf3 SinOsc\cf0 .kr(\cf3 Array\cf0 .fill(numparts, \{\cf3 Rand\cf0 (0.05, 0.2)\}), \
+		\cf3 Array\cf0 .fill(numparts, \{\cf3 Rand\cf0 (0, 1.0)\})).range(fund, fund * 2).round(2**1/fstep);\
+	\cf3 LPF\cf0 .ar(\
+		\cf3 LeakDC\cf0 .ar(\
+			\cf3 Pluck\cf0 .ar(\
+				\cf3 PinkNoise\cf0 .ar(0.1).dup(numparts), \
+				\cf3 Impulse\cf0 .kr(\cf3 Array\cf0 .fill(numparts, \{\cf3 Rand\cf0 (10, 12)\})), \
+				100.reciprocal, freq.reciprocal, 2, \cf3 Rand\cf0 (0.01, 0.2), mul: mul\
+			).sum\
+		).softclip.clip2(clip),\
+		\cf3 SinOsc\cf0 .kr(lpf, lpfz).range(cutfreq / 1.5, cutfreq * 1.5)\
+	);\
+\}.play}
