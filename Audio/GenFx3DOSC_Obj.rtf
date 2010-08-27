@@ -1,7 +1,7 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
 {\fonttbl\f0\fnil\fcharset238 Inconsolata;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
-\red0\green115\blue0;\red191\green0\blue0;}
+\red191\green0\blue0;\red0\green115\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f0\fs24 \cf2 (\
@@ -10,7 +10,7 @@
 ~serv = \cf3 Server\cf2 .internal;\
 \cf3 Server\cf2 .default = ~serv;\
 \
-~serv.options.memSize = 2**16;\
+\cf5 //~serv.options.memSize = 2**16;\cf2 \
 \
 if (~serv.serverRunning.not)\
 \{\
@@ -43,9 +43,9 @@ if (~serv.serverRunning.not)\
 (\
 \pard\pardeftab720\ql\qnatural
 \cf2 \
-\cf3 SynthDef\cf2 (\cf5 \\swarp\cf2 , \{\cf3 |out, efx, aamp, eamp, dur, buf, str, end, wrp, frq, wsz, dns, rnd, azm, elv=0, rho=1|\cf2 \
+\cf3 SynthDef\cf2 (\cf6 \\swarp\cf2 , \{\cf3 |out, efx, aamp, eamp, dur, buf, str, end, wrp, frq, wsz, dns, rnd, azm, elv=0, rho=1|\cf2 \
 	\cf3 var\cf2  ptr, sig, env, bf;\
-	env = \cf3 Control\cf2 .names([\cf5 \\env\cf2 ]).kr(\cf3 Env\cf2 .newClear(16).asArray);	\
+	env = \cf3 Control\cf2 .names([\cf6 \\env\cf2 ]).kr(\cf3 Env\cf2 .newClear(16).asArray);	\
 	ptr = \cf3 LFSaw\cf2 .kr(wrp).range(str, end);\
 	sig = \cf3 SndWarp\cf2 .ar(buf, ptr, frq, wsz, dns, rnd) * \
 		\cf3 EnvGen\cf2 .kr(env, timeScale: dur, doneAction: 2);\
@@ -57,9 +57,9 @@ if (~serv.serverRunning.not)\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
 \cf2 \
 \pard\pardeftab720\ql\qnatural
-\cf3 SynthDef\cf2 (\cf5 \\rwarp\cf2 , \{\cf3 |out, efx, aamp, eamp, dur, buf, str, end, wrp, frq, wsz, dns, rnd, azm, elv=0, rho=1|\cf2 \
+\cf3 SynthDef\cf2 (\cf6 \\rwarp\cf2 , \{\cf3 |out, efx, aamp, eamp, dur, buf, str, end, wrp, frq, wsz, dns, rnd, azm, elv=0, rho=1|\cf2 \
 	\cf3 var\cf2  ptr, sig, env, bf;\
-	env = \cf3 Control\cf2 .names([\cf5 \\env\cf2 ]).kr(\cf3 Env\cf2 .newClear(16).asArray);	\
+	env = \cf3 Control\cf2 .names([\cf6 \\env\cf2 ]).kr(\cf3 Env\cf2 .newClear(16).asArray);	\
 	ptr = \cf3 LFSaw\cf2 .kr(wrp).range(str, end);\
 	sig = \cf3 LeakDC\cf2 .ar(\cf3 Warp1\cf2 .ar(1, buf, ptr, frq, wsz, -1, dns, rnd)) * \
 		\cf3 EnvGen\cf2 .kr(env, timeScale: dur, doneAction: 2);\
@@ -70,10 +70,10 @@ if (~serv.serverRunning.not)\
 \}).memStore;\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 \
-\cf3 SynthDef\cf2 (\cf5 \\verb\cf2 , \{\cf3 |in, rtime, damp, inbw, spr, dry, early, tail, amp|\cf2 \
+\cf3 SynthDef\cf2 (\cf6 \\verb\cf2 , \{\cf3 |in, rtime, damp, inbw, spr, dry, early, tail, amp|\cf2 \
 	\cf3 var\cf2  sig, input, actr, fb;\
 	input = \cf3 In\cf2 .ar(in) * \
-		\cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf5 \\sine\cf2 ), \
+		\cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf6 \\sine\cf2 ), \
 			\cf3 Impulse\cf2 .kr(0.04), timeScale:0.04.reciprocal);\
 	fb = \cf3 LocalIn\cf2 .ar;\
 	sig = \cf3 GVerb\cf2 .ar(input + fb, 1500, rtime, damp, inbw, spr, dry, early, tail, 1500);\
@@ -82,13 +82,13 @@ if (~serv.serverRunning.not)\
 	\cf3 Out\cf2 .ar(0, (sig ++ sig) * amp)\
 \}).memStore;\
 \
-\cf3 SynthDef\cf2 (\cf5 \\bf2decode\cf2 , \{\cf3 |bus, amp = 1|\cf2 \
+\cf3 SynthDef\cf2 (\cf6 \\bf2decode\cf2 , \{\cf3 |bus, amp = 1|\cf2 \
 	\cf3 var\cf2  w, x, y, z;\
 	#w, x, y, z = \cf3 In\cf2 .ar(bus, 4);\
 	\cf3 Out\cf2 .ar( 0, \cf3 BFDecode1\cf2 .ar(w, x, y, z, \cf3 IbiSpeakers\cf2 .quad.azimuth, (0 ! 4) ) * amp )\
 \}).memStore;\
 \
-\cf3 SynthDef\cf2 (\cf5 \\bfcollect\cf2 , \{\cf3 |bus, amp = 1|\cf2 \
+\cf3 SynthDef\cf2 (\cf6 \\bfcollect\cf2 , \{\cf3 |bus, amp = 1|\cf2 \
 	\cf3 Out\cf2 .ar(0, \cf3 In\cf2 .ar(bus, 4) * amp)\
 \}).memStore\
 \
@@ -98,10 +98,10 @@ if (~serv.serverRunning.not)\
 ~abus = \cf3 Bus\cf2 .audio(~serv, 4);\
 ~rbus = \cf3 Bus\cf2 .audio(~serv);\
 ~agrp = \cf3 Group\cf2 ();\
-~rev = \cf3 Synth\cf2 .after(~agrp, \cf5 \\verb\cf2 , [\cf5 \\in\cf2 , ~rbus, \cf5 \\rtime\cf2 , 3, \cf5 \\damp\cf2 , 0.5, \cf5 \\inbw\cf2 , 0.5, \cf5 \\spr\cf2 , 20, \
-	\cf5 \\dry\cf2 , 0.0, \cf5 \\early\cf2 , 0.4, \cf5 \\tail\cf2 , 1.0, \cf5 \\amp\cf2 , 0.5]);	\
-\cf6 //~decode = Synth.after(~rev, \\bf2decode, [\\bus, ~abus, \\amp, 1.0]);\cf2 \
-~decode = \cf3 Synth\cf2 .after(~rev, \cf5 \\bfcollect\cf2 , [\cf5 \\bus\cf2 , ~abus, \cf5 \\amp\cf2 , 1.0]);\
+~rev = \cf3 Synth\cf2 .after(~agrp, \cf6 \\verb\cf2 , [\cf6 \\in\cf2 , ~rbus, \cf6 \\rtime\cf2 , 3, \cf6 \\damp\cf2 , 0.5, \cf6 \\inbw\cf2 , 0.5, \cf6 \\spr\cf2 , 20, \
+	\cf6 \\dry\cf2 , 0.0, \cf6 \\early\cf2 , 0.4, \cf6 \\tail\cf2 , 1.0, \cf6 \\amp\cf2 , 0.5]);	\
+\cf5 //~decode = Synth.after(~rev, \\bf2decode, [\\bus, ~abus, \\amp, 1.0]);\cf2 \
+~decode = \cf3 Synth\cf2 .after(~rev, \cf6 \\bfcollect\cf2 , [\cf6 \\bus\cf2 , ~abus, \cf6 \\amp\cf2 , 1.0]);\
 ~bps = 140 / 60;\
 ~div = ~bps.reciprocal;\
 \
@@ -110,8 +110,8 @@ if (~serv.serverRunning.not)\
 ~eq = \cf3 MasterEQ\cf2 (4)\
 )\
 \
-~decode.set(\cf5 \\amp\cf2 , 0.2)\
-~rev.set(\cf5 \\amp\cf2 , 0.8)\
+~decode.set(\cf6 \\amp\cf2 , 0.2)\
+~rev.set(\cf6 \\amp\cf2 , 0.8)\
 \
 ~rev.free\
 ~decode.free\
@@ -123,29 +123,29 @@ if (~serv.serverRunning.not)\
 \
 \
 ~fxparams = [\
-	\cf3 FxParam\cf2 (\cf5 \\aamp\cf2 , \cf5 \\aamp\cf2 , \cf3 ControlSpec\cf2 (0.1, 1.0), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\wrp\cf2 , \cf5 \\wrp\cf2 , \cf3 ControlSpec\cf2 (0.001, 1.0), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\frq\cf2 , \cf5 \\frq\cf2 , \cf3 ControlSpec\cf2 (0.25, 4.0), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\wsz\cf2 , \cf5 \\wsz\cf2 , \cf3 ControlSpec\cf2 (0.005, 0.5), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\rnd\cf2 , \cf5 \\rnd\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.2), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\azm\cf2 , \cf5 \\azm\cf2 , \cf3 ControlSpec\cf2 (-pi, pi), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\elv\cf2 , \cf5 \\elv\cf2 , \cf3 ControlSpec\cf2 (-0.5pi, 0.5pi), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\rho\cf2 , \cf5 \\rho\cf2 , \cf3 ControlSpec\cf2 (0.0, 2.0), \cf3 false\cf2 )\
+	\cf3 FxParam\cf2 (\cf6 \\aamp\cf2 , \cf6 \\aamp\cf2 , \cf3 ControlSpec\cf2 (0.1, 1.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\wrp\cf2 , \cf6 \\wrp\cf2 , \cf3 ControlSpec\cf2 (0.001, 1.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\frq\cf2 , \cf6 \\frq\cf2 , \cf3 ControlSpec\cf2 (0.25, 4.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\wsz\cf2 , \cf6 \\wsz\cf2 , \cf3 ControlSpec\cf2 (0.005, 0.5), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\rnd\cf2 , \cf6 \\rnd\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.2), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\azm\cf2 , \cf6 \\azm\cf2 , \cf3 ControlSpec\cf2 (-pi, pi), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\elv\cf2 , \cf6 \\elv\cf2 , \cf3 ControlSpec\cf2 (-0.5pi, 0.5pi), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\rho\cf2 , \cf6 \\rho\cf2 , \cf3 ControlSpec\cf2 (0.0, 2.0), \cf3 false\cf2 )\
 ];\
 \
 ~fxglobals = [\
-	\cf3 FxParam\cf2 (\cf5 \\rtime\cf2 , \cf5 \\rtime\cf2 , \cf3 ControlSpec\cf2 (0.0, 10.0), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\damp\cf2 , \cf5 \\damp\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\inbw\cf2 , \cf5 \\inbw\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\spr\cf2 , \cf5 \\spr\cf2 , \cf3 ControlSpec\cf2 (1, 20), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\dry\cf2 , \cf5 \\dry\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.4), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\early\cf2 , \cf5 \\early\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.8), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\tail\cf2 , \cf5 \\tail\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
-	\cf3 FxParam\cf2 (\cf5 \\amp\cf2 , \cf5 \\amp\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.75), \cf3 false\cf2 )\
+	\cf3 FxParam\cf2 (\cf6 \\rtime\cf2 , \cf6 \\rtime\cf2 , \cf3 ControlSpec\cf2 (0.0, 10.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\damp\cf2 , \cf6 \\damp\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\inbw\cf2 , \cf6 \\inbw\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\spr\cf2 , \cf6 \\spr\cf2 , \cf3 ControlSpec\cf2 (1, 20), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\dry\cf2 , \cf6 \\dry\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.4), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\early\cf2 , \cf6 \\early\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.8), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\tail\cf2 , \cf6 \\tail\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
+	\cf3 FxParam\cf2 (\cf6 \\amp\cf2 , \cf6 \\amp\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.75), \cf3 false\cf2 )\
 ];\
 \
-~mappedInputs = [\cf5 \\\CocoaLigature0 lbf\cf2 , \cf5 \\rbf\cf2 , \cf5 \\rbb\cf2 , \cf5 \\lbb\cf2 , \cf5 \\ltf\cf2 , \cf5 \\rtf\cf2 , \cf5 \\rtb\cf2 , \cf5 \\ltb\cf2 , \
-	\cf5 \\avglbf\cf2 , \cf5 \\avgrbf\cf2 , \cf5 \\avgrbb\cf2 , \cf5 \\avglbb\cf2 , \cf5 \\avgltf\cf2 , \cf5 \\avgrtf\cf2 , \cf5 \\avgrtb\cf2 , \cf5 \\avgltb\cf2 \CocoaLigature1 ];\
+~mappedInputs = [\cf6 \\\CocoaLigature0 lbf\cf2 , \cf6 \\rbf\cf2 , \cf6 \\rbb\cf2 , \cf6 \\lbb\cf2 , \cf6 \\ltf\cf2 , \cf6 \\rtf\cf2 , \cf6 \\rtb\cf2 , \cf6 \\ltb\cf2 , \
+	\cf6 \\avglbf\cf2 , \cf6 \\avgrbf\cf2 , \cf6 \\avgrbb\cf2 , \cf6 \\avglbb\cf2 , \cf6 \\avgltf\cf2 , \cf6 \\avgrtf\cf2 , \cf6 \\avgrtb\cf2 , \cf6 \\avgltb\cf2 \CocoaLigature1 ];\
 \
 ~parameters = (\
 	arr: (1..32).stutter(8),\
@@ -164,7 +164,7 @@ if (~serv.serverRunning.not)\
 	].lace(128).stutter(2)\
 );\
 \
-\cf6 //~indexArray = [0, 31, 63, 127, 255];\cf2 \
+\cf5 //~indexArray = [0, 31, 63, 127, 255];\cf2 \
 \
 ~order = ~parameters.keys(\cf3 Array\cf2 ).sort;\
 \
@@ -172,7 +172,7 @@ if (~serv.serverRunning.not)\
 \
 ~chromoSize = ~genes.population[0].size;\
 ~quant = ~bps / 32;\
-~staticArgs = [\cf5 \\out\cf2 , ~abus, \cf5 \\efx\cf2 , ~rbus, \cf5 \\aamp\cf2 , 1.0, \cf5 \\eamp\cf2 , 1.0];\
+~staticArgs = [\cf6 \\out\cf2 , ~abus, \cf6 \\efx\cf2 , ~rbus, \cf6 \\aamp\cf2 , 1.0, \cf6 \\eamp\cf2 , 1.0];\
 ~mutationRate = 1 / 16;\
 ~maxPopulation = 512;\
 ~collectArgs = \{\cf3 |chromo|\cf2 \
@@ -268,7 +268,7 @@ if (~serv.serverRunning.not)\
 	\
 \};\
 \
-~avgresp = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf5 '/fx/stats'\cf2 , \{\cf3 |ti, re, ms|\cf2 \
+~avgresp = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf6 '/fx/stats'\cf2 , \{\cf3 |ti, re, ms|\cf2 \
 \pard\tx480\pardeftab480\ql\qnatural\pardirnatural
 \cf2 \CocoaLigature0 	\cf3 var\cf2  cmd, avg, sdev, albf, arbf, arbb, albb, altf, artf, artb, altb;\
 		\CocoaLigature1 \
@@ -290,14 +290,14 @@ if (~serv.serverRunning.not)\
 \
 \}).add;\
 \
-~stateresp = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf5 '/fx/states'\cf2 , \{\cf3 |ti, re, ms|\cf2 \
+~stateresp = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf6 '/fx/states'\cf2 , \{\cf3 |ti, re, ms|\cf2 \
 	~invalues.states = ms[1..64];\
 	~mapParams.value;\
 \}).add\
 \
 )\
 \
-~fx = \cf3 FxLive\cf2 ().gui\
+\cf5 ~fx = FxLive().gui\cf2 \
 \
 ~invalues.postln\
 \
@@ -314,46 +314,46 @@ if (~serv.serverRunning.not)\
 			\cf3 var\cf2  dur, args, chromo, synth, index, actives, dead, scores, cr, def;\
 			\cf3 var\cf2  env;\
 			cr = ~genes.select(\{\cf3 |it|\cf2  \
-				~parameters[\cf5 \\arr\cf2 ][it.code.keep(4).convertDigits(4)] == (step + 1)\
+				~parameters[\cf6 \\arr\cf2 ][it.code.keep(4).convertDigits(4)] == (step + 1)\
 			\});\
 			weights = cr.collect(\cf3 _\cf2 .score).normalizeSum;\
 			\
 			index = weights.windex;\
 			\
-\cf6 //			Post << "step: " << step << Char.nl;\cf2 \
+\cf5 //			Post << "step: " << step << Char.nl;\cf2 \
 			\
 			if ((index > -1).and(index < cr.size))\
 			\{			\
 				chromo = cr@index;\
 				\
-\cf6 //				Post << "score: " << chromo.score << Char.nl;\cf2 \
+\cf5 //				Post << "score: " << chromo.score << Char.nl;\cf2 \
 				\
-				dur = ~parameters[\cf5 \\dur\cf2 ][chromo.code.copyRange(12, 15).convertDigits(4)];\
+				dur = ~parameters[\cf6 \\dur\cf2 ][chromo.code.copyRange(12, 15).convertDigits(4)];\
 				args = ~staticArgs ++ ~collectArgs.value(chromo);\
 				if (dur < 0.75)\
 				\{\
 					env = \cf3 Env\cf2 ([0.001, 2.0, 0.001], [0, 1], [0, 4]).asArray;\
 				\}\
 				\{\
-				 	env = \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.01, 0.6, 0.19], \cf5 \\sine\cf2 ).asArray;\
+				 	env = \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.01, 0.6, 0.19], \cf6 \\sine\cf2 ).asArray;\
 				\};\
 				\
-				if (chromo.code[0] > 1) \{ def = \cf5 \\swarp\cf2  \} \{ def = \cf5 \\rwarp\cf2  \};\
+				if (chromo.code[0] > 1) \{ def = \cf6 \\swarp\cf2  \} \{ def = \cf6 \\rwarp\cf2  \};\
 				\
-				synth = \cf3 Synth\cf2 .head(~agrp, def, args ++ [\cf5 \\elv\cf2 , 0, \cf5 \\rho\cf2 , 0.4])\
-					.setn(\cf5 \\env\cf2 , env);\
+				synth = \cf3 Synth\cf2 .head(~agrp, def, args ++ [\cf6 \\elv\cf2 , 0, \cf6 \\rho\cf2 , 0.4])\
+					.setn(\cf6 \\env\cf2 , env);\
 					\
 				chromo.activate(synth);\
 				\
 				\cf3 SystemClock\cf2 .sched(dur, \{ chromo.deactivate; \cf3 nil\cf2  \});\
 								\
-				\cf6 //crossover\cf2 \
+				\cf5 //crossover\cf2 \
 				\
 				weights = ~genes.population.collect(\cf3 _\cf2 .score).normalizeSum;\
 				\
 				~genes.crossover(chromo, \{ ~genes.population.wchoose(weights) \});\
 				\
-				\cf6 //mutation\cf2 \
+				\cf5 //mutation\cf2 \
 				if(~mutationRate.coin) \{\
 					chromo.mutate\
 				\};\
@@ -361,7 +361,7 @@ if (~serv.serverRunning.not)\
 			\
 			\};\
 			\
-			\cf6 //score\cf2 \
+			\cf5 //score\cf2 \
 			\
 			~actives = ~genes.population.select(\cf3 _\cf2 .active);\
 			\
@@ -379,7 +379,7 @@ if (~serv.serverRunning.not)\
 						\
 			~quant.wait;\
 			\
-			\cf6 // if resource limit is reached, kill the synth\cf2 \
+			\cf5 // if resource limit is reached, kill the synth\cf2 \
 \
 			if ((~serv.peakCPU > ~cpuLimit).and(chromo.notNil)) \{\
 				chromo.deactivate;\
@@ -387,7 +387,7 @@ if (~serv.serverRunning.not)\
 				synth.free;\
 			\};\
 			\
-			\cf6 // discourage longer durations\cf2 \
+			\cf5 // discourage longer durations\cf2 \
 			\
 			if (index < ~genes.size)\
 			\{\
@@ -395,11 +395,11 @@ if (~serv.serverRunning.not)\
 				if (actives.size > 0)\
 				\{\
 					actives.wchoose(actives.collect(\{\cf3 |inc|\cf2  \
-						~parameters[\cf5 \\dur\cf2 ][inc.code.copyRange(8, 11).convertDigits(4)]\
+						~parameters[\cf6 \\dur\cf2 ][inc.code.copyRange(8, 11).convertDigits(4)]\
 					\}).normalizeSum).deactivate;					\};	\
 			\};\
 							\
-			\cf6 // death, the closer genepool size reaches to max population, the more likely to occur\cf2 \
+			\cf5 // death, the closer genepool size reaches to max population, the more likely to occur\cf2 \
 			\
 			if ((~genes.population.size / ~maxPopulation).coin)\
 			\{\
@@ -415,18 +415,18 @@ if (~serv.serverRunning.not)\
 			\{~win.refresh\}.defer\
 		\});\
 		avgdur = ~genes.population.collect(\{\cf3 |ch|\cf2  \
-			~parameters[\cf5 \\dur\cf2 ][ch.code.copyRange(12, 15).convertDigits(4)]\
+			~parameters[\cf6 \\dur\cf2 ][ch.code.copyRange(12, 15).convertDigits(4)]\
 		\}).sum / ~genes.size;\
-\cf6 //		~genes.do(\{|gene|\cf2 \
-\cf6 //			if ((gene.score - avgdur).abs < (avgdur * 0.1))\cf2 \
-\cf6 //			\{\cf2 \
-\cf6 //				gene.score = max(gene.score - 2, 1);\cf2 \
-\cf6 //			\};\cf2 \
-\cf6 //			if ((gene.score - avgdur).abs > (avgdur * 0.5))\cf2 \
-\cf6 //			\{\cf2 \
-\cf6 //				gene.score = gene.score + 2\cf2 \
-\cf6 //			\}\cf2 \
-\cf6 //		\});\cf2 \
+\cf5 //		~genes.do(\{|gene|\cf2 \
+\cf5 //			if ((gene.score - avgdur).abs < (avgdur * 0.1))\cf2 \
+\cf5 //			\{\cf2 \
+\cf5 //				gene.score = max(gene.score - 2, 1);\cf2 \
+\cf5 //			\};\cf2 \
+\cf5 //			if ((gene.score - avgdur).abs > (avgdur * 0.5))\cf2 \
+\cf5 //			\{\cf2 \
+\cf5 //				gene.score = gene.score + 2\cf2 \
+\cf5 //			\}\cf2 \
+\cf5 //		\});\cf2 \
 		(\cf4 "------ generation "\cf2  ++ ind.asString ++ \cf4 " # "\cf2  \
 			++ ~genes.population.size.asString ++ \cf4 " ## "\cf2  ++ avgdur.asString ++ \cf4 " ---------"\cf2 ).postln;\
 		~quant.wait;		\
@@ -438,7 +438,7 @@ if (~serv.serverRunning.not)\
 \
 ~rout.stop\
 \
-~cpuLimit = 24\
+~cpuLimit = 16\
 ~genes.size\
 \
 ~maxPopulation = 256\
@@ -447,8 +447,8 @@ if (~serv.serverRunning.not)\
 	\cf3 var\cf2  par;\
 	par = ch.code.clump(4);\
 	[\
-		~parameters[\cf5 \\dur\cf2 ][par[2].convertDigits(4)],\
-		~parameters[\cf5 \\dns\cf2 ][par[1].convertDigits(4)] \
+		~parameters[\cf6 \\dur\cf2 ][par[2].convertDigits(4)],\
+		~parameters[\cf6 \\dns\cf2 ][par[1].convertDigits(4)] \
 	].postln\
 		\
 \})\
@@ -471,7 +471,7 @@ if (~serv.serverRunning.not)\
 ~serv.scope\
 \
 ~genes.do(\{\cf3 |it|\cf2  \
-	~parameters[\cf5 \\arr\cf2 ][it.code.keep(4).convertDigits(4)].postln\
+	~parameters[\cf6 \\arr\cf2 ][it.code.keep(4).convertDigits(4)].postln\
 \});\
 \
 \cf3 FxLive\cf2 ().gui\

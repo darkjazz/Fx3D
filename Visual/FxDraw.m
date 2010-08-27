@@ -108,9 +108,9 @@
 - (void) setCommon
 {
 	size = 0.6f;
-	size *= 5.0f;
+	size *= 2.0f;
 	halfscreen = 5.2f;
-	halfscreen *= 5.0f;
+	halfscreen *= 2.0f;
 	[cp mapValues: indexi: indexj: state];
 	alpha = [cp alpha] * gAlpha;
 	red = [cp red]; 
@@ -177,7 +177,7 @@
 		
 		lineWidth = map(state, 0.1f, 1.0f);
 		
-		alpha = 1.0f;
+//		alpha = 1.0f;
 		
 		scale = 1.0f;
 		//alpha = alpha * map(1.0f - (indexk / worldSize), 0.2f, 0.8f);
@@ -350,69 +350,41 @@
 	bottom = (float)indexj * size - halfscreen + (size / 2.0f);
 	front = (float)indexk * size - halfscreen + (size / 2.0f);
 	width = size;
-	alpha = alpha * map(indexk, 0.1f, 1.0f);
-	[self drawLine: left: bottom: front: left + width: bottom: front: map(1.0f - state, 1.0f, 4.0f)];
-	bottom -= (size / 4.0f);
-	[self drawLine: left: bottom: front: left + width: bottom: front: map(1.0f - state, 1.0f, 2.0f)];	
-	bottom += (size / 2.0f);
-	[self drawLine: left: bottom: front: left + width: bottom: front: map(1.0f - state, 1.0f, 2.0f)];
+
+	if (!isEven(indexk))
+	{
+		[self drawLine: left: bottom: front: left + width: bottom: front: map(1.0f - state, 1.0f, 2.0f)];
+	}
 	
 }
 - (void) blinds {
 
-//	[self setCommon];
-	
-	if (indexi == 0 && indexj == 0 && indexk == 0)
+	[self setCommon];
+		
+	left = (float)indexi * size - halfscreen + size -  (size * 2.0f * state);
+	bottom = (float)indexj * size - halfscreen + size -  (size * 2.0f * state);
+	front = (float)indexk * size - halfscreen + size -  (size * 2.0f * state);
+	height = width = depth = size * 4.0f * state;
+
+	if (isEven(indexk))
 	{
-		
-		red = [cp red]; 
-		green = [cp green];
-		blue = [cp blue];
-
-		alpha = 1.0f;
-		
-		[self drawLine: 0 : 0 : 0 : 1 : 0 : 0 : 3];
-		[self drawLine: 0 : 0 : 0 : -0.333 : 0 : 0.94 : 3];
-		[self drawLine: 0 : 0 : 0 : -0.47 : -0.667 : -0.58 : 3];
-		[self drawLine: 0 : 0 : 0 : -0.47 : 0.667 : -0.58 : 3];
-		
-		[self drawLine:1 : 0 : 0 : -0.333 : 0 : 0.94 : 1];
-		[self drawLine:1 : 0 : 0 : -0.47 : -0.667 : -0.58 : 1];
-		[self drawLine:1 : 0 : 0 : -0.47 : 0.667 : -0.58 : 1];	
-		
-		[self drawLine:-0.333 : 0 : 0.94 : -0.47 : -0.667 : -0.58 : 1];
-		[self drawLine:-0.333 : 0 : 0.94 : -0.47 : 0.667 : -0.58 : 1];
-		
-		[self drawLine: -0.47 : -0.667 : -0.58: -0.47 : 0.667 : -0.58 : 1];		
-		
-		alpha = 0.1f;
-		left = -2.0f; width = 4.0f;
-		bottom = 0.0f; height = 0.0f;
-		front = -2.0f; depth = 4.0f;
-		
-		[self fillRect: 2];
-
-		left = -2.0f; width = 4.0f;
-		bottom = -2.0f; height = 4.0f;
-		front = 0.0f; depth = 0.0f;
-		
-		[self fillRect: 0];
-
-		left = 0.0f; width = 0.0f;
-		bottom = -2.0f; height = 4.0f;
-		front = -2.0f; depth = 4.0f;
-		
-		[self fillRect: 1];
-		
-	
+		[self drawPoint: left : bottom : front : 1.0f ];
+		[self drawPoint: left : bottom : front + depth : 1.0f ];
+		[self drawPoint: left : bottom + height : front : 1.0f ];
+		[self drawPoint: left : bottom + height : front + depth : 1.0f ];
 	}
-	
-//	left = (float)indexi * size - halfscreen + (size / 2.0f);
-//	bottom = (float)indexj * size - halfscreen;
-//	front = (float)indexk * size - halfscreen + (size / 2.0f);
-//	height = state * size;
-//	[self drawLine: left: bottom: front: left: bottom + height: front: map(1.0f - state, 0.1f, 2.0f)];
+
+	if (!isEven(indexi))
+	{
+		[self drawPoint: left + width : bottom : front : 1.0f ];
+		[self drawPoint: left + width : bottom : front + depth : 1.0f ];
+		[self drawPoint: left + width : bottom + height : front : 1.0f ];
+		[self drawPoint: left + width : bottom + height : front + depth : 1.0f ];
+	}
+	//	[self drawLine: left: bottom: front: left: bottom + height: front: map(1.0f - state, 0.1f, 2.0f)];
+
 }
+
 - (void) axial {
 	[self setCommon];
 	left = (float)indexi * size - halfscreen + size - (size * 2.0f * state);

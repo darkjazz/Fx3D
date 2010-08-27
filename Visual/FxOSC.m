@@ -175,74 +175,19 @@ float state;
 }
 
 - (void) sendMessage: (NSMutableArray*) states {
-	// if I ever have to do this again, I am switching to C++
-	lo_send(addr, "/fx/states", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 
-			[[states objectAtIndex:0] floatValue],
-			[[states objectAtIndex:1] floatValue],
-			[[states objectAtIndex:2] floatValue],
-			[[states objectAtIndex:3] floatValue],
-			[[states objectAtIndex:4] floatValue],
-			[[states objectAtIndex:5] floatValue],
-			[[states objectAtIndex:6] floatValue],
-			[[states objectAtIndex:7] floatValue],
-			[[states objectAtIndex:8] floatValue],
-			[[states objectAtIndex:9] floatValue],
-			[[states objectAtIndex:10] floatValue],
-			[[states objectAtIndex:11] floatValue],
-			[[states objectAtIndex:12] floatValue],
-			[[states objectAtIndex:13] floatValue],
-			[[states objectAtIndex:14] floatValue],
-			[[states objectAtIndex:15] floatValue],
-			[[states objectAtIndex:16] floatValue],
-			[[states objectAtIndex:17] floatValue],
-			[[states objectAtIndex:18] floatValue],
-			[[states objectAtIndex:19] floatValue],
-			[[states objectAtIndex:20] floatValue],
-			[[states objectAtIndex:21] floatValue],
-			[[states objectAtIndex:22] floatValue],
-			[[states objectAtIndex:23] floatValue],
-			[[states objectAtIndex:24] floatValue],
-			[[states objectAtIndex:25] floatValue],
-			[[states objectAtIndex:26] floatValue],
-			[[states objectAtIndex:27] floatValue],
-			[[states objectAtIndex:28] floatValue],
-			[[states objectAtIndex:29] floatValue],
-			[[states objectAtIndex:30] floatValue],
-			[[states objectAtIndex:31] floatValue],
-			[[states objectAtIndex:32] floatValue],
-			[[states objectAtIndex:33] floatValue],
-			[[states objectAtIndex:34] floatValue],
-			[[states objectAtIndex:35] floatValue],
-			[[states objectAtIndex:36] floatValue],
-			[[states objectAtIndex:37] floatValue],
-			[[states objectAtIndex:38] floatValue],
-			[[states objectAtIndex:39] floatValue],
-			[[states objectAtIndex:40] floatValue],
-			[[states objectAtIndex:41] floatValue],
-			[[states objectAtIndex:42] floatValue],
-			[[states objectAtIndex:43] floatValue],
-			[[states objectAtIndex:44] floatValue],
-			[[states objectAtIndex:45] floatValue],
-			[[states objectAtIndex:46] floatValue],
-			[[states objectAtIndex:47] floatValue],
-			[[states objectAtIndex:48] floatValue],
-			[[states objectAtIndex:49] floatValue],
-			[[states objectAtIndex:50] floatValue],
-			[[states objectAtIndex:51] floatValue],
-			[[states objectAtIndex:52] floatValue],
-			[[states objectAtIndex:53] floatValue],
-			[[states objectAtIndex:54] floatValue],
-			[[states objectAtIndex:55] floatValue],
-			[[states objectAtIndex:56] floatValue],
-			[[states objectAtIndex:57] floatValue],
-			[[states objectAtIndex:58] floatValue],
-			[[states objectAtIndex:59] floatValue],
-			[[states objectAtIndex:60] floatValue],
-			[[states objectAtIndex:61] floatValue],
-			[[states objectAtIndex:62] floatValue],
-			[[states objectAtIndex:63] floatValue]
-	);
+	int i;
+	float arr[64];
+	
+	for (i = 0; i < [states count]; i++)
+	{
+		arr[i] = [[states objectAtIndex: i] floatValue];
+	}
+	
+	lo_blob data = lo_blob_new(sizeof(arr), arr);
+	lo_send(addr, "/fx/states", "b", data);
+	
 }
+
 
 - (void) sendTrigger: (int) x: (int) y: (int) z: (float) phase
 {

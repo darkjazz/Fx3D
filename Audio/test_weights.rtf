@@ -1,21 +1,21 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
 {\fonttbl\f0\fnil\fcharset238 Inconsolata;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red191\green0\blue0;
-}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red191\green0\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs24 \cf2 ~weights = [1, 1, 1, 1].mirror2;\
-~rule = \cf3 Continuous\cf2 (add: 0.95, wrap: \cf3 false\cf2 ).weights_(~weights);\
-\cf4 //~wrld = XWorld.newSetCells(17, XSeeds.rect(4, 4, 9, 9), Habitat.newMoore, ~rule);\cf2 \
-~wrld = \cf3 XWorld\cf2 .newRand2DContinuous(40, \cf3 Habitat\cf2 .newMoore, ~rule);\
-\cf3 PenDisplay\cf2 (~wrld, ~rule, \cf3 Array\cf2 .with(\cf3 Color\cf2 .new(0.2, 0.22, 0.25)), 20, 0.1);\
+\f0\fs24 \cf0 ~weights = [1, 1, 1, 1].mirror2;\
+~rule = \cf2 Continuous\cf0 (add: 0.98, wrap: \cf2 false\cf0 ).weights_(~weights);\
+~wrld = \cf2 XWorld\cf0 .newSetCells(40, \cf2 XSeeds\cf0 .rect(15, 15, 10, 10), \cf2 Habitat\cf0 .newMoore, ~rule);\
+\cf3 //~wrld = XWorld.newRand2DContinuous(40, Habitat.newMoore, ~rule);\cf0 \
+\cf3 //~wrld.cells.do(\{|row, i| row.do(\{|cell, j| cell.value = 1.0.rand\}) \});\cf0 \
+\cf2 PenDisplay\cf0 (~wrld, ~rule, \cf2 Array\cf0 .with(\cf2 Color\cf0 .new(0.2, 0.22, 0.25)), 15, 0.1);\
 \
-\cf3 XSeeds\cf2 .randRectCont(0, 0, 40, 40)\
+\cf2 XSeeds\cf0 .randRectCont(0, 0, 40, 40)\
 \
 ~rule.add_(0.01)\
 ~rule.weights_(~weights)\
-\cf3 Routine\cf2 (\{\
-	\cf3 var\cf2  step;\
+\cf2 Routine\cf0 (\{\
+	\cf2 var\cf0  step;\
 	step = 0.1 / 500;\
 	500.do(\{\
 		~rule.add_(~rule.add - step);\
@@ -23,7 +23,19 @@
 	\})\
 \}).play\
 \
+(\
+~weights = [1, 1, 1, 1].mirror2;\
+~rule = \cf2 Continuous2\cf0 (wrap: \cf2 true\cf0 ).weights_(~weights);\
+~wrld = \cf2 XWorld\cf0 .newSetCells(40, \cf2 XSeeds\cf0 .rect(15, 15, 10, 10), \cf2 Habitat\cf0 .newMoore, ~rule);\
+\cf3 //~wrld = XWorld.newRand2DContinuous(40, Habitat.newMoore, ~rule);\cf0 \
+~wrld.world.do(\{\cf2 |row, i|\cf0  row.do(\{\cf2 |cell, j|\cf0  cell.value = rrand(0.3, 0.4) \}) \});\
+\cf2 XSeeds\cf0 .rect(15, 15, 10, 10).do(\{\cf2 |seed|\cf0  ~wrld.world[seed[0]][seed[1]].value = 0.9 \});\
+\cf2 PenDisplay\cf0 (~wrld, ~rule, \cf2 Array\cf0 .with(\cf2 Color\cf0 .new(0.2, 0.22, 0.25)), 15, 0.1);\
+)\
 \
-~fx = \cf3 FxLive\cf2 ().gui\
 \
-SOMTrain}
+~wrld.world.do(\{\cf2 |row, i|\cf0 \
+	row.do(\{\cf2 |cell, j|\cf0  \
+		[cell.value, cell.state].postln\
+	\})\
+\})}

@@ -1,3 +1,6 @@
+ffffffffffffffffffffffffffffffff 7368194b1d530ddde774623b21ffcbca ffffffffffffffffffffffffffffffff 45684 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/FxOSC.o
+ffffffffffffffffffffffffffffffff a98f0f74073b2544ebbfa64eee815f77 ffffffffffffffffffffffffffffffff 102 /Users/alo/Development/Fx3D/Visual/build/Debug/fx.app
+ffffffffffffffffffffffffffffffff f554e6116abf49eb6b9777bbc486fcc8 ffffffffffffffffffffffffffffffff 157316 /Users/alo/Development/Fx3D/Visual/build/Debug/fx.app/Contents/MacOS/fx
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 18800 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/Patch.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 3728 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/timetag.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 37076 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/server.o
@@ -12,14 +15,11 @@ ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffff
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 15608 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/Seeds.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 16104 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/Habitat.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 24524 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/FxWorld.o
-ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 52072 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/FxView.o
+000000004b56c8b5000000000000adb9 f26782e5aee91c98de29a37de18ca3c9 ffffffffffffffffffffffffffffffff 52072 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/FxView.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 4940 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/fxutil.o
-ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 54036 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/FxOSC.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 75744 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/FxDraw.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 17588 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/Cell.o
-ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 22728 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/main.o
-2828d78cb3365a85dab3e1726a8dfc67 a98f0f74073b2544ebbfa64eee815f77 ffffffffffffffffffffffffffffffff 102 /Users/alo/Development/Fx3D/Visual/build/Debug/fx.app
-74ee87a5cf15eda3911426a6fc7161ec f554e6116abf49eb6b9777bbc486fcc8 ffffffffffffffffffffffffffffffff 161392 /Users/alo/Development/Fx3D/Visual/build/Debug/fx.app/Contents/MacOS/fx
+000000000a05a425000000000003efd3 4e6234c93343780ed4c0b64fdf57d664 ffffffffffffffffffffffffffffffff 22760 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Debug/f(x).build/Objects-normal/i386/main.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 45419 /Users/alo/Development/Fx3D/Visual/build/Debug/fx.app/Contents/Resources/fxv2.icns
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 56660 /Users/alo/Development/Fx3D/Visual/build/Debug/fx.app/Contents/Resources/fx.icns
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 202 /Users/alo/Development/Fx3D/Visual/build/Debug/fx.app/Contents/Resources/English.lproj/InfoPlist.strings
