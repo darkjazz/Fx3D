@@ -1,0 +1,336 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;\red191\green0\blue0;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 //alo allik. f(x).\cf0 \
+(\
+~loadAts = \cf3 false\cf0 ;\
+~localDecoder = \cf3 true\cf0 ;\
+~stereoOutput = \cf3 true\cf0 ;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf4 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf0 .loadPath;\
+)\
+\
+(\
+~serv = \cf3 Server\cf0 .internal;\
+\cf3 Server\cf0 .default = ~serv;\
+\
+~defs = [	\
+	\cf3 SynthDef\cf0 (\cf5 \\kck\cf0 , \{\cf3 |ou, ef, fr, at, dr, cr, az, ea, on, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 Env\cf0 .perc(at, 1.0 - at, 1, cr);\
+		sig = \cf3 BLowPass\cf0 .ar(\
+			\cf3 Mix\cf0 (\
+				\cf3 SinOsc\cf0 .ar(\
+					\cf3 Array\cf0 .series(5, fr, 10) * \cf3 LFNoise0\cf0 .ar(1000.0).range(35/36, 36/35), \
+					0.5pi \
+				)\
+			),\
+			300.0,\
+			1.0\
+		) * \cf3 EnvGen\cf0 .kr(env, timeScale: dr, levelScale: am, doneAction: 2) * on;\
+		\cf3 Out\cf0 .ar(ef, sig * ea);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr)\
+	\}),\
+	\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\snr\cf0 , \{\cf3 |ou, fr, at, dr, cr, dc, dl, wt, az, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr, nr;\
+		nr = 5;\
+		env = \cf3 Env\cf0 .perc(at, 1.0 - at, 1, cr);\
+		sig = \cf3 Dust\cf0 .ar(fr, dc * 0.5) + \cf3 BPF\cf0 .ar(\cf3 WhiteNoise\cf0 .ar, \cf3 Line\cf0 .kr(fr*1.5, fr*0.667, dr), 0.5) \
+			* \cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr * am)\
+	\}),\
+		\
+	\cf3 SynthDef\cf0 (\cf5 \\hh\cf0 , \{\cf3 |ou, dr, fr, az, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(0.05, 0.95, 1, -16), timeScale: dr, doneAction: 2);\
+		sig = \cf3 RHPF\cf0 .ar(\cf3 PinkNoise\cf0 .ar, fr, 0.3) * env;\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);	\
+		\cf3 Out\cf0 .ar(ou, bfr * am);\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\bss\cf0 , \{\cf3 |ou, fr, dr, az, am|\cf0 \
+		\cf3 var\cf0  env, sig, bfr;\
+		env = \cf3 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.01, 0.8, 0.19], \cf5 \\sine\cf0 );\
+		sig = \cf3 SinOsc\cf0 .ar(fr * \cf3 LFNoise2\cf0 .ar(\cf3 SinOsc\cf0 .ar(1, 0, 500, 10000)).range(15/16, 16/15), \
+			\cf3 SinOsc\cf0 .kr(2.25, 0, pi, pi), 10).distort\
+			* \cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		sig = \cf3 Reverb\cf0 .ar(sig * 0.1, 3) + sig;\
+		sig = \cf3 Compander\cf0 .ar(sig, sig, 0.2, 1.0, 0.01);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr * am)\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\clck\cf0 , \{\cf3 |ou, ef, am, az, dr, bt, ea|\cf0 \
+		\cf3 var\cf0  sig, bfr;\
+		sig = \cf3 BPF\cf0 .ar(\
+			\cf3 VarSaw\cf0 .ar(15000, 0.0, 0.1, \cf3 Decay\cf0 .ar(\cf3 Impulse\cf0 .ar(bt), 0.001)),\
+			15000,\
+			0.9,\
+			25 * \cf3 LFNoise1\cf0 .ar(8).range(0, 1)\
+		).fold(-1, 1);\
+		sig = sig * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 ([0, 1, 1, 0], [0, 1, 0]), timeScale: dr, doneAction: 2);\
+		\cf3 Out\cf0 .ar(ef, sig * ea);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr * am)\
+	\}),\
+			\
+	\cf3 SynthDef\cf0 (\cf5 \\nzsnr\cf0 , \{\cf3 |ou, am, az, fr, dr|\cf0 \
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(0.05, 0.95, 1, -16), timeScale: dr, doneAction: 2);\
+		sig = \cf3 Dust\cf0 .ar(fr) * \cf3 SinOsc\cf0 .ar(fr) * env;\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr * am);\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\pnk\cf0 , \{\cf3 |ou, az, dr, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(0.05, 0.95, 1, -16), timeScale: dr, doneAction: 2);\
+		sig = \cf3 PinkNoise\cf0 .ar * env;\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr * am)\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\fmsnth\cf0 , \{\cf3 |ou, ef, dr, gd, cf, mf, in, az, on, am|\cf0 \
+		\
+		\cf3 var\cf0  sig, env, bfr, trg, dev, amps, n = 7;\
+		trg = \cf3 Impulse\cf0 .kr(gd.reciprocal);\
+		env = \cf3 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.1, 0.5, 0.4], [0, 0, 3]);\
+		dev = \cf3 Array\cf0 .rand(n, 0.5, 2.0).round(1 - (2**(1/24)));\
+		amps = \cf3 Array\cf0 .geom(n, 1.0, 13 / 21);\
+		sig = \cf3 Mix\cf0 .fill(n, \{\cf3 |i|\cf0 \
+			\cf3 var\cf0  frq = cf * dev[i];\
+			\cf3 DelayC\cf0 .ar(\cf3 FMGrain\cf0 .ar(trg, gd, frq, frq * mf, in, amps[i]), 0.1, \cf3 Rand\cf0 (0, 0.1))\
+		\}) * \cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig * am, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr)	\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\hgls\cf0 , \{\cf3 |ou, dr, fr, wd, ws, wr, gr, az, on, am|\cf0 \
+		\
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.2, 0.5, 0.3], \cf5 \\sine\cf0 );\
+		sig = \cf3 VarSaw\cf0 .ar(\cf3 XLine\cf0 .kr(fr, fr * 0.5, dr), 0, wd);\
+		sig = \cf3 GrainIn\cf0 .ar(1, \cf3 Impulse\cf0 .kr(gr * \cf3 TRand\cf0 .kr(1-wr, 1+wr, \cf3 Impulse\cf0 .kr(gr))), ws, sig) * \
+			\cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig * am, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr)\
+		\
+	\}),\
+\
+	\cf3 SynthDef\cf0 (\cf5 \\dbkck\cf0 , \{\cf3 |ou, ef, dr, gd, az, ea, on, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr, fr;\
+		fr = \cf3 Array\cf0 .geom(24, 14.midicps, 2**(1/24)) * (1..4).stutter(6).reverse;\
+		env = \cf3 Env\cf0 ([0.001, 8.0, 1.0, 0.001], [0.01, 0.1, 0.89], [0, 0, -16]);\
+		sig = \cf3 Mix\cf0 (\cf3 SinGrain\cf0 .ar(\cf3 Impulse\cf0 .kr(gd.reciprocal * 4), gd, fr, 0.4)); \
+		sig = sig * \cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		sig = sig.clip(-0.9, 0.9);\
+		\cf3 Out\cf0 .ar(ef, sig * ea);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig * am, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr)\
+	\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\dbclp\cf0 , \{\cf3 |ou, ef, at, dc, cr, dr, co, ds, az, ea, on, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 Env\cf0 .perc(at, dc, 1, cr);\
+		sig = \cf3 Crackle\cf0 .ar(co, ds).clip(-0.9, 0.9) * \
+			\cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		\cf3 Out\cf0 .ar(ef, sig * ea);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig * am, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr)\
+	\})\
+	\
+];\
+\
+\pard\pardeftab720\ql\qnatural
+\cf3 SynthDef\cf0 (\cf5 \\rwarpfldatk\cf0 , \{\cf3 |out, efx, gate, aamp, eamp, maxdel, dur, buf, str, end, wrp, frq, wsz, \
+		dns, rnd, xang, yang, zang, doneAction = 2|\cf0 \
+	\cf3 var\cf0  ptr, sig, bf, delays, shifts, wins, amps, a, b, c, d, w, x, y, z;\
+	delays = \cf3 ArrayControl\cf0 .kr(\cf5 \\delays\cf0 , 4, 0);\
+	shifts = \cf3 ArrayControl\cf0 .kr(\cf5 \\shifts\cf0 , 4, 1);\
+	wins = \cf3 ArrayControl\cf0 .kr(\cf5 \\wins\cf0 , 4, 0.1);\
+	amps = \cf3 ArrayControl\cf0 .kr(\cf5 \\amps\cf0 , 4, 1);\
+	ptr = \cf3 LFSaw\cf0 .kr(wrp).range(str, end);\
+	sig = \cf3 LeakDC\cf0 .ar(\cf3 Warp1\cf0 .ar(1, buf, ptr, frq, wsz, -1, dns, rnd)) * \
+		\cf3 EnvGen\cf0 .kr(\cf3 EnvControl\cf0 .kr, gate, timeScale: dur, doneAction: doneAction);\
+	sig = \cf3 LeakDC\cf0 .ar(sig ** 0.5 ** 1.5);\
+	\cf3 Out\cf0 .ar(efx, sig * eamp);\
+	#a, b, c, d = \cf3 Array\cf0 .fill(4, \{\cf3 |i|\cf0   \
+		\cf3 DelayC\cf0 .ar(\cf3 PitchShift\cf0 .ar(sig, wins@i, shifts@i), maxdel, delays@i, amps@i);\
+	\});\
+	#w, x, y, z = \cf3 A2B\cf0 .ar(a, b, c, d) * aamp;\
+	\cf3 Out\cf0 .ar(out, \cf3 AtkRotateXYZ\cf0 .ar(w, x, y, z, xang, yang, zang))\
+\}).memStore;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+~defs.do(\cf3 _\cf0 .memStore);\
+\
+)\
+\
+(\
+	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //	~loopind = [201, 174, 182, 189, 225, 230, 232, 237];\cf0 \
+\
+\cf2 // 	~loopind = [85, 87, 98, 101, 103, 113, 115, 120];\cf0 \
+	\
+\cf2 //	~loopind = [225, 230, 232, 237] ++ (0..3)\cf0 \
+\
+	~loopind = (0..7);\
+\
+\cf2 //	~loopind = (33..40)\cf0 \
+		\
+	~indices = (0..63).clump(2).clump(2).flop.flatten(2).clump(4).perfectShuffle\
+			.clump(4).flop.flatten(2).clump(8).sort(\{\cf3 |a, b|\cf0  a[0] < b[0] \});\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf6 //	~trigmap = [\cf7 \
+\cf6 //		(\\on: 0.1, \\off: 0.3, \\last: 0, \\active: false ),\cf7 \
+\cf6 //		(\\on: 0.2, \\off: 0.4, \\last: 0, \\active: false ),\cf7 \
+\cf6 //		(\\on: 0.3, \\off: 0.5, \\last: 0, \\active: false ),\cf7 \
+\cf6 //		(\\on: 0.4, \\off: 0.6, \\last: 0, \\active: false ),\cf7 \
+\cf6 //		(\\on: 0.9, \\off: 0.7, \\last: 0, \\active: false ),\cf7 \
+\cf6 //		(\\on: 0.8, \\off: 0.6, \\last: 0, \\active: false ),\cf7 \
+\cf6 //		(\\on: 0.7, \\off: 0.5, \\last: 0, \\active: false ),\cf7 \
+\cf6 //		(\\on: 0.6, \\off: 0.4, \\last: 0, \\active: false )\cf7 \
+\cf6 //	];\cf7 \
+\cf0 \
+	~trigmap = [\
+		(\cf5 \\on\cf0 : 0.2, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.4, \cf5 \\off\cf0 : 0.6, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.6, \cf5 \\off\cf0 : 0.8, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.1, \cf5 \\off\cf0 : 0.9, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.9, \cf5 \\off\cf0 : 0.1, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.8, \cf5 \\off\cf0 : 0.6, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.6, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.4, \cf5 \\off\cf0 : 0.2, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  )\
+	];	\
+	\
+	~trigmap = [\
+		(\cf5 \\on\cf0 : 0.3, \cf5 \\off\cf0 : 0.1, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.4, \cf5 \\off\cf0 : 0.2, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.5, \cf5 \\off\cf0 : 0.3, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.6, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.9, \cf5 \\off\cf0 : 0.7, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.8, \cf5 \\off\cf0 : 0.6, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.7, \cf5 \\off\cf0 : 0.5, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.6, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  )\
+	];	\
+		\
+	~synths = \cf3 Array\cf0 .newClear(8);\
+	\
+	~z3map = (\
+		\cf5 \\aamp\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (1.0, 0.1)),\
+		\cf5 \\str\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (0, 0.5)),\
+		\cf5 \\end\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (0.5, 1.0)),\
+		\cf5 \\wrp\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (0.125/4 , 1.0/4, step: 2**(1/5) )),\
+		\cf5 \\frq\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (1.0, 1.0 )),\
+		\cf5 \\wsz\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (0.0625, 0.5, step: 2**(1/5) )),\
+		\cf5 \\dns\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (4, 32, step: 2**(1/5) )),\
+		\cf5 \\rnd\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (0.1, 0.2)),\
+		\cf5 \\xang\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) )),\
+		\cf5 \\yang\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) )),\
+		\cf5 \\zang\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) ))\
+	);\
+\
+	~z3pmaps = (\
+		\cf5 \\kck\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\ef\cf0 , ~rbus, \cf5 \\fr\cf0 , 50.0, \cf5 \\at\cf0 , 0.1, \cf5 \\dr\cf0 , 0.05, \cf5 \\cr\cf0 , -4, \cf5 \\ea\cf0 , 1, \
+			\cf5 \\on\cf0 , 1, \cf5 \\am\cf0 , 1.0],\
+		\cf5 \\snr\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\fr\cf0 , 400, \cf5 \\at\cf0 , 0.008, \cf5 \\dr\cf0 , 0.05, \cf5 \\cr\cf0 , -6, \cf5 \\dc\cf0 , 2, \cf5 \\dl\cf0 , 0.125, \cf5 \\wt\cf0 , 3,\
+			\cf5 \\am\cf0 , 12],\
+		\cf5 \\hh\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\dr\cf0 , 0.04, \cf5 \\fr\cf0 , 2500, \cf5 \\am\cf0 , 25.0],\
+		\cf5 \\bss\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\fr\cf0 , 60.0, \cf5 \\dr\cf0 , 0.05, \cf5 \\am\cf0 , 4.0],\
+		\cf5 \\clck\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\ef\cf0 , ~rbus, \cf5 \\am\cf0 , 8.0, \cf5 \\dr\cf0 , 0.2, \cf5 \\bt\cf0 , 1, \cf5 \\ea\cf0 , 1],\
+		\cf5 \\nzsnr\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\am\cf0 , 4, \cf5 \\fr\cf0 , 700, \cf5 \\dr\cf0 , 0.2],\
+		\cf5 \\pnk\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\dr\cf0 , 0.05, \cf5 \\am\cf0 , 4.0],\
+		\cf5 \\fmsnth\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\ef\cf0 , ~rbus, \cf5 \\dr\cf0 , 0.05, \cf5 \\gd\cf0 , 0.015, \cf5 \\cf\cf0 , 500, \cf5 \\mf\cf0 , 0.5, \cf5 \\in\cf0 , 12, \
+			\cf5 \\on\cf0 , 1, \cf5 \\am\cf0 , 2]\
+	);	\
+\
+	~addSynth = \{\cf3 |index|\cf0 \
+		\cf3 var\cf0  states = \cf3 Pseq\cf0 (~invalues.states[~indices[index]], 2).asStream;\
+		\cf3 Synth\cf0 .head(~agrp, ~defs[index].name, ~z3pmaps[~defs[index].name.asSymbol] \
+			++ [\cf5 \\az\cf0 , [-pi, pi].asSpec.map(states.next)]);\
+		~synths[index] = \cf3 Synth\cf0 .head(~agrp, \cf5 \\rwarpfldatk\cf0 , \
+			[\cf5 \\out\cf0 , ~abus, \cf5 \\efx\cf0 , ~rbus, \cf5 \\gate\cf0 , 1.0, \cf5 \\aamp\cf0 , 1.0, \
+			\cf5 \\eamp\cf0 , 2.0, \cf5 \\maxdel\cf0 , 0.1, \cf5 \\dur\cf0 , 1, \cf5 \\buf\cf0 , ~loopind[index]\
+			] ++ ~z3map.collect(\{\cf3 |spec|\cf0  spec.map(states.next) \}).asKeyValuePairs )\
+				.setn(\cf5 \\env\cf0 , \cf3 Env\cf0 ([1, 1, 0], [0.8, 0.2], \cf5 \\lin\cf0 , 2, 1).asArray)\
+				.setn(\cf5 \\delays\cf0 , \cf3 Array\cf0 .geom(4, [0.005, 0.01].asSpec.map(states.next), 1.618 ))\
+				.setn(\cf5 \\shifts\cf0 , [1, 0.5, 0.25, 1])\
+				.setn(\cf5 \\wins\cf0 , \cf3 Array\cf0 .geom(4, [0.01, 0.05].asSpec.map(states.next), 1.618 ))\
+				.setn(\cf5 \\amps\cf0 , \cf3 Array\cf0 .geom(4, 1.0, 8/13));\
+	\};\
+\
+	~removeSynth = \{\cf3 |index|\cf0 \
+		~synths[index].set(\cf5 \\gate\cf0 , -1.0);\
+		~synths[index] = \cf3 nil\cf0 ;	\
+	\};\
+\
+	~mapParams = \{\
+					\
+		~indices.do(\{ \cf3 |index, i|\cf0 \
+			\cf3 var\cf0  map, states, params = ~invalues.states[index];\
+			map = ~trigmap[i];\
+			\
+			if (~synths[i].notNil)\
+			\{\
+				states = \cf3 Pseq\cf0 (~invalues.states[~indices[i]], 2).asStream;\
+				~synths[i].set(~z3map.collect(\{\cf3 |spec|\cf0  spec.map(states.next) \}).asKeyValuePairs)\
+			\};\
+			\
+			if (map.on > map.off) \{\
+				if ((map.active.not).and(params[0] > map.off).and(params[0] < map.on))\
+				\{\
+					~addSynth.value(i);\
+					map.active = \cf3 true\cf0 ;\
+				\};\
+				if ((map.active).and((params[0] < map.off).or(params[0] > map.on) ))\
+				\{\
+					~removeSynth.value(i);\
+					map.active = \cf3 false\cf0 ;\
+				\}\
+			\}\
+			\{\
+				if ((map.active.not).and(params[0] < map.off).and(params[0] > map.on))\
+				\{\
+					~addSynth.value(i);\
+					map.active = \cf3 true\cf0 ;\
+				\};\
+				if ((map.active).and((params[0] > map.off).or(params[0] < map.on) ))\
+				\{\
+					~removeSynth.value(i);\
+					map.active = \cf3 false\cf0 ;\
+				\}\
+			\
+			\};\
+\
+			\
+		\})\
+			\
+	\}\
+)\
+\
+~fx.startFx\
+\
+~loops.do(\cf3 _\cf0 .postln)\
+\
+(\
+	~invalues = ();\
+\
+	~stateresp = \cf3 OSCresponderNode\cf0 (\cf3 nil\cf0 , \cf5 '/fx/states'\cf0 , \{\cf3 |ti, re, ms|\cf0 \
+		~invalues.states = ms[1].asFloatArray;\
+		~mapParams.value;\
+	\}).add;\
+\
+)\
+\
+~serv.queryAllNodes\
+}
