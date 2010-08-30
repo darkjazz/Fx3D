@@ -1,25 +1,25 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
 {\fonttbl\f0\fnil\fcharset238 Inconsolata;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red96\green96\blue96;\red0\green115\blue0;
-\red191\green0\blue0;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;\red191\green0\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs24 \cf0 (\
-~loadAts = \cf2 false\cf0 ;\
-~localDecoder = \cf2 true\cf0 ;\
-~stereoOutput = \cf2 true\cf0 ;\
-~livepath = \cf3 "/Users/alo/Development/Fx3D/Audio/Live/"\cf0 ;\
-(~livepath ++ \cf3 "initiate_live.rtf"\cf0 ).load;\
+\f0\fs24 \cf2 (\
+~loadAts = \cf3 true\cf2 ;\
+~localDecoder = \cf3 true\cf2 ;\
+~stereoOutput = \cf3 true\cf2 ;\
+~livepath = \cf4 "/Users/alo/Development/Fx3D/Audio/Live/"\cf2 ;\
+(~livepath ++ \cf4 "initiate_live.rtf"\cf2 ).load;\
 )\
 \
-~loops.do(\cf2 _\cf0 .postln)\
+~loops.do(\cf3 _\cf2 .postln)\
 \
 	~fx.startFx\
 \
-	(~livepath ++ \cf3 "start_live_synths.rtf"\cf0 ).load;\
+	(~livepath ++ \cf4 "start_live_synths.rtf"\cf2 ).load;\
 \
 (\
-(~livepath ++ \cf3 "synthdefs.rtf"\cf0 ).load;\
+(~livepath ++ \cf4 "synthdefs.rtf"\cf2 ).load;\
 \
 ~fx.initLive;\
 \
@@ -27,117 +27,117 @@
 ~fx.addStatesResponder;\
 ~fx.addTriggerResponder;\
 \
-~fx.perfGui.assignPanel(0, \{\cf2 |panel|\cf0 \
-	\cf2 var\cf0  colors, fonts;\
+~fx.perfGui.assignPanel(0, \{\cf3 |panel|\cf2 \
+	\cf3 var\cf2  colors, fonts;\
 	colors = (\
-		\cf4 \\blue\cf0 : \cf2 Color\cf0 .new255(28, 134, 238),\
-		\cf4 \\orange\cf0 : \cf2 Color\cf0 .new255(184, 134, 11),\
-		\cf4 \\steel\cf0 : \cf2 Color\cf0 .new255(4, 50, 89)\
+		\cf5 \\blue\cf2 : \cf3 Color\cf2 .new255(28, 134, 238),\
+		\cf5 \\orange\cf2 : \cf3 Color\cf2 .new255(184, 134, 11),\
+		\cf5 \\steel\cf2 : \cf3 Color\cf2 .new255(4, 50, 89)\
 	);\
 	fonts = (\
-		\cf4 \\lucida9\cf0 : \cf2 Font\cf0 (\cf3 "Lucida Grande"\cf0 , 9),\
-		\cf4 \\lucida11\cf0 : \cf2 Font\cf0 (\cf3 "Lucida Grande"\cf0 , 11),\
-		\cf4 \\skia\cf0 : \cf2 Font\cf0 (\cf3 "Skia"\cf0 , 9) \
+		\cf5 \\lucida9\cf2 : \cf3 Font\cf2 (\cf4 "Lucida Grande"\cf2 , 9),\
+		\cf5 \\lucida11\cf2 : \cf3 Font\cf2 (\cf4 "Lucida Grande"\cf2 , 11),\
+		\cf5 \\skia\cf2 : \cf3 Font\cf2 (\cf4 "Skia"\cf2 , 9) \
 	);\
-	\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (5, 5, panel.bounds.width - 10, 25))\
-		.states_([[\cf3 "initialize"\cf0 , colors.orange, colors.steel ]])\
+	\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (5, 5, panel.bounds.width - 10, 25))\
+		.states_([[\cf4 "initialize"\cf2 , colors.orange, colors.steel ]])\
 		.font_(fonts.lucida11)\
 		.action_(\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 		~z0mapping = (\
+\cf2 		~z0mapping = (\
 		\
-			\cf4 \\freeze\cf0  : (\
-				\cf4 \\xang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi, step: pi/8)),\
-				\cf4 \\yang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi, step: pi/8)),\
-				\cf4 \\zang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi, step: pi/8)),\
-				\cf4 \\aa\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 1.0, step: 0.1)),\
-				\cf4 \\ab\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 1.0, step: 0.1)),\
-				\cf4 \\ac\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 1.0, step: 0.1)),\
-				\cf4 \\ad\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 1.0, step: 0.1))\
+			\cf5 \\freeze\cf2  : (\
+				\cf5 \\xang\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (-pi, pi, step: pi/8)),\
+				\cf5 \\yang\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (-pi, pi, step: pi/8)),\
+				\cf5 \\zang\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (-pi, pi, step: pi/8)),\
+				\cf5 \\aa\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.5, 1.0, step: 0.1)),\
+				\cf5 \\ab\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.5, 1.0, step: 0.1)),\
+				\cf5 \\ac\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.5, 1.0, step: 0.1)),\
+				\cf5 \\ad\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.5, 1.0, step: 0.1))\
 			),\
 			\
-			\cf4 \\zone0_grain\cf0 : (\
-				\cf4 \\tdev\cf0 : \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 0.01, step: 0.001)),\
-				\cf4 \\tfrq\cf0 : \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (32, 4, step: 8)),\
-				\cf4 \\gdur\cf0 : \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (0.004, 0.08, step:0.004)),\
-				\cf4 \\pos\cf0 : \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 1.0, step: 1/16)),\
-				\cf4 \\envf\cf0 : \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 1.0, step: 1/8)),\
-				\cf4 \\aamp\cf0 : \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (2.0, 0.6))\
+			\cf5 \\zone0_grain\cf2 : (\
+				\cf5 \\tdev\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (0.0, 0.01, step: 0.001)),\
+				\cf5 \\tfrq\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (32, 4, step: 8)),\
+				\cf5 \\gdur\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (0.004, 0.08, step:0.004)),\
+				\cf5 \\pos\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (0.0, 1.0, step: 1/16)),\
+				\cf5 \\envf\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (0.0, 1.0, step: 1/8)),\
+				\cf5 \\aamp\cf2 : \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (2.0, 0.6))\
 			)\
 		);\
 		~z0atkspecarrays = (\
-			\cf4 \\regionshalf\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  [i*(0.2pi/8)-0.1pi, i*(0.2pi/8)+(0.2pi/8)-0.1pi].asSpec \}),\
-			\cf4 \\regionsfull\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  [i*(pi/4)-pi, i*(pi/4)+(pi/4)-pi].asSpec \}),\
-			\cf4 \\rangehalf\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  [-0.1pi, 0.1pi].asSpec \}),\
-			\cf4 \\rangefull\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  [-pi, pi].asSpec \}),\
-			\cf4 \\randregionshalf\cf0 : \cf2 Array\cf0 .fill(8, \{ [0.1pi.rand2, 0.1pi.rand2].asSpec \}), \
-			\cf4 \\randregionsfull\cf0 : \cf2 Array\cf0 .fill(8, \{ [pi.rand2, pi.rand2].asSpec \}),\
-			\cf4 \\joinregionshalf\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  [i*(0.2pi/9)-0.1pi, i*(0.2pi/9)+(0.2pi/4.5)-0.1pi].asSpec \}),\
-			\cf4 \\joinregionsfull\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0   [i*(pi/4.5)-pi, i*(pi/4.5)+(pi/2.25)-pi].asSpec \})\
+			\cf5 \\regionshalf\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  [i*(0.2pi/8)-0.1pi, i*(0.2pi/8)+(0.2pi/8)-0.1pi].asSpec \}),\
+			\cf5 \\regionsfull\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  [i*(pi/4)-pi, i*(pi/4)+(pi/4)-pi].asSpec \}),\
+			\cf5 \\rangehalf\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  [-0.1pi, 0.1pi].asSpec \}),\
+			\cf5 \\rangefull\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  [-pi, pi].asSpec \}),\
+			\cf5 \\randregionshalf\cf2 : \cf3 Array\cf2 .fill(8, \{ [0.1pi.rand2, 0.1pi.rand2].asSpec \}), \
+			\cf5 \\randregionsfull\cf2 : \cf3 Array\cf2 .fill(8, \{ [pi.rand2, pi.rand2].asSpec \}),\
+			\cf5 \\joinregionshalf\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  [i*(0.2pi/9)-0.1pi, i*(0.2pi/9)+(0.2pi/4.5)-0.1pi].asSpec \}),\
+			\cf5 \\joinregionsfull\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2   [i*(pi/4.5)-pi, i*(pi/4.5)+(pi/2.25)-pi].asSpec \})\
 		);\
 		~z0atkparams = (\
-			\cf4 \\rX\cf0 : ~z0atkspecarrays.joinregionsfull.collect(\{\cf2 |spec|\cf0  \cf2 LinearWarp\cf0 (spec) \}),\
-			\cf4 \\rY\cf0 : ~z0atkspecarrays.regionsfull.collect(\{\cf2 |spec|\cf0  \cf2 LinearWarp\cf0 (spec) \}),\
-			\cf4 \\rZ\cf0 : ~z0atkspecarrays.rangefull.collect(\{\cf2 |spec|\cf0  \cf2 LinearWarp\cf0 (spec) \}),\
-			\cf4 \\pX\cf0 : ~z0atkspecarrays.regionshalf.collect(\{\cf2 |spec|\cf0  \cf2 LinearWarp\cf0 (spec) \}),\
-			\cf4 \\pY\cf0 : ~z0atkspecarrays.rangehalf.collect(\{\cf2 |spec|\cf0  \cf2 LinearWarp\cf0 (spec) \}),\
-			\cf4 \\pZ\cf0 : ~z0atkspecarrays.joinregionshalf.collect(\{\cf2 |spec|\cf0  \cf2 LinearWarp\cf0 (spec) \})\
+			\cf5 \\rX\cf2 : ~z0atkspecarrays.joinregionsfull.collect(\{\cf3 |spec|\cf2  \cf3 LinearWarp\cf2 (spec) \}),\
+			\cf5 \\rY\cf2 : ~z0atkspecarrays.regionsfull.collect(\{\cf3 |spec|\cf2  \cf3 LinearWarp\cf2 (spec) \}),\
+			\cf5 \\rZ\cf2 : ~z0atkspecarrays.rangefull.collect(\{\cf3 |spec|\cf2  \cf3 LinearWarp\cf2 (spec) \}),\
+			\cf5 \\pX\cf2 : ~z0atkspecarrays.regionshalf.collect(\{\cf3 |spec|\cf2  \cf3 LinearWarp\cf2 (spec) \}),\
+			\cf5 \\pY\cf2 : ~z0atkspecarrays.rangehalf.collect(\{\cf3 |spec|\cf2  \cf3 LinearWarp\cf2 (spec) \}),\
+			\cf5 \\pZ\cf2 : ~z0atkspecarrays.joinregionshalf.collect(\{\cf3 |spec|\cf2  \cf3 LinearWarp\cf2 (spec) \})\
 		);\
 		~z0envs = (\
-			\cf4 \\gauss\cf0 : \cf2 Env\cf0 .sine,\
-			\cf4 \\quasigauss\cf0 : \cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf4 \\sine\cf0 ),\
-			\cf4 \\perc\cf0 : \cf2 Env\cf0 .perc,\
-			\cf4 \\reversed\cf0 : \cf2 Env\cf0 ([0.001, 1.0, 0.001], [0.95, 0.05], \cf4 \\sine\cf0 ),\
-			\cf4 \\triangle\cf0 : \cf2 Env\cf0 .triangle,\
-			\cf4 \\linear\cf0 : \cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3]),\
-			\cf4 \\sine\cf0 : \cf2 InterplPairs\cf0 ([[0.0, 0.0], [0.2, 0.1], [0.25, -0.1], [0.5, 1.0], [0.75, -0.1], \
-				[0.8, 0.1], [1.0, 0.0]], \cf4 \\sin\cf0 ).asEnv\
-		).collect(\{\cf2 |env|\cf0  \cf2 Buffer\cf0 .sendCollection(~serv, env.discretize) \}); \
+			\cf5 \\gauss\cf2 : \cf3 Env\cf2 .sine,\
+			\cf5 \\quasigauss\cf2 : \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf5 \\sine\cf2 ),\
+			\cf5 \\perc\cf2 : \cf3 Env\cf2 .perc,\
+			\cf5 \\reversed\cf2 : \cf3 Env\cf2 ([0.001, 1.0, 0.001], [0.95, 0.05], \cf5 \\sine\cf2 ),\
+			\cf5 \\triangle\cf2 : \cf3 Env\cf2 .triangle,\
+			\cf5 \\linear\cf2 : \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3]),\
+			\cf5 \\sine\cf2 : \cf3 InterplPairs\cf2 ([[0.0, 0.0], [0.2, 0.1], [0.25, -0.1], [0.5, 1.0], [0.75, -0.1], \
+				[0.8, 0.1], [1.0, 0.0]], \cf5 \\sin\cf2 ).asEnv\
+		).collect(\{\cf3 |env|\cf2  \cf3 Buffer\cf2 .sendCollection(~serv, env.discretize) \}); \
 		\
-		~z0loops = ~loops.select(\{\cf2 |buf|\cf0  \
-			buf.path.contains(\cf3 "monooop"\cf0 )\
+		~z0loops = ~loops.select(\{\cf3 |buf|\cf2  \
+			buf.path.contains(\cf4 "monooop"\cf2 )\
 		\});\
 		\
-\cf5 //		~z0ats = ~atsdata.select(\{|data|\cf0 \
-\cf5 //			data.file.contains("monooop")\cf0 \
-\cf5 //		\});\cf0 \
+\cf6 //		~z0ats = ~atsdata.select(\{|data|\cf2 \
+\cf6 //			data.file.contains("monooop")\cf2 \
+\cf6 //		\});\cf2 \
 \
 		~z0ats = ~atsdata;\
 				\
-		~z0atsbufspec = \cf2 ControlSpec\cf0 (0, ~z0ats.size - 1, step: 1);\
+		~z0atsbufspec = \cf3 ControlSpec\cf2 (0, ~z0ats.size - 1, step: 1);\
 		\
-		~trigdefs = ~noisedefs.select(\{\cf2 |def|\cf0  def.asString.contains(\cf3 "dust"\cf0 ) \});	\
+		~trigdefs = ~noisedefs.select(\{\cf3 |def|\cf2  def.asString.contains(\cf4 "dust"\cf2 ) \});	\
 		\
 		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 			\
+\cf2 			\
 		\});\
 		\
-		\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (5, 35, panel.bounds.width / 2 - 5, 25))\
-			.states_([[\cf3 "states OFF"\cf0 , colors.orange, colors.steel ], [\cf3 "states ON"\cf0 , colors.steel, colors.orange ]])\
+		\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (5, 35, panel.bounds.width / 2 - 5, 25))\
+			.states_([[\cf4 "states OFF"\cf2 , colors.orange, colors.steel ], [\cf4 "states ON"\cf2 , colors.steel, colors.orange ]])\
 			.font_(fonts.lucida9)\
-			.action_(\{\cf2 |bt|\cf0 \
+			.action_(\{\cf3 |bt|\cf2 \
 				if (bt.value == 1)\
 				\{\
-					~fx.addStatesFunction(\cf4 \\zone0\cf0 , \{\cf2 |invalues|\cf0 \
+					~fx.addStatesFunction(\cf5 \\zone0\cf2 , \{\cf3 |invalues|\cf2 \
 \pard\pardeftab720\ql\qnatural
-\cf0 				\
-					\cf2 var\cf0  params = invalues.states.clump(8);\
-					~z0synths.do(\{\cf2 |synth, i|\cf0 \
-						\cf2 var\cf0  states, args;\
+\cf2 				\
+					\cf3 var\cf2  params = invalues.states.clump(8);\
+					~z0synths.do(\{\cf3 |synth, i|\cf2 \
+						\cf3 var\cf2  states, args;\
 						if (synth.notNil)\
 						\{\
-							states = \cf2 Pseq\cf0 (params[i], \cf2 inf\cf0 ).asStream;				\
-							args = ~z0mapping[synth.defName.asSymbol].collect(\{\cf2 |spec|\cf0  \
+							states = \cf3 Pseq\cf2 (params[i], \cf3 inf\cf2 ).asStream;				\
+							args = ~z0mapping[synth.defName.asSymbol].collect(\{\cf3 |spec|\cf2  \
 								spec.map(states.next) \
 							\});\
 							synth.set(*args.asKeyValuePairs);						\
 						\};\
 					\});\
 						\
-					~z0transforms.do(\{\cf2 |synth, i|\cf0 \
-						\cf2 var\cf0  j = 0;\
-						synth.set(*~z0atkparams.collect(\{\cf2 |specarr|\cf0  \
+					~z0transforms.do(\{\cf3 |synth, i|\cf2 \
+						\cf3 var\cf2  j = 0;\
+						synth.set(*~z0atkparams.collect(\{\cf3 |specarr|\cf2  \
 								j = j + 1;\
 								specarr[i * 2].map(params[i + 4][j]) \
 							\}).asKeyValuePairs\
@@ -147,347 +147,349 @@
 				\});				\
 				\}\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\{\
-					~fx.removeStatesFunction(\cf4 \\zone0\cf0 )	\
+\cf2 				\{\
+					~fx.removeStatesFunction(\cf5 \\zone0\cf2 )	\
 				\}\
 			\});\
 		\
-		~z0ns = [0.5, 0.2, \cf4 \\exp\cf0 ].asSpec;\
+		~z0ns = [0.5, 0.2, \cf5 \\exp\cf2 ].asSpec;\
 			\
-		\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (panel.bounds.width / 2, 35, panel.bounds.width / 2 - 5, 25))\
-			.states_([[\cf3 "trig OFF"\cf0 , colors.orange, colors.steel ], [\cf3 "trig ON"\cf0 , colors.steel, colors.orange ]])\
+		\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (panel.bounds.width / 2, 35, panel.bounds.width / 2 - 5, 25))\
+			.states_([[\cf4 "trig OFF"\cf2 , colors.orange, colors.steel ], [\cf4 "trig ON"\cf2 , colors.steel, colors.orange ]])\
 			.font_(fonts.lucida9)\
-			.action_(\{\cf2 |bt|\cf0 \
+			.action_(\{\cf3 |bt|\cf2 \
 				if (bt.value == 1)\
 				\{\
-					~fx.addTriggerFunction(\cf4 \\zone0\cf0 , \{\cf2 |invalues|\cf0 \
+					~fx.addTriggerFunction(\cf5 \\zone0\cf2 , \{\cf3 |invalues|\cf2 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
-\cf0 						\cf2 var\cf0  polar, data;\
-						polar = \cf2 ZPoint\cf0 ( invalues.coordX - 8 / 8, invalues.coordY - 8 / 8, \
+\cf2 						\cf3 var\cf2  polar, data;\
+						polar = \cf3 ZPoint\cf2 ( invalues.coordX - 8 / 8, invalues.coordY - 8 / 8, \
 							invalues.coordZ - 8 / 8 ).asZPolar;\
 						data = ~z0ats[~z0atsbufspec.map(1.0 - invalues.states[(4..7)].mean)];\
-						\cf2 Synth\cf0 .tail(~agrp, ~trigdefs.choose, \
-							[\cf4 \\out\cf0 , ~abus, \cf4 \\efx\cf0 , ~rout, \
-								\cf4 \\aamp\cf0 , ~z0ns.map( invalues.states[(0..3)].mean ), \
-								\cf4 \\eamp\cf0 , 1.0, \cf4 \\samp\cf0 , 0.1, \
-								\cf4 \\dur\cf0 , [0.1, 1.0].asSpec.map(invalues.states[(30..33)].mean),\
-								\cf4 \\rate\cf0 , 8.0 , \
-								\cf4 \\buffer\cf0 , data.buffer, \cf4 \\rq\cf0 , 0.3, \cf4 \\clip\cf0 , 0.9])\
-							.setn(\cf4 \\env\cf0 , \cf2 Env\cf0 ([0, 1, 0.5, 0.5, 0], [0.05, 0.05, 0.8, 0.1]).asArray)\
-							.setn(\cf4 \\azm\cf0 , \cf2 Env\cf0 ([polar.theta - 0.1pi, polar.theta + 0.1pi], [1]).asArray )\
-							.setn(\cf4 \\elv\cf0 , \cf2 Env\cf0 ([polar.phi + 0.1pi, polar.phi - 0.1pi], [1]).asArray )\
-							.setn(\cf4 \\rho\cf0 , \cf2 Env\cf0 ([polar.rho + 0.2, polar.rho - 0.2], [1]).asArray)\
+						\cf3 Synth\cf2 .tail(~agrp, ~trigdefs.choose, \
+							[\cf5 \\out\cf2 , ~abus, \cf5 \\efx\cf2 , ~rout, \
+								\cf5 \\aamp\cf2 , ~z0ns.map( invalues.states[(0..3)].mean ), \
+								\cf5 \\eamp\cf2 , 1.0, \cf5 \\samp\cf2 , 0.1, \
+								\cf5 \\dur\cf2 , [0.1, 1.0].asSpec.map(invalues.states[(30..33)].mean),\
+								\cf5 \\rate\cf2 , 8.0 , \
+								\cf5 \\buffer\cf2 , data.buffer, \cf5 \\rq\cf2 , 0.3, \cf5 \\clip\cf2 , 0.9])\
+							.setn(\cf5 \\env\cf2 , \cf3 Env\cf2 ([0, 1, 0.5, 0.5, 0], [0.05, 0.05, 0.8, 0.1]).asArray)\
+							.setn(\cf5 \\azm\cf2 , \cf3 Env\cf2 ([polar.theta - 0.1pi, polar.theta + 0.1pi], [1]).asArray )\
+							.setn(\cf5 \\elv\cf2 , \cf3 Env\cf2 ([polar.phi + 0.1pi, polar.phi - 0.1pi], [1]).asArray )\
+							.setn(\cf5 \\rho\cf2 , \cf3 Env\cf2 ([polar.rho + 0.2, polar.rho - 0.2], [1]).asArray)\
 					 \});				\
 \pard\pardeftab720\ql\qnatural
-\cf0 			\}\
+\cf2 			\}\
 			\{\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 					~fx.removeTriggerFunction(\cf4 \\zone0\cf0 )\
+\cf2 					~fx.removeTriggerFunction(\cf5 \\zone0\cf2 )\
 \pard\pardeftab720\ql\qnatural
-\cf0 			\}\
+\cf2 			\}\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 			\});\
+\cf2 			\});\
 		\
-		\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (5, 65, panel.bounds.width / 2 - 5, 25))\
-			.states_([[\cf3 "atk OFF"\cf0 , colors.orange, colors.steel ], [\cf3 "atk ON"\cf0 , colors.steel, colors.orange ]])\
+		\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (5, 65, panel.bounds.width / 2 - 5, 25))\
+			.states_([[\cf4 "atk OFF"\cf2 , colors.orange, colors.steel ], [\cf4 "atk ON"\cf2 , colors.steel, colors.orange ]])\
 			.font_(fonts.lucida9)\
-			.action_(\{\cf2 |bt|\cf0 \
+			.action_(\{\cf3 |bt|\cf2 \
 				if (bt.value == 1)\
 				\{\
-					~z0trgroup = \cf2 Group\cf0 .head(~agrp);\
+					~z0trgroup = \cf3 Group\cf2 .head(~agrp);\
 					\
-					~z0trbus = \cf2 Array\cf0 .fill(4, \{\cf2 |i|\cf0  \cf2 Bus\cf0 .audio(~serv, 4) \});\
+					~z0trbus = \cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2  \cf3 Bus\cf2 .audio(~serv, 4) \});\
 					\
-					~z0transforms = \cf2 Array\cf0 .fill(4, \{\cf2 |i|\cf0 \
-						\cf2 Synth\cf0 .tail(~z0trgroup, \cf4 \\atk_zone0\cf0 , [\cf4 \\out\cf0 , ~abus, \cf4 \\in\cf0 , ~z0trbus@i])\
+					~z0transforms = \cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2 \
+						\cf3 Synth\cf2 .tail(~z0trgroup, \cf5 \\atk_zone0\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\in\cf2 , ~z0trbus@i])\
 					\});\
 					\
-					~z0synths = \cf2 Array\cf0 .newClear(5);\
+					~z0synths = \cf3 Array\cf2 .newClear(5);\
 \pard\pardeftab720\ql\qnatural
-\cf0 			\}\
+\cf2 			\}\
 			\{\
-				~z0transforms.do(\cf2 _\cf0 .free);\
-				~z0transforms = \cf2 nil\cf0 ;\
-				~z0trbus.do(\cf2 _\cf0 .free);\
-				~z0trbus = \cf2 nil\cf0 ;\
+				~z0transforms.do(\cf3 _\cf2 .free);\
+				~z0transforms = \cf3 nil\cf2 ;\
+				~z0trbus.do(\cf3 _\cf2 .free);\
+				~z0trbus = \cf3 nil\cf2 ;\
 				~z0trgroup.free;\
-				~z0trgroup = \cf2 nil\cf0 ;\
+				~z0trgroup = \cf3 nil\cf2 ;\
 			\}\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 			\});\
+\cf2 			\});\
 \
-		\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (panel.bounds.width / 2, 65, panel.bounds.width / 2 - 5, 25))\
-			.states_([[\cf3 "frz OFF"\cf0 , colors.orange, colors.steel ], [\cf3 "frz ON"\cf0 , colors.steel, colors.orange ]])\
+		\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (panel.bounds.width / 2, 65, panel.bounds.width / 2 - 5, 25))\
+			.states_([[\cf4 "frz OFF"\cf2 , colors.orange, colors.steel ], [\cf4 "frz ON"\cf2 , colors.steel, colors.orange ]])\
 			.font_(fonts.lucida9)\
-			.action_(\{\cf2 |bt|\cf0 \
+			.action_(\{\cf3 |bt|\cf2 \
 				if (bt.value == 1)\
 				\{\
 					~z0synths.put(0,\
-						\cf2 Synth\cf0 .before(~z0trgroup, \cf4 \\freeze\cf0 , [\cf4 \\out\cf0 , ~z0trbus[0], \cf4 \\gate\cf0 , 1.0, \cf4 \\tgate\cf0 , 1/30, \cf4 \\dur\cf0 , 30, \
-							\cf4 \\maxdel\cf0 , 0.1, \cf4 \\room\cf0 , 1500, \cf4 \\damp\cf0 , 0.5, \cf4 \\inbw\cf0 , 0.5, \cf4 \\spr\cf0 , 20, \cf4 \\early\cf0 , 0.2, \cf4 \\tail\cf0 , 1.0, \
-							\cf4 \\doneAction\cf0 , 2])\
-							 	.setn(\cf4 \\bw\cf0 , \cf2 Env\cf0 ([100.0, 1000.0, 100.0], [20, 0.0], [6, -4]).asArray)\
-							 	.setn(\cf4 \\fq\cf0 , \cf2 Env\cf0 ([15000.0, 6000.0, 15000.0], [20, 0.0], [6, -4]).asArray)\
-							 	.setn(\cf4 \\amp\cf0 , \cf2 Env\cf0 ([0.01, 0.6, 0.01], [20, 0], [6, -4]).asArray)\
-							 	.setn(\cf4 \\rt\cf0 , \cf2 Env\cf0 ([60, 1, 60], [20, 10], [4, -4]).asArray)\
-							 	.setn(\cf4 \\env\cf0 , \cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf4 \\sine\cf0 , 2, 1).asArray)\
-								.setn(\cf4 \\delays\cf0 , \cf2 Array\cf0 .geom(4, 0.01, 1.618).scramble)\
-								.setn(\cf4 \\shifts\cf0 , [1.0, 35/36, 16/15, 36/35])\
+						\cf3 Synth\cf2 .before(~z0trgroup, \cf5 \\freeze\cf2 , [\cf5 \\out\cf2 , ~z0trbus[0], \cf5 \\gate\cf2 , 1.0, \cf5 \\tgate\cf2 , 1/30, \cf5 \\dur\cf2 , 30, \
+							\cf5 \\maxdel\cf2 , 0.1, \cf5 \\room\cf2 , 1500, \cf5 \\damp\cf2 , 0.5, \cf5 \\inbw\cf2 , 0.5, \cf5 \\spr\cf2 , 20, \cf5 \\early\cf2 , 0.2, \cf5 \\tail\cf2 , 1.0, \
+							\cf5 \\doneAction\cf2 , 2])\
+							 	.setn(\cf5 \\bw\cf2 , \cf3 Env\cf2 ([100.0, 1000.0, 100.0], [20, 0.0], [6, -4]).asArray)\
+							 	.setn(\cf5 \\fq\cf2 , \cf3 Env\cf2 ([15000.0, 6000.0, 15000.0], [20, 0.0], [6, -4]).asArray)\
+							 	.setn(\cf5 \\amp\cf2 , \cf3 Env\cf2 ([0.01, 0.6, 0.01], [20, 0], [6, -4]).asArray)\
+							 	.setn(\cf5 \\rt\cf2 , \cf3 Env\cf2 ([60, 1, 60], [20, 10], [4, -4]).asArray)\
+							 	.setn(\cf5 \\env\cf2 , \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf5 \\sine\cf2 , 2, 1).asArray)\
+								.setn(\cf5 \\delays\cf2 , \cf3 Array\cf2 .geom(4, 0.01, 1.618).scramble)\
+								.setn(\cf5 \\shifts\cf2 , [1.0, 35/36, 16/15, 36/35])\
 					);\
 \pard\pardeftab720\ql\qnatural
-\cf0 			\}\
+\cf2 			\}\
 			\{\
-				~z0synths[0].set(\cf4 \\gate\cf0 , -30.0);\
-				~z0synths[0] = \cf2 nil\cf0 ;\
+				~z0synths[0].set(\cf5 \\gate\cf2 , -30.0);\
+				~z0synths[0] = \cf3 nil\cf2 ;\
 			\}\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 			\});\
+\cf2 			\});\
 \
-		4.do(\{\cf2 |i|\cf0 \
-			\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (i * 45 + 5, 95, panel.bounds.width / 4 - 5, 25))\
-				.states_([[i.asString ++ \cf3 " off"\cf0 , colors.orange, colors.steel ], \
-					[i.asString ++ \cf3 " on"\cf0 , colors.steel, colors.orange ]])\
+		4.do(\{\cf3 |i|\cf2 \
+			\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (i * 45 + 5, 95, panel.bounds.width / 4 - 5, 25))\
+				.states_([[i.asString ++ \cf4 " off"\cf2 , colors.orange, colors.steel ], \
+					[i.asString ++ \cf4 " on"\cf2 , colors.steel, colors.orange ]])\
 				.font_(fonts.lucida9)\
-				.action_(\{\cf2 |bt|\cf0 \
+				.action_(\{\cf3 |bt|\cf2 \
 					if (bt.value == 1)\
 					\{\
 						~z0synths.put(i + 1,\
-							\cf2 Synth\cf0 .before(~z0trgroup, \cf4 \\zone0_grain\cf0 , [\cf4 \\out\cf0 , ~z0trbus@i, \cf4 \\efx\cf0 , 99, \cf4 \\gate\cf0 , 1.0, \cf4 \\dur\cf0 , 10.0, \
-								\cf4 \\buffer\cf0 , ~z0loops[i], \cf4 \\maxdel\cf0 , 0.1, \cf4 \\brate\cf0 , 1.0, \cf4 \\envA\cf0 , ~z0envs.perc, \
-								\cf4 \\envB\cf0 , ~z0envs.sine])\
-									.setn(\cf4 \\env\cf0 , \cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.5, 0.2, 0.3], [6, 0, -2], 2, 1).asArray)\
-									.setn(\cf4 \\delays\cf0 , ([0.0] ++ \cf2 Array\cf0 .geom(3, 0.01, 1.618)).scramble )\
-									.setn(\cf4 \\shifts\cf0 , [1.0, 35/36, 0.5, 36/35])\
+							\cf3 Synth\cf2 .before(~z0trgroup, \cf5 \\zone0_grain\cf2 , [\cf5 \\out\cf2 , ~z0trbus@i, \cf5 \\efx\cf2 , 99, \cf5 \\gate\cf2 , 1.0, \
+								\cf5 \\dur\cf2 , 10.0, \
+								\cf5 \\buffer\cf2 , ~z0loops[i], \cf5 \\maxdel\cf2 , 0.1, \cf5 \\brate\cf2 , 1.0, \cf5 \\envA\cf2 , ~z0envs.perc, \
+								\cf5 \\envB\cf2 , ~z0envs.sine])\
+									.setn(\cf5 \\env\cf2 , \
+										\cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.5, 0.2, 0.3], [6, 0, -2], 2, 1).asArray)\
+									.setn(\cf5 \\delays\cf2 , ([0.0] ++ \cf3 Array\cf2 .geom(3, 0.01, 1.618)).scramble )\
+									.setn(\cf5 \\shifts\cf2 , [1.0, 35/36, 0.5, 36/35])\
 						);\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
-\cf0 					\}\
+\cf2 					\}\
 					\{\
-						~z0synths[i + 1].set(\cf4 \\gate\cf0 , -10.0);\
-						~z0synths[i + 1] = \cf2 nil\cf0 ;\
+						~z0synths[i + 1].set(\cf5 \\gate\cf2 , -10.0);\
+						~z0synths[i + 1] = \cf3 nil\cf2 ;\
 					\}\
 \pard\pardeftab720\ql\qnatural
-\cf0 			\});		\
+\cf2 			\});		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 		\
+\cf2 		\
 		\});\
 		\
 		~z0items = (\
-			\cf4 \\oop_0_3\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
+			\cf5 \\oop_0_3\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 				~z0loops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "monooop"\cf0 ) \});\
-				~z0synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 				~z0loops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "monooop"\cf2 ) \});\
+				~z0synths.do(\{\cf3 |syn, i|\cf2 \
 					if (syn.notNil)\
 					\{\
-						syn.set(\cf4 \\buffer\cf0 , ~z0loops[i]);\
+						syn.set(\cf5 \\buffer\cf2 , ~z0loops[i]);\
 						4.wait;\
 					\}\
 				\});\
-				\cf3 "zone 0 loops change complete"\cf0 .postln;		\
+				\cf4 "zone 0 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\}).play\
+\cf2 				\}).play\
 			\},\
-			\cf4 \\oop_4_7\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
+			\cf5 \\oop_4_7\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 				~z0loops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "monooop"\cf0 ) \});\
-				~z0synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 				~z0loops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "monooop"\cf2 ) \});\
+				~z0synths.do(\{\cf3 |syn, i|\cf2 \
 					if (syn.notNil)\
 					\{\
-						syn.set(\cf4 \\buffer\cf0 , ~z0loops[i + 4]);\
+						syn.set(\cf5 \\buffer\cf2 , ~z0loops[i + 4]);\
 						4.wait;\
 					\}\
 				\});		\
-				\cf3 "zone 0 loops change complete"\cf0 .postln;		\
+				\cf4 "zone 0 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\}).play\
+\cf2 				\}).play\
 			\},\
-			\cf4 \\oop_rand\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
+			\cf5 \\oop_rand\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 				~z0loops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "monooop"\cf0 ) \});\
-				~z0synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 				~z0loops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "monooop"\cf2 ) \});\
+				~z0synths.do(\{\cf3 |syn, i|\cf2 \
 					if (syn.notNil)\
 					\{\
-						syn.set(\cf4 \\buffer\cf0 , ~z0loops.choose);\
+						syn.set(\cf5 \\buffer\cf2 , ~z0loops.choose);\
 						4.wait;\
 					\}\
 				\});		\
-				\cf3 "zone 0 loops change complete"\cf0 .postln;		\
+				\cf4 "zone 0 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\}).play\
+\cf2 				\}).play\
 			\},\
-			\cf4 \\sum_4_7\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
+			\cf5 \\sum_4_7\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 				~z0loops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "sumeloop"\cf0 ) \});\
-				~z0synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 				~z0loops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "sumeloop"\cf2 ) \});\
+				~z0synths.do(\{\cf3 |syn, i|\cf2 \
 					if (syn.notNil)\
 					\{\
-						syn.set(\cf4 \\buffer\cf0 , ~z0loops[i + 4]);\
+						syn.set(\cf5 \\buffer\cf2 , ~z0loops[i + 4]);\
 						4.wait;\
 					\}\
 				\});\
-				\cf3 "zone 0 loops change complete"\cf0 .postln;		\
+				\cf4 "zone 0 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\}).play\
+\cf2 				\}).play\
 			\},\
-			\cf4 \\mem_rand\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
+			\cf5 \\mem_rand\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 				~z0loops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "memorloop"\cf0 ) \});\
-				~z0synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 				~z0loops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "memorloop"\cf2 ) \});\
+				~z0synths.do(\{\cf3 |syn, i|\cf2 \
 					if (syn.notNil)\
 					\{\
-						syn.set(\cf4 \\buffer\cf0 , ~z0loops.choose);\
+						syn.set(\cf5 \\buffer\cf2 , ~z0loops.choose);\
 						4.wait;\
 					\}\
 				\});		\
-				\cf3 "zone 0 loops change complete"\cf0 .postln;		\
+				\cf4 "zone 0 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\}).play\
+\cf2 				\}).play\
 			\}\
 		);\
 		\
-		~z0pm = \cf2 SCPopUpMenu\cf0 (panel, \cf2 Rect\cf0 (5, 155, panel.bounds.width / 1.5 - 5, 25))\
+		~z0pm = \cf3 SCPopUpMenu\cf2 (panel, \cf3 Rect\cf2 (5, 155, panel.bounds.width / 1.5 - 5, 25))\
 			.background_(colors.steel)\
 			.font_(fonts.lucida9)			\
 			.stringColor_(colors.orange)\
-			.items_(~z0items.keys(\cf2 Array\cf0 ).sort);\
+			.items_(~z0items.keys(\cf3 Array\cf2 ).sort);\
 		\
-		\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (panel.bounds.width / 1.5 + 5, 155, panel.bounds.width / 3 - 10, 25))\
+		\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (panel.bounds.width / 1.5 + 5, 155, panel.bounds.width / 3 - 10, 25))\
 			.font_(fonts.lucida9)\
-			.states_([[\cf3 "send"\cf0 , colors.orange, colors.steel]])\
+			.states_([[\cf4 "send"\cf2 , colors.orange, colors.steel]])\
 			.action_(\{\
 				~z0items[~z0pm.items[~z0pm.value].asSymbol].value\
 			\});\
 		\
 		~z0smspecs = (\
-			\cf4 \\tfrq\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (32, 256, step: 8)),\
-			\cf4 \\gdur\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.08, 1.6, step: 0.004)),\
-			\cf4 \\aamp\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (2.0, 4.0)),\
-			\cf4 \\z0ns\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 2.0))\
+			\cf5 \\tfrq\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (32, 256, step: 8)),\
+			\cf5 \\gdur\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.08, 1.6, step: 0.004)),\
+			\cf5 \\aamp\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (2.0, 4.0)),\
+			\cf5 \\z0ns\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.5, 2.0))\
 		);\
 \
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (0 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.action_(\{\cf2 |sl|\cf0 \
-				~z0mapping[\cf4 \\zone0_grain\cf0 ][\cf4 \\tfrq\cf0 ].spec.minval = ~z0smspecs[\cf4 \\tfrq\cf0 ].map(sl.value)\
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (0 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.action_(\{\cf3 |sl|\cf2 \
+				~z0mapping[\cf5 \\zone0_grain\cf2 ][\cf5 \\tfrq\cf2 ].spec.minval = ~z0smspecs[\cf5 \\tfrq\cf2 ].map(sl.value)\
 			\});\
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (1 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.action_(\{\cf2 |sl|\cf0 \
-				~z0mapping[\cf4 \\zone0_grain\cf0 ][\cf4 \\gdur\cf0 ].spec.maxval = ~z0smspecs[\cf4 \\gdur\cf0 ].map(sl.value)\
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (1 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.action_(\{\cf3 |sl|\cf2 \
+				~z0mapping[\cf5 \\zone0_grain\cf2 ][\cf5 \\gdur\cf2 ].spec.maxval = ~z0smspecs[\cf5 \\gdur\cf2 ].map(sl.value)\
 			\});\
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (2 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.action_(\{\cf2 |sl|\cf0 \
-				~z0mapping[\cf4 \\zone0_grain\cf0 ][\cf4 \\aamp\cf0 ].spec.minval = ~z0smspecs[\cf4 \\aamp\cf0 ].map(sl.value)\
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (2 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.action_(\{\cf3 |sl|\cf2 \
+				~z0mapping[\cf5 \\zone0_grain\cf2 ][\cf5 \\aamp\cf2 ].spec.minval = ~z0smspecs[\cf5 \\aamp\cf2 ].map(sl.value)\
 			\});\
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (3 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.action_(\{\cf2 |sl|\cf0 \
-				~z0ns.minval = ~z0smspecs[\cf4 \\z0ns\cf0 ].spec.map(sl.value)\
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (3 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.action_(\{\cf3 |sl|\cf2 \
+				~z0ns.minval = ~z0smspecs[\cf5 \\z0ns\cf2 ].spec.map(sl.value)\
 			\});\
 			\
-		[\cf3 "tfrq"\cf0 , \cf3 "gdur"\cf0 , \cf3 "aamp"\cf0 , \cf3 "nzamp"\cf0  ].do(\{\cf2 |txt, i|\cf0 \
-			\cf2 SCStaticText\cf0 (panel, \cf2 Rect\cf0 (i * 45 + 5, 215, panel.bounds.width / 4 - 5, 25))\
+		[\cf4 "tfrq"\cf2 , \cf4 "gdur"\cf2 , \cf4 "aamp"\cf2 , \cf4 "nzamp"\cf2  ].do(\{\cf3 |txt, i|\cf2 \
+			\cf3 SCStaticText\cf2 (panel, \cf3 Rect\cf2 (i * 45 + 5, 215, panel.bounds.width / 4 - 5, 25))\
 				.font_(fonts.skia)\
 				.stringColor_(colors.orange)\
-				.align_(\cf4 \\center\cf0 )\
+				.align_(\cf5 \\center\cf2 )\
 				.string_(txt)\
 		\})\
 				\
 \});\
 \
-~fx.perfGui.assignPanel(1, \{\cf2 |panel|\cf0 \
-	\cf2 var\cf0  colors, fonts;\
+~fx.perfGui.assignPanel(1, \{\cf3 |panel|\cf2 \
+	\cf3 var\cf2  colors, fonts;\
 	colors = (\
-		\cf4 \\blue\cf0 : \cf2 Color\cf0 .new255(28, 134, 238),\
-		\cf4 \\orange\cf0 : \cf2 Color\cf0 .new255(184, 134, 11),\
-		\cf4 \\steel\cf0 : \cf2 Color\cf0 .new255(4, 50, 89)\
+		\cf5 \\blue\cf2 : \cf3 Color\cf2 .new255(28, 134, 238),\
+		\cf5 \\orange\cf2 : \cf3 Color\cf2 .new255(184, 134, 11),\
+		\cf5 \\steel\cf2 : \cf3 Color\cf2 .new255(4, 50, 89)\
 	);\
 	fonts = (\
-		\cf4 \\lucida9\cf0 : \cf2 Font\cf0 (\cf3 "Lucida Grande"\cf0 , 9),\
-		\cf4 \\lucida11\cf0 : \cf2 Font\cf0 (\cf3 "Lucida Grande"\cf0 , 11),\
-		\cf4 \\skia\cf0 : \cf2 Font\cf0 (\cf3 "Skia"\cf0 , 9) \
+		\cf5 \\lucida9\cf2 : \cf3 Font\cf2 (\cf4 "Lucida Grande"\cf2 , 9),\
+		\cf5 \\lucida11\cf2 : \cf3 Font\cf2 (\cf4 "Lucida Grande"\cf2 , 11),\
+		\cf5 \\skia\cf2 : \cf3 Font\cf2 (\cf4 "Skia"\cf2 , 9) \
 	);\
-	\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (5, 5, panel.bounds.width - 10, 25))\
-		.states_([[\cf3 "initialize"\cf0 , colors.orange, colors.steel ]])\
+	\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (5, 5, panel.bounds.width - 10, 25))\
+		.states_([[\cf4 "initialize"\cf2 , colors.orange, colors.steel ]])\
 		.font_(fonts.lucida11)\
 		.action_(\{\
 			~z1paramspecs = (\
-				\cf4 \\aamp\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  \cf2 CyclicWarp\cf0 ([i * 0.03 + 0.2, 2.0 - (i * 0.1)].asSpec) \}).reverse,\
-				\cf4 \\str\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  \cf2 CyclicWarp\cf0 ([0.0, 0.5].asSpec) \}),\
-				\cf4 \\end\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  \cf2 CyclicWarp\cf0 ([0.5, 1.0].asSpec) \}),\
-				\cf4 \\eamp\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  [4.0 - (i * 0.2), i * 0.1 + 0.2 ].asSpec \}),\
-				\cf4 \\xang\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  \cf2 CyclicWarp\cf0 ([i*(pi/4.5)-pi, i*(pi/4.5)+(pi/2.25)-pi].asSpec) \}).scramble,\
-				\cf4 \\yang\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  \cf2 CyclicWarp\cf0 ([i*(pi/4.5)-pi, i*(pi/4.5)+(pi/2.25)-pi].asSpec) \}).scramble,\
-				\cf4 \\zang\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  \cf2 CyclicWarp\cf0 ([i*(pi/4.5)-pi, i*(pi/4.5)+(pi/2.25)-pi].asSpec) \}).scramble,\
-		  		\cf4 \\zoom\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  \cf2 CyclicWarp\cf0 ([i*(pi/8)-0.5pi, i*(pi/8)+(pi/8)-0.5pi].asSpec) \}).reverse,\
-				\cf4 \\push\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  \cf2 CyclicWarp\cf0 ([i*(pi/8)-0.5pi, i*(pi/8)+(pi/8)-0.5pi].asSpec) \}),\
-				\cf4 \\focus\cf0 : \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0  \cf2 CyclicWarp\cf0 ([i + 1 / 8 * -0.49pi, i + 1 / 8 * 0.49pi].asSpec) \})\
+				\cf5 \\aamp\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  \cf3 CyclicWarp\cf2 ([i * 0.03 + 0.2, 2.0 - (i * 0.1)].asSpec) \}).reverse,\
+				\cf5 \\str\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  \cf3 CyclicWarp\cf2 ([0.0, 0.5].asSpec) \}),\
+				\cf5 \\end\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  \cf3 CyclicWarp\cf2 ([0.5, 1.0].asSpec) \}),\
+				\cf5 \\eamp\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  [4.0 - (i * 0.2), i * 0.1 + 0.2 ].asSpec \}),\
+				\cf5 \\xang\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  \cf3 CyclicWarp\cf2 ([i*(pi/4.5)-pi, i*(pi/4.5)+(pi/2.25)-pi].asSpec) \}).scramble,\
+				\cf5 \\yang\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  \cf3 CyclicWarp\cf2 ([i*(pi/4.5)-pi, i*(pi/4.5)+(pi/2.25)-pi].asSpec) \}).scramble,\
+				\cf5 \\zang\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  \cf3 CyclicWarp\cf2 ([i*(pi/4.5)-pi, i*(pi/4.5)+(pi/2.25)-pi].asSpec) \}).scramble,\
+		  		\cf5 \\zoom\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  \cf3 CyclicWarp\cf2 ([i*(pi/8)-0.5pi, i*(pi/8)+(pi/8)-0.5pi].asSpec) \}).reverse,\
+				\cf5 \\push\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  \cf3 CyclicWarp\cf2 ([i*(pi/8)-0.5pi, i*(pi/8)+(pi/8)-0.5pi].asSpec) \}),\
+				\cf5 \\focus\cf2 : \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2  \cf3 CyclicWarp\cf2 ([i + 1 / 8 * -0.49pi, i + 1 / 8 * 0.49pi].asSpec) \})\
 			);\
 			\
-			~z1params = \cf2 Array\cf0 .fill(8, \{\cf2 |i|\cf0 \
+			~z1params = \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2 \
 				[\
-					\cf2 FxParam\cf0 (\cf4 \\aamp\cf0 , \cf4 \\aamp\cf0 , ~z1paramspecs[\cf4 \\aamp\cf0 ][i], \cf2 false\cf0 ),\
-					\cf2 FxParam\cf0 (\cf4 \\str\cf0 , \cf4 \\str\cf0 , ~z1paramspecs[\cf4 \\str\cf0 ][i], \cf2 false\cf0 ),\
-					\cf2 FxParam\cf0 (\cf4 \\end\cf0 , \cf4 \\end\cf0 , ~z1paramspecs[\cf4 \\end\cf0 ][i], \cf2 false\cf0 ),\
-					\cf2 FxParam\cf0 (\cf4 \\eamp\cf0 , \cf4 \\eamp\cf0 , ~z1paramspecs[\cf4 \\eamp\cf0 ][i], \cf2 false\cf0 ),\
-					\cf2 FxParam\cf0 (\cf4 \\xang\cf0 , \cf4 \\xsc\cf0 , ~z1paramspecs[\cf4 \\xang\cf0 ][i], \cf2 false\cf0 ),\
-					\cf2 FxParam\cf0 (\cf4 \\yang\cf0 , \cf4 \\ysc\cf0 , ~z1paramspecs[\cf4 \\yang\cf0 ][i], \cf2 false\cf0 ),\
-					\cf2 FxParam\cf0 (\cf4 \\zang\cf0 , \cf4 \\zsc\cf0 , ~z1paramspecs[\cf4 \\zang\cf0 ][i], \cf2 false\cf0 ),\
-					\cf2 FxParam\cf0 (\cf4 \\zoom\cf0 , \cf4 \\zoom\cf0 , ~z1paramspecs[\cf4 \\zoom\cf0 ][i], \cf2 false\cf0 ),\
-					\cf2 FxParam\cf0 (\cf4 \\push\cf0 , \cf4 \\push\cf0 , ~z1paramspecs[\cf4 \\push\cf0 ][i], \cf2 false\cf0 ),\
-					\cf2 FxParam\cf0 (\cf4 \\focus\cf0 , \cf4 \\focus\cf0 , ~z1paramspecs[\cf4 \\focus\cf0 ][i], \cf2 false\cf0 )\
+					\cf3 FxParam\cf2 (\cf5 \\aamp\cf2 , \cf5 \\aamp\cf2 , ~z1paramspecs[\cf5 \\aamp\cf2 ][i], \cf3 false\cf2 ),\
+					\cf3 FxParam\cf2 (\cf5 \\str\cf2 , \cf5 \\str\cf2 , ~z1paramspecs[\cf5 \\str\cf2 ][i], \cf3 false\cf2 ),\
+					\cf3 FxParam\cf2 (\cf5 \\end\cf2 , \cf5 \\end\cf2 , ~z1paramspecs[\cf5 \\end\cf2 ][i], \cf3 false\cf2 ),\
+					\cf3 FxParam\cf2 (\cf5 \\eamp\cf2 , \cf5 \\eamp\cf2 , ~z1paramspecs[\cf5 \\eamp\cf2 ][i], \cf3 false\cf2 ),\
+					\cf3 FxParam\cf2 (\cf5 \\xang\cf2 , \cf5 \\xsc\cf2 , ~z1paramspecs[\cf5 \\xang\cf2 ][i], \cf3 false\cf2 ),\
+					\cf3 FxParam\cf2 (\cf5 \\yang\cf2 , \cf5 \\ysc\cf2 , ~z1paramspecs[\cf5 \\yang\cf2 ][i], \cf3 false\cf2 ),\
+					\cf3 FxParam\cf2 (\cf5 \\zang\cf2 , \cf5 \\zsc\cf2 , ~z1paramspecs[\cf5 \\zang\cf2 ][i], \cf3 false\cf2 ),\
+					\cf3 FxParam\cf2 (\cf5 \\zoom\cf2 , \cf5 \\zoom\cf2 , ~z1paramspecs[\cf5 \\zoom\cf2 ][i], \cf3 false\cf2 ),\
+					\cf3 FxParam\cf2 (\cf5 \\push\cf2 , \cf5 \\push\cf2 , ~z1paramspecs[\cf5 \\push\cf2 ][i], \cf3 false\cf2 ),\
+					\cf3 FxParam\cf2 (\cf5 \\focus\cf2 , \cf5 \\focus\cf2 , ~z1paramspecs[\cf5 \\focus\cf2 ][i], \cf3 false\cf2 )\
 				];	\
 			\});\
 		\
 				\
 			~z1globals = [\
-				\cf2 FxParam\cf0 (\cf4 \\rtime\cf0 , \cf4 \\rtime\cf0 , \cf2 ControlSpec\cf0 (10.0, 5.0), \cf2 false\cf0 ),\
-				\cf2 FxParam\cf0 (\cf4 \\damp\cf0 , \cf4 \\damp\cf0 , \cf2 ControlSpec\cf0 (0.0, 1.0), \cf2 false\cf0 ),\
-				\cf2 FxParam\cf0 (\cf4 \\inbw\cf0 , \cf4 \\inbw\cf0 , \cf2 ControlSpec\cf0 (0.0, 1.0), \cf2 false\cf0 ),\
-				\cf2 FxParam\cf0 (\cf4 \\spr\cf0 , \cf4 \\spr\cf0 , \cf2 ControlSpec\cf0 (5, 20), \cf2 false\cf0 ),\
-				\cf2 FxParam\cf0 (\cf4 \\dry\cf0 , \cf4 \\dry\cf0 , \cf2 ControlSpec\cf0 (0.0, 0.1), \cf2 false\cf0 ),\
-				\cf2 FxParam\cf0 (\cf4 \\early\cf0 , \cf4 \\early\cf0 , \cf2 ControlSpec\cf0 (0.0, 0.1), \cf2 false\cf0 ),\
-				\cf2 FxParam\cf0 (\cf4 \\tail\cf0 , \cf4 \\tail\cf0 , \cf2 ControlSpec\cf0 (1.0, 0.2), \cf2 false\cf0 ),\
-				\cf2 FxParam\cf0 (\cf4 \\amp\cf0 , \cf4 \\amp\cf0 , \cf2 ControlSpec\cf0 (0.0, 1.0), \cf2 false\cf0 ),\
-				\cf2 FxParam\cf0 (\cf4 \\line\cf0 , \cf4 \\line\cf0 , \cf2 ControlSpec\cf0 (0.4, 2.0, \cf4 'lin'\cf0 , 0.1), \cf2 false\cf0 )\
+				\cf3 FxParam\cf2 (\cf5 \\rtime\cf2 , \cf5 \\rtime\cf2 , \cf3 ControlSpec\cf2 (10.0, 5.0), \cf3 false\cf2 ),\
+				\cf3 FxParam\cf2 (\cf5 \\damp\cf2 , \cf5 \\damp\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
+				\cf3 FxParam\cf2 (\cf5 \\inbw\cf2 , \cf5 \\inbw\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
+				\cf3 FxParam\cf2 (\cf5 \\spr\cf2 , \cf5 \\spr\cf2 , \cf3 ControlSpec\cf2 (5, 20), \cf3 false\cf2 ),\
+				\cf3 FxParam\cf2 (\cf5 \\dry\cf2 , \cf5 \\dry\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.1), \cf3 false\cf2 ),\
+				\cf3 FxParam\cf2 (\cf5 \\early\cf2 , \cf5 \\early\cf2 , \cf3 ControlSpec\cf2 (0.0, 0.1), \cf3 false\cf2 ),\
+				\cf3 FxParam\cf2 (\cf5 \\tail\cf2 , \cf5 \\tail\cf2 , \cf3 ControlSpec\cf2 (1.0, 0.2), \cf3 false\cf2 ),\
+				\cf3 FxParam\cf2 (\cf5 \\amp\cf2 , \cf5 \\amp\cf2 , \cf3 ControlSpec\cf2 (0.0, 1.0), \cf3 false\cf2 ),\
+				\cf3 FxParam\cf2 (\cf5 \\line\cf2 , \cf5 \\line\cf2 , \cf3 ControlSpec\cf2 (0.4, 2.0, \cf5 'lin'\cf2 , 0.1), \cf3 false\cf2 )\
 			];\
 			\
-			~subloops = ~loops.select(\{\cf2 |loop|\cf0  loop.path.contains(\cf3 "detloop_"\cf0 ) \});\
+			~subloops = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "detloop_"\cf2 ) \});\
 \
-			~b_bus = \cf2 Array\cf0 .fill(8, \{ \cf2 Bus\cf0 .audio(~serv) \});\
-			~t_bus = \cf2 Array\cf0 .fill(8, \{ \cf2 Bus\cf0 .audio(~serv, 4) \});\
+			~b_bus = \cf3 Array\cf2 .fill(8, \{ \cf3 Bus\cf2 .audio(~serv) \});\
+			~t_bus = \cf3 Array\cf2 .fill(8, \{ \cf3 Bus\cf2 .audio(~serv, 4) \});\
 \
-			~freqs = \cf2 Array\cf0 .geom(8, 0.125, 1.5);\
-			~dist = \cf2 Array\cf0 .series(8, 0.0, 0.375).reverse;\
+			~freqs = \cf3 Array\cf2 .geom(8, 0.125, 1.5);\
+			~dist = \cf3 Array\cf2 .series(8, 0.0, 0.375).reverse;\
 		\
-			~z1synths = \cf2 Array\cf0 .newClear(8);\
+			~z1synths = \cf3 Array\cf2 .newClear(8);\
 \
-			~orient = \cf2 Orientation\cf0 ();\
+			~orient = \cf3 Orientation\cf2 ();\
 		\
 		\});\
 \
-		\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (5, 35, panel.bounds.width / 2 - 5, 25))\
-			.states_([[\cf3 "states OFF"\cf0 , colors.orange, colors.steel ], [\cf3 "states ON"\cf0 , colors.steel, colors.orange ]])\
+		\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (5, 35, panel.bounds.width / 2 - 5, 25))\
+			.states_([[\cf4 "states OFF"\cf2 , colors.orange, colors.steel ], [\cf4 "states ON"\cf2 , colors.steel, colors.orange ]])\
 			.font_(fonts.lucida9)\
-			.action_(\{\cf2 |bt|\cf0 \
+			.action_(\{\cf3 |bt|\cf2 \
 				if (bt.value == 1)\
 				\{\
-					~fx.addStatesFunction(\cf4 \\zone1\cf0 , \{\cf2 |invalues|\cf0 \
+					~fx.addStatesFunction(\cf5 \\zone1\cf2 , \{\cf3 |invalues|\cf2 \
 \pard\pardeftab720\ql\qnatural
-\cf0 				\
+\cf2 				\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 						\cf2 var\cf0  states;\
+\cf2 						\cf3 var\cf2  states;\
 							\
 						if (~z1synths.notNil)\
 						\{\
 							states = invalues.states.clump(8);\
-							~z1synths.do(\{\cf2 |active, i|\cf0 \
-								\cf2 var\cf0  map, params;\
+							~z1synths.do(\{\cf3 |active, i|\cf2 \
+								\cf3 var\cf2  map, params;\
 								if (active.notNil)\
 								\{\
-									params = \cf2 Array\cf0 .newClear(~z1params[0].size);\
-									~z1params[i].do(\{\cf2 |param, j|\cf0 \
+									params = \cf3 Array\cf2 .newClear(~z1params[0].size);\
+									~z1params[i].do(\{\cf3 |param, j|\cf2 \
 										params[j] = (\
 											name: ~z1params[i].wrapAt(j).name, \
 											pvalue: ~z1params[i].wrapAt(j).mapValue(states.wrapAt(i).wrapAt(j))\
@@ -511,22 +513,22 @@
 							\})\
 						\}\
 \pard\pardeftab720\ql\qnatural
-\cf0 											\
+\cf2 											\
 				\});				\
 				\}\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\{\
-					~fx.removeStatesFunction(\cf4 \\zone1\cf0 )	\
+\cf2 				\{\
+					~fx.removeStatesFunction(\cf5 \\zone1\cf2 )	\
 				\}\
 			\});\
 			\
-		\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (panel.bounds.width / 2, 35, panel.bounds.width / 2 - 5, 25))\
-			.states_([[\cf3 "glob OFF"\cf0 , colors.orange, colors.steel ], [\cf3 "glob ON"\cf0 , colors.steel, colors.orange ]])\
+		\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (panel.bounds.width / 2, 35, panel.bounds.width / 2 - 5, 25))\
+			.states_([[\cf4 "glob OFF"\cf2 , colors.orange, colors.steel ], [\cf4 "glob ON"\cf2 , colors.steel, colors.orange ]])\
 			.font_(fonts.lucida9)\
-			.action_(\{\cf2 |bt|\cf0 \
+			.action_(\{\cf3 |bt|\cf2 \
 				if (bt.value == 1)\
 				\{\
-					~fx.addGlobalsFunction(\cf4 \\zone1\cf0 , \{\cf2 |invalues|\cf0 \
+					~fx.addGlobalsFunction(\cf5 \\zone1\cf2 , \{\cf3 |invalues|\cf2 \
 						~rev.set(\
 							~z1globals[0].name, ~z1globals[0].mapValue(invalues.avglbf),\
 							~z1globals[1].name, ~z1globals[1].mapValue(invalues.avgrbf),\
@@ -538,268 +540,268 @@
 							~z1globals[7].name, ~z1globals[7].mapValue(invalues.avgltb)\
 						);\
 						\
-						~line.set(\cf4 \\amp\cf0 , ~z1globals[8].mapValue(invalues.avgstate));\
+						~line.set(\cf5 \\amp\cf2 , ~z1globals[8].mapValue(invalues.avgstate));\
 					\})\
 \pard\pardeftab720\ql\qnatural
-\cf0 			\}\
+\cf2 			\}\
 			\{\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 					~fx.removeGlobalsFunction(\cf4 \\zone1\cf0 )\
+\cf2 					~fx.removeGlobalsFunction(\cf5 \\zone1\cf2 )\
 \pard\pardeftab720\ql\qnatural
-\cf0 			\}\
+\cf2 			\}\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 			\});\
+\cf2 			\});\
 \
-		\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (5, 65, panel.bounds.width / 2 - 5, 25))\
-			.states_([[\cf3 "line OFF"\cf0 , colors.orange, colors.steel ], [\cf3 "line ON"\cf0 , colors.steel, colors.orange ]])\
+		\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (5, 65, panel.bounds.width / 2 - 5, 25))\
+			.states_([[\cf4 "line OFF"\cf2 , colors.orange, colors.steel ], [\cf4 "line ON"\cf2 , colors.steel, colors.orange ]])\
 			.font_(fonts.lucida9)\
-			.action_(\{\cf2 |bt|\cf0 \
+			.action_(\{\cf3 |bt|\cf2 \
 				if (bt.value == 1)\
 				\{\
-					~line = \cf2 Synth\cf0 .after(~rev, \cf4 \\line\cf0 , [\cf4 \\out\cf0 , 0, \cf4 \\in\cf0 , ~rout, \cf4 \\i_wrp\cf0 , 0.1, \cf4 \\frq\cf0 , 1.0, \cf4 \\wsz\cf0 , 0.1, \
-						\cf4 \\dns\cf0 , 6, \cf4 \\rnd\cf0 , 0.05, \cf4 \\amp\cf0 , 0.5\
+					~line = \cf3 Synth\cf2 .after(~rev, \cf5 \\line\cf2 , [\cf5 \\out\cf2 , 0, \cf5 \\in\cf2 , ~rout, \cf5 \\i_wrp\cf2 , 0.1, \cf5 \\frq\cf2 , 1.0, \cf5 \\wsz\cf2 , 0.1, \
+						\cf5 \\dns\cf2 , 6, \cf5 \\rnd\cf2 , 0.05, \cf5 \\amp\cf2 , 0.5\
 					])\
 				\}\
 				\{\
-					~line.set(\cf4 \\gate\cf0 , -30.0)\
+					~line.set(\cf5 \\gate\cf2 , -30.0)\
 				\}\
 			\});\
 			\
 \
-		4.do(\{\cf2 |i|\cf0 \
-			\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (i * 45 + 5, 95, panel.bounds.width / 4 - 5, 25))\
-				.states_([[i.asString ++ \cf3 " off"\cf0 , colors.orange, colors.steel ], \
-					[i.asString ++ \cf3 " on"\cf0 , colors.steel, colors.orange ]])\
+		4.do(\{\cf3 |i|\cf2 \
+			\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (i * 45 + 5, 95, panel.bounds.width / 4 - 5, 25))\
+				.states_([[i.asString ++ \cf4 " off"\cf2 , colors.orange, colors.steel ], \
+					[i.asString ++ \cf4 " on"\cf2 , colors.steel, colors.orange ]])\
 				.font_(fonts.lucida9)\
-				.action_(\{\cf2 |bt|\cf0 \
-					\cf2 var\cf0  trans, grp, s_src, s_enc, s_trn, s_dst, buf;\
+				.action_(\{\cf3 |bt|\cf2 \
+					\cf3 var\cf2  trans, grp, s_src, s_enc, s_trn, s_dst, buf;\
 					if (bt.value == 1)\
 					\{\
-						grp = \cf2 Group\cf0 .tail(~agrp);\
-						s_src = \cf2 Synth\cf0 .head(grp, \cf4 \\swarpfld\cf0 , [\cf4 \\out\cf0 , ~b_bus[i], \cf4 \\efx\cf0 , ~rbus, \cf4 \\gate\cf0 , 1.0, \cf4 \\aamp\cf0 , 0.5, \
-							\cf4 \\eamp\cf0 , 0.1, \cf4 \\dur\cf0 , 1.0, \cf4 \\buf\cf0 , ~subloops[i], \cf4 \\str\cf0 , 0, \cf4 \\end\cf0 , 1.0, \cf4 \\wrp\cf0 , 0.001, \
-							\cf4 \\frq\cf0 , ~freqs@i, \cf4 \\wsz\cf0 , 0.1, \cf4 \\dns\cf0 , rrand(2, 10), \cf4 \\rnd\cf0 , 0.01, \cf4 \\doneAction\cf0 , 14])\
-							.setn(\cf4 \\env\cf0 , \cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.001, 1.0, 0.001], \cf4 \\sine\cf0 , 2, 1).asArray);\
-						s_enc = \cf2 Synth\cf0 .tail(grp, \cf4 \\atkencodedel\cf0 , [\cf4 \\out\cf0 , ~t_bus[i], \cf4 \\in\cf0 , ~b_bus[i]])\
-							.setn(\cf4 \\del\cf0 , \cf2 Array\cf0 .geom(4, rrand(0.001, 0.003), 1.618))\
-							.setn(\cf4 \\azm\cf0 , ~orient.azimuthArray)\
-							.setn(\cf4 \\elv\cf0 , ~orient.elevationArray);\
-						s_trn = \cf2 Synth\cf0 .tail(grp, \cf4 \\atk_trans\cf0 , [\cf4 \\out\cf0 , ~abus, \cf4 \\in\cf0 , ~t_bus@i, \cf4 \\dist\cf0 , ~dist@i]);\
-						~z1synths.put(i, (\cf4 \\src\cf0 : s_src, \cf4 \\enc\cf0 : s_enc, \cf4 \\trn\cf0 : s_trn, \cf4 \\grp\cf0 : grp));\
+						grp = \cf3 Group\cf2 .tail(~agrp);\
+						s_src = \cf3 Synth\cf2 .head(grp, \cf5 \\swarpfld\cf2 , [\cf5 \\out\cf2 , ~b_bus[i], \cf5 \\efx\cf2 , ~rbus, \cf5 \\gate\cf2 , 1.0, \cf5 \\aamp\cf2 , 0.5, \
+							\cf5 \\eamp\cf2 , 0.1, \cf5 \\dur\cf2 , 1.0, \cf5 \\buf\cf2 , ~subloops[i], \cf5 \\str\cf2 , 0, \cf5 \\end\cf2 , 1.0, \cf5 \\wrp\cf2 , 0.001, \
+							\cf5 \\frq\cf2 , ~freqs@i, \cf5 \\wsz\cf2 , 0.1, \cf5 \\dns\cf2 , rrand(2, 10), \cf5 \\rnd\cf2 , 0.01, \cf5 \\doneAction\cf2 , 14])\
+							.setn(\cf5 \\env\cf2 , \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.001, 1.0, 0.001], \cf5 \\sine\cf2 , 2, 1).asArray);\
+						s_enc = \cf3 Synth\cf2 .tail(grp, \cf5 \\atkencodedel\cf2 , [\cf5 \\out\cf2 , ~t_bus[i], \cf5 \\in\cf2 , ~b_bus[i]])\
+							.setn(\cf5 \\del\cf2 , \cf3 Array\cf2 .geom(4, rrand(0.001, 0.003), 1.618))\
+							.setn(\cf5 \\azm\cf2 , ~orient.azimuthArray)\
+							.setn(\cf5 \\elv\cf2 , ~orient.elevationArray);\
+						s_trn = \cf3 Synth\cf2 .tail(grp, \cf5 \\atk_trans\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\in\cf2 , ~t_bus@i, \cf5 \\dist\cf2 , ~dist@i]);\
+						~z1synths.put(i, (\cf5 \\src\cf2 : s_src, \cf5 \\enc\cf2 : s_enc, \cf5 \\trn\cf2 : s_trn, \cf5 \\grp\cf2 : grp));\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
-\cf0 					\}\
+\cf2 					\}\
 					\{\
-						~z1synths[i].src.set(\cf4 \\gate\cf0 , -30.0);\
-						\cf2 SystemClock\cf0 .sched(30, \{ ~z1synths[i] = \cf2 nil\cf0 ; \cf2 nil\cf0  \});\
+						~z1synths[i].src.set(\cf5 \\gate\cf2 , -30.0);\
+						\cf3 SystemClock\cf2 .sched(30, \{ ~z1synths[i] = \cf3 nil\cf2 ; \cf3 nil\cf2  \});\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 					\}\
+\cf2 					\}\
 \pard\pardeftab720\ql\qnatural
-\cf0 			\});		\
+\cf2 			\});		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 		\
+\cf2 		\
 		\});\
 \
-		4.do(\{\cf2 |i|\cf0 	\
-			\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (i * 45 + 5, 125, panel.bounds.width / 4 - 5, 25))\
-				.states_([[(i + 4).asString ++ \cf3 " off"\cf0 , colors.orange, colors.steel ], \
-					[(i + 4).asString ++ \cf3 " on"\cf0 , colors.steel, colors.orange ]])\
+		4.do(\{\cf3 |i|\cf2 	\
+			\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (i * 45 + 5, 125, panel.bounds.width / 4 - 5, 25))\
+				.states_([[(i + 4).asString ++ \cf4 " off"\cf2 , colors.orange, colors.steel ], \
+					[(i + 4).asString ++ \cf4 " on"\cf2 , colors.steel, colors.orange ]])\
 				.font_(fonts.lucida9)\
-				.action_(\{\cf2 |bt|\cf0 \
-					\cf2 var\cf0  trans, grp, s_src, s_enc, s_trn, s_dst, buf;\
+				.action_(\{\cf3 |bt|\cf2 \
+					\cf3 var\cf2  trans, grp, s_src, s_enc, s_trn, s_dst, buf;\
 					if (bt.value == 1)\
 					\{\
-						grp = \cf2 Group\cf0 .tail(~agrp);\
-						s_src = \cf2 Synth\cf0 .head(grp, \cf4 \\swarpfld\cf0 , [\cf4 \\out\cf0 , ~b_bus[i+4], \cf4 \\efx\cf0 , ~rbus, \cf4 \\gate\cf0 , 1.0, \cf4 \\aamp\cf0 , 0.5, \
-							\cf4 \\eamp\cf0 , 0.1, \cf4 \\dur\cf0 , 1.0, \cf4 \\buf\cf0 , ~subloops[i+4], \cf4 \\str\cf0 , 0, \cf4 \\end\cf0 , 1.0, \cf4 \\wrp\cf0 , 0.001, \
-							\cf4 \\frq\cf0 , ~freqs@i, \cf4 \\wsz\cf0 , 0.1, \cf4 \\dns\cf0 , rrand(2, 10), \cf4 \\rnd\cf0 , 0.01, \cf4 \\doneAction\cf0 , 14])\
-							.setn(\cf4 \\env\cf0 , \cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.001, 1.0, 0.001], \cf4 \\sine\cf0 , 2, 1).asArray);\
-						s_enc = \cf2 Synth\cf0 .tail(grp, \cf4 \\atkencodedel\cf0 , [\cf4 \\out\cf0 , ~t_bus[i+4], \cf4 \\in\cf0 , ~b_bus[i+4]])\
-							.setn(\cf4 \\del\cf0 , \cf2 Array\cf0 .geom(4, rrand(0.001, 0.003), 1.618))\
-							.setn(\cf4 \\azm\cf0 , ~orient.azimuthArray)\
-							.setn(\cf4 \\elv\cf0 , ~orient.elevationArray);\
-						s_trn = \cf2 Synth\cf0 .tail(grp, \cf4 \\atk_trans\cf0 , [\cf4 \\out\cf0 , ~abus, \cf4 \\in\cf0 , ~t_bus[i+4], \cf4 \\dist\cf0 , ~dist[i+4]]);\
-						~z1synths.put(i + 4, (\cf4 \\src\cf0 : s_src, \cf4 \\enc\cf0 : s_enc, \cf4 \\trn\cf0 : s_trn, \cf4 \\grp\cf0 : grp));\
+						grp = \cf3 Group\cf2 .tail(~agrp);\
+						s_src = \cf3 Synth\cf2 .head(grp, \cf5 \\swarpfld\cf2 , [\cf5 \\out\cf2 , ~b_bus[i+4], \cf5 \\efx\cf2 , ~rbus, \cf5 \\gate\cf2 , 1.0, \cf5 \\aamp\cf2 , 0.5, \
+							\cf5 \\eamp\cf2 , 0.1, \cf5 \\dur\cf2 , 1.0, \cf5 \\buf\cf2 , ~subloops[i+4], \cf5 \\str\cf2 , 0, \cf5 \\end\cf2 , 1.0, \cf5 \\wrp\cf2 , 0.001, \
+							\cf5 \\frq\cf2 , ~freqs@i, \cf5 \\wsz\cf2 , 0.1, \cf5 \\dns\cf2 , rrand(2, 10), \cf5 \\rnd\cf2 , 0.01, \cf5 \\doneAction\cf2 , 14])\
+							.setn(\cf5 \\env\cf2 , \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.001, 1.0, 0.001], \cf5 \\sine\cf2 , 2, 1).asArray);\
+						s_enc = \cf3 Synth\cf2 .tail(grp, \cf5 \\atkencodedel\cf2 , [\cf5 \\out\cf2 , ~t_bus[i+4], \cf5 \\in\cf2 , ~b_bus[i+4]])\
+							.setn(\cf5 \\del\cf2 , \cf3 Array\cf2 .geom(4, rrand(0.001, 0.003), 1.618))\
+							.setn(\cf5 \\azm\cf2 , ~orient.azimuthArray)\
+							.setn(\cf5 \\elv\cf2 , ~orient.elevationArray);\
+						s_trn = \cf3 Synth\cf2 .tail(grp, \cf5 \\atk_trans\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\in\cf2 , ~t_bus[i+4], \cf5 \\dist\cf2 , ~dist[i+4]]);\
+						~z1synths.put(i + 4, (\cf5 \\src\cf2 : s_src, \cf5 \\enc\cf2 : s_enc, \cf5 \\trn\cf2 : s_trn, \cf5 \\grp\cf2 : grp));\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
-\cf0 					\}\
+\cf2 					\}\
 					\{\
-						~z1synths[i+4].src.set(\cf4 \\gate\cf0 , -30.0);\
-						\cf2 SystemClock\cf0 .sched(30, \{ ~z1synths[i+4] = \cf2 nil\cf0 ; \cf2 nil\cf0  \});\
+						~z1synths[i+4].src.set(\cf5 \\gate\cf2 , -30.0);\
+						\cf3 SystemClock\cf2 .sched(30, \{ ~z1synths[i+4] = \cf3 nil\cf2 ; \cf3 nil\cf2  \});\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 					\}\
+\cf2 					\}\
 \pard\pardeftab720\ql\qnatural
-\cf0 			\});		\
+\cf2 			\});		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 		\
+\cf2 		\
 		\});\
 \
 		~z1items = (\
-			\cf4 \\det_0_7\cf0 : \{  \
-				~subloops = ~loops.select(\{\cf2 |loop|\cf0  loop.path.contains(\cf3 "detloop_"\cf0 ) \});\
+			\cf5 \\det_0_7\cf2 : \{  \
+				~subloops = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "detloop_"\cf2 ) \});\
 \pard\pardeftab720\ql\qnatural
-\cf0 			~z1synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 			~z1synths.do(\{\cf3 |syn, i|\cf2 \
 				if (syn.notNil)\
 				\{\
-					syn.src.set(\cf4 \\buf\cf0 , ~subloops[i]);\
-					(\cf3 "loop at "\cf0  ++ i.asString ++ \cf3 " changed"\cf0 ).postln;\
+					syn.src.set(\cf5 \\buf\cf2 , ~subloops[i]);\
+					(\cf4 "loop at "\cf2  ++ i.asString ++ \cf4 " changed"\cf2 ).postln;\
 				\}\
 			\});	\
-			\cf3 "zone 1 loops change complete"\cf0 .postln;						\
+			\cf4 "zone 1 loops change complete"\cf2 .postln;						\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 			\},\
-			\cf4 \\det_8_15\cf0 : \{  \
+\cf2 			\},\
+			\cf5 \\det_8_15\cf2 : \{  \
 \pard\pardeftab720\ql\qnatural
-\cf0 			~subloops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "detloop_"\cf0 ) \});\
-			~z1synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 			~subloops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "detloop_"\cf2 ) \});\
+			~z1synths.do(\{\cf3 |syn, i|\cf2 \
 				if (syn.notNil)\
 				\{\
-					syn.src.set(\cf4 \\buf\cf0 , ~subloops[i + 8]);\
-					(\cf3 "loop at "\cf0  ++ i.asString ++ \cf3 " changed"\cf0 ).postln;\
+					syn.src.set(\cf5 \\buf\cf2 , ~subloops[i + 8]);\
+					(\cf4 "loop at "\cf2  ++ i.asString ++ \cf4 " changed"\cf2 ).postln;\
 				\}\
 			\});		\
-			\cf3 "zone 1 loops change complete"\cf0 .postln;		\
+			\cf4 "zone 1 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 			\},\
-			\cf4 \\oop_rand\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
+\cf2 			\},\
+			\cf5 \\oop_rand\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 				~subloops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "monooop"\cf0 ) \});\
-				~z1synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 				~subloops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "monooop"\cf2 ) \});\
+				~z1synths.do(\{\cf3 |syn, i|\cf2 \
 					if (syn.notNil)\
 					\{\
-						syn.src.set(\cf4 \\buffer\cf0 , ~subloops.choose);\
-						(\cf3 "loop at "\cf0  ++ i.asString ++ \cf3 " changed"\cf0 ).postln;\
+						syn.src.set(\cf5 \\buffer\cf2 , ~subloops.choose);\
+						(\cf4 "loop at "\cf2  ++ i.asString ++ \cf4 " changed"\cf2 ).postln;\
 						2.wait;\
 					\}\
 				\});		\
-				\cf3 "zone 1 loops change complete"\cf0 .postln;		\
+				\cf4 "zone 1 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\}).play\
+\cf2 				\}).play\
 			\},\
-			\cf4 \\oop_0_7\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
+			\cf5 \\oop_0_7\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 				~subloops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "monooop"\cf0 ) \});\
-				~z1synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 				~subloops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "monooop"\cf2 ) \});\
+				~z1synths.do(\{\cf3 |syn, i|\cf2 \
 					if (syn.notNil)\
 					\{\
-						syn.src.set(\cf4 \\buffer\cf0 , ~subloops[i]);\
-						(\cf3 "loop at "\cf0  ++ i.asString ++ \cf3 " changed"\cf0 ).postln;\
+						syn.src.set(\cf5 \\buffer\cf2 , ~subloops[i]);\
+						(\cf4 "loop at "\cf2  ++ i.asString ++ \cf4 " changed"\cf2 ).postln;\
 						2.wait;\
 					\}\
 				\});		\
-				\cf3 "zone 1 loops change complete"\cf0 .postln;		\
+				\cf4 "zone 1 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\}).play\
+\cf2 				\}).play\
 			\},\
-			\cf4 \\sum_4_11\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
+			\cf5 \\sum_4_11\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 				~subloops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "sumeloop"\cf0 ) \});\
-				~z1synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 				~subloops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "sumeloop"\cf2 ) \});\
+				~z1synths.do(\{\cf3 |syn, i|\cf2 \
 					if (syn.notNil)\
 					\{\
-						syn.src.set(\cf4 \\buffer\cf0 , ~subloops[i + 4]);\
-						(\cf3 "loop at "\cf0  ++ i.asString ++ \cf3 " changed"\cf0 ).postln;\
+						syn.src.set(\cf5 \\buffer\cf2 , ~subloops[i + 4]);\
+						(\cf4 "loop at "\cf2  ++ i.asString ++ \cf4 " changed"\cf2 ).postln;\
 						2.wait;\
 					\}\
 				\});\
-				\cf3 "zone 1 loops change complete"\cf0 .postln;		\
+				\cf4 "zone 1 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\}).play\
+\cf2 				\}).play\
 			\},\
-			\cf4 \\nim_rand\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
+			\cf5 \\nim_rand\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 				~subloops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "nimeloop"\cf0 ) \});\
-				~z1synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 				~subloops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "nimeloop"\cf2 ) \});\
+				~z1synths.do(\{\cf3 |syn, i|\cf2 \
 					if (syn.notNil)\
 					\{\
-						syn.src.set(\cf4 \\buffer\cf0 , ~subloops.choose);\
-						(\cf3 "loop at "\cf0  ++ i.asString ++ \cf3 " changed"\cf0 ).postln;\
+						syn.src.set(\cf5 \\buffer\cf2 , ~subloops.choose);\
+						(\cf4 "loop at "\cf2  ++ i.asString ++ \cf4 " changed"\cf2 ).postln;\
 						2.wait;\
 					\}\
 				\});		\
-				\cf3 "zone 1 loops change complete"\cf0 .postln;		\
+				\cf4 "zone 1 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\}).play\
+\cf2 				\}).play\
 			\},\
-			\cf4 \\the_rand\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
+			\cf5 \\the_rand\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 				~subloops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "tehisloop"\cf0 ) \});\
-				~z1synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 				~subloops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "tehisloop"\cf2 ) \});\
+				~z1synths.do(\{\cf3 |syn, i|\cf2 \
 					if (syn.notNil)\
 					\{\
-						syn.src.set(\cf4 \\buffer\cf0 , ~subloops.choose);\
-						(\cf3 "loop at "\cf0  ++ i.asString ++ \cf3 " changed"\cf0 ).postln;\
+						syn.src.set(\cf5 \\buffer\cf2 , ~subloops.choose);\
+						(\cf4 "loop at "\cf2  ++ i.asString ++ \cf4 " changed"\cf2 ).postln;\
 						2.wait;\
 					\}\
 				\});		\
-				\cf3 "zone 1 loops change complete"\cf0 .postln;		\
+				\cf4 "zone 1 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\}).play\
+\cf2 				\}).play\
 			\},\
-			\cf4 \\fx_rand\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
+			\cf5 \\fx_rand\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
 \pard\pardeftab720\ql\qnatural
-\cf0 				~subloops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf3 "fxloop"\cf0 ) \});\
-				~z1synths.do(\{\cf2 |syn, i|\cf0 \
+\cf2 				~subloops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf4 "fxloop"\cf2 ) \});\
+				~z1synths.do(\{\cf3 |syn, i|\cf2 \
 					if (syn.notNil)\
 					\{\
-						syn.src.set(\cf4 \\buffer\cf0 , ~subloops.choose);\
-						(\cf3 "loop at "\cf0  ++ i.asString ++ \cf3 " changed"\cf0 ).postln;\
+						syn.src.set(\cf5 \\buffer\cf2 , ~subloops.choose);\
+						(\cf4 "loop at "\cf2  ++ i.asString ++ \cf4 " changed"\cf2 ).postln;\
 						2.wait;\
 					\}\
 				\});		\
-				\cf3 "zone 1 loops change complete"\cf0 .postln;		\
+				\cf4 "zone 1 loops change complete"\cf2 .postln;		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\}).play\
+\cf2 				\}).play\
 			\}\
 		);\
 		\
-		~z1pm = \cf2 SCPopUpMenu\cf0 (panel, \cf2 Rect\cf0 (5, 155, panel.bounds.width / 1.5 - 5, 25))\
+		~z1pm = \cf3 SCPopUpMenu\cf2 (panel, \cf3 Rect\cf2 (5, 155, panel.bounds.width / 1.5 - 5, 25))\
 			.background_(colors.steel)\
 			.font_(fonts.lucida9)			\
 			.stringColor_(colors.orange)\
-			.items_(~z1items.keys(\cf2 Array\cf0 ).sort);\
+			.items_(~z1items.keys(\cf3 Array\cf2 ).sort);\
 		\
-		\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (panel.bounds.width / 1.5 + 5, 155, panel.bounds.width / 3 - 10, 25))\
+		\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (panel.bounds.width / 1.5 + 5, 155, panel.bounds.width / 3 - 10, 25))\
 			.font_(fonts.lucida9)\
-			.states_([[\cf3 "send"\cf0 , colors.orange, colors.steel]])\
+			.states_([[\cf4 "send"\cf2 , colors.orange, colors.steel]])\
 			.action_(\{\
 				~z1items[~z1pm.items[~z1pm.value].asSymbol].value\
 			\});				\
 \
 		~z1smspecs = (\
-			\cf4 \\rtime\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (10.0, 20.0)),\
-			\cf4 \\tail\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (1.0, 2.0)),\
-			\cf4 \\aamp\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (1.0, 4.0)),\
-			\cf4 \\line\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 3.0, default: 2.0))\
+			\cf5 \\rtime\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (10.0, 20.0)),\
+			\cf5 \\tail\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (1.0, 2.0)),\
+			\cf5 \\aamp\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (1.0, 4.0)),\
+			\cf5 \\line\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.5, 3.0, default: 2.0))\
 		);			\
 				\
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (0 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.action_(\{\cf2 |sl|\cf0 \
-				~z1globals[0].spec.minval = ~z1smspecs[\cf4 \\rtime\cf0 ].map(sl.value)\
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (0 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.action_(\{\cf3 |sl|\cf2 \
+				~z1globals[0].spec.minval = ~z1smspecs[\cf5 \\rtime\cf2 ].map(sl.value)\
 			\});\
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (1 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.action_(\{\cf2 |sl|\cf0 \
-				~z1globals[6].spec.minval = ~z1smspecs[\cf4 \\tail\cf0 ].map(sl.value)\
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (1 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.action_(\{\cf3 |sl|\cf2 \
+				~z1globals[6].spec.minval = ~z1smspecs[\cf5 \\tail\cf2 ].map(sl.value)\
 			\});\
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (2 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.action_(\{\cf2 |sl|\cf0 \
-				~z1globals[7].spec.maxval = ~z1smspecs[\cf4 \\aamp\cf0 ].map(sl.value)\
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (2 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.action_(\{\cf3 |sl|\cf2 \
+				~z1globals[7].spec.maxval = ~z1smspecs[\cf5 \\aamp\cf2 ].map(sl.value)\
 			\});\
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (3 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.value_(~z1smspecs[\cf4 \\line\cf0 ].spec.unmap(~z1smspecs[\cf4 \\line\cf0 ].spec.default))\
-			.action_(\{\cf2 |sl|\cf0 \
-				~z1globals[8].spec.maxval = ~z1smspecs[\cf4 \\line\cf0 ].map(sl.value)\
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (3 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.value_(~z1smspecs[\cf5 \\line\cf2 ].spec.unmap(~z1smspecs[\cf5 \\line\cf2 ].spec.default))\
+			.action_(\{\cf3 |sl|\cf2 \
+				~z1globals[8].spec.maxval = ~z1smspecs[\cf5 \\line\cf2 ].map(sl.value)\
 			\});\
 \
-		[\cf3 "rtime"\cf0 , \cf3 "tail"\cf0 , \cf3 "amp"\cf0 , \cf3 "line"\cf0  ].do(\{\cf2 |txt, i|\cf0 \
-			\cf2 SCStaticText\cf0 (panel, \cf2 Rect\cf0 (i * 45 + 5, 215, panel.bounds.width / 4 - 5, 25))\
+		[\cf4 "rtime"\cf2 , \cf4 "tail"\cf2 , \cf4 "amp"\cf2 , \cf4 "line"\cf2  ].do(\{\cf3 |txt, i|\cf2 \
+			\cf3 SCStaticText\cf2 (panel, \cf3 Rect\cf2 (i * 45 + 5, 215, panel.bounds.width / 4 - 5, 25))\
 				.font_(fonts.skia)\
 				.stringColor_(colors.orange)\
-				.align_(\cf4 \\center\cf0 )\
+				.align_(\cf5 \\center\cf2 )\
 				.string_(txt)\
 		\})\
 			\
@@ -807,213 +809,212 @@
 \
 \});\
 \
-~fx.perfGui.assignPanel(2, \{\cf2 |panel|\cf0 \
-	\cf2 var\cf0  colors, fonts;\
+~fx.perfGui.assignPanel(2, \{\cf3 |panel|\cf2 \
+	\cf3 var\cf2  colors, fonts;\
 	colors = (\
-		\cf4 \\blue\cf0 : \cf2 Color\cf0 .new255(28, 134, 238),\
-		\cf4 \\orange\cf0 : \cf2 Color\cf0 .new255(184, 134, 11),\
-		\cf4 \\steel\cf0 : \cf2 Color\cf0 .new255(4, 50, 89)\
+		\cf5 \\blue\cf2 : \cf3 Color\cf2 .new255(28, 134, 238),\
+		\cf5 \\orange\cf2 : \cf3 Color\cf2 .new255(184, 134, 11),\
+		\cf5 \\steel\cf2 : \cf3 Color\cf2 .new255(4, 50, 89)\
 	);\
 	fonts = (\
-		\cf4 \\lucida9\cf0 : \cf2 Font\cf0 (\cf3 "Lucida Grande"\cf0 , 9),\
-		\cf4 \\lucida11\cf0 : \cf2 Font\cf0 (\cf3 "Lucida Grande"\cf0 , 11),\
-		\cf4 \\skia\cf0 : \cf2 Font\cf0 (\cf3 "Skia"\cf0 , 9) \
+		\cf5 \\lucida9\cf2 : \cf3 Font\cf2 (\cf4 "Lucida Grande"\cf2 , 9),\
+		\cf5 \\lucida11\cf2 : \cf3 Font\cf2 (\cf4 "Lucida Grande"\cf2 , 11),\
+		\cf5 \\skia\cf2 : \cf3 Font\cf2 (\cf4 "Skia"\cf2 , 9) \
 	);\
-	\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (5, 5, panel.bounds.width - 10, 25))\
-		.states_([[\cf3 "initialize"\cf0 , colors.orange, colors.steel ]])\
+	\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (5, 5, panel.bounds.width - 10, 25))\
+		.states_([[\cf4 "initialize"\cf2 , colors.orange, colors.steel ]])\
 		.font_(fonts.lucida11)\
 		.action_(\{\
 			~loopind = (0..7);\
 \
 			~indices = (0..63).clump(2).clump(2).flop.flatten(2).clump(4).perfectShuffle\
-					.clump(4).flop.flatten(2).clump(8).sort(\{\cf2 |a, b|\cf0  a[0] < b[0] \});\
+					.clump(4).flop.flatten(2).clump(8).sort(\{\cf3 |a, b|\cf2  a[0] < b[0] \});\
 			\
 			~trigmap = [\
-				(\cf4 \\on\cf0 : 0.1, \cf4 \\off\cf0 : 0.3, \cf4 \\last\cf0 : 0, \cf4 \\active\cf0 : \cf2 false\cf0  ),\
-				(\cf4 \\on\cf0 : 0.2, \cf4 \\off\cf0 : 0.4, \cf4 \\last\cf0 : 0, \cf4 \\active\cf0 : \cf2 false\cf0  ),\
-				(\cf4 \\on\cf0 : 0.3, \cf4 \\off\cf0 : 0.5, \cf4 \\last\cf0 : 0, \cf4 \\active\cf0 : \cf2 false\cf0  ),\
-				(\cf4 \\on\cf0 : 0.4, \cf4 \\off\cf0 : 0.6, \cf4 \\last\cf0 : 0, \cf4 \\active\cf0 : \cf2 false\cf0  ),\
-				(\cf4 \\on\cf0 : 0.9, \cf4 \\off\cf0 : 0.7, \cf4 \\last\cf0 : 0, \cf4 \\active\cf0 : \cf2 false\cf0  ),\
-				(\cf4 \\on\cf0 : 0.8, \cf4 \\off\cf0 : 0.6, \cf4 \\last\cf0 : 0, \cf4 \\active\cf0 : \cf2 false\cf0  ),\
-				(\cf4 \\on\cf0 : 0.7, \cf4 \\off\cf0 : 0.5, \cf4 \\last\cf0 : 0, \cf4 \\active\cf0 : \cf2 false\cf0  ),\
-				(\cf4 \\on\cf0 : 0.6, \cf4 \\off\cf0 : 0.4, \cf4 \\last\cf0 : 0, \cf4 \\active\cf0 : \cf2 false\cf0  )\
+				(\cf5 \\on\cf2 : 0.1, \cf5 \\off\cf2 : 0.3, \cf5 \\last\cf2 : 0, \cf5 \\active\cf2 : \cf3 false\cf2  ),\
+				(\cf5 \\on\cf2 : 0.2, \cf5 \\off\cf2 : 0.4, \cf5 \\last\cf2 : 0, \cf5 \\active\cf2 : \cf3 false\cf2  ),\
+				(\cf5 \\on\cf2 : 0.3, \cf5 \\off\cf2 : 0.5, \cf5 \\last\cf2 : 0, \cf5 \\active\cf2 : \cf3 false\cf2  ),\
+				(\cf5 \\on\cf2 : 0.4, \cf5 \\off\cf2 : 0.6, \cf5 \\last\cf2 : 0, \cf5 \\active\cf2 : \cf3 false\cf2  ),\
+				(\cf5 \\on\cf2 : 0.9, \cf5 \\off\cf2 : 0.7, \cf5 \\last\cf2 : 0, \cf5 \\active\cf2 : \cf3 false\cf2  ),\
+				(\cf5 \\on\cf2 : 0.8, \cf5 \\off\cf2 : 0.6, \cf5 \\last\cf2 : 0, \cf5 \\active\cf2 : \cf3 false\cf2  ),\
+				(\cf5 \\on\cf2 : 0.7, \cf5 \\off\cf2 : 0.5, \cf5 \\last\cf2 : 0, \cf5 \\active\cf2 : \cf3 false\cf2  ),\
+				(\cf5 \\on\cf2 : 0.6, \cf5 \\off\cf2 : 0.4, \cf5 \\last\cf2 : 0, \cf5 \\active\cf2 : \cf3 false\cf2  )\
 			];\
 \
-			~z3synths = \cf2 Array\cf0 .newClear(8);\
+			~z3synths = \cf3 Array\cf2 .newClear(8);\
 \
 			~z3map = (\
-				\cf4 \\aamp\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 0.1)),\
-				\cf4 \\str\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0, 0.5)),\
-				\cf4 \\end\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 1.0)),\
-				\cf4 \\wrp\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.125/4 , 1.0/4, step: 2**(1/5) )),\
-				\cf4 \\frq\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (1.0, 1.0 )),\
-				\cf4 \\wsz\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.0625, 0.5, step: 2**(1/5) )),\
-				\cf4 \\dns\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (4, 32, step: 2**(1/5) )),\
-				\cf4 \\rnd\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.1, 0.2)),\
-				\cf4 \\xang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) )),\
-				\cf4 \\yang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) )),\
-				\cf4 \\zang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) ))\
+				\cf5 \\aamp\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.5, 0.1)),\
+				\cf5 \\str\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0, 0.5)),\
+				\cf5 \\end\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.5, 1.0)),\
+				\cf5 \\wrp\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.125/4 , 1.0/4, step: 2**(1/5) )),\
+				\cf5 \\frq\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (1.0, 1.0 )),\
+				\cf5 \\wsz\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.0625, 0.5, step: 2**(1/5) )),\
+				\cf5 \\dns\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (4, 32, step: 2**(1/5) )),\
+				\cf5 \\rnd\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.1, 0.2)),\
+				\cf5 \\xang\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (pi, -pi, step: 2**(1/5) )),\
+				\cf5 \\yang\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (pi, -pi, step: 2**(1/5) )),\
+				\cf5 \\zang\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (pi, -pi, step: 2**(1/5) ))\
 			);\
 \
 			~z3pmaps = (\
-				\cf4 \\kck\cf0 : [\cf4 \\ou\cf0 , ~abus, \cf4 \\ef\cf0 , 99, \cf4 \\fr\cf0 , 50.0, \cf4 \\at\cf0 , 0.1, \cf4 \\dr\cf0 , 0.05, \cf4 \\cr\cf0 , -4, \cf4 \\ea\cf0 , 1, \
-					\cf4 \\on\cf0 , 1, \cf4 \\am\cf0 , 1.0],\
-				\cf4 \\snr\cf0 : [\cf4 \\ou\cf0 , ~abus, \cf4 \\fr\cf0 , 400, \cf4 \\at\cf0 , 0.008, \cf4 \\dr\cf0 , 0.05, \cf4 \\cr\cf0 , -6, \cf4 \\dc\cf0 , 2, \cf4 \\dl\cf0 , 0.125, \cf4 \\wt\cf0 , 3,\
-					\cf4 \\am\cf0 , 12],\
-				\cf4 \\hh\cf0 : [\cf4 \\ou\cf0 , ~abus, \cf4 \\dr\cf0 , 0.04, \cf4 \\fr\cf0 , 2500, \cf4 \\am\cf0 , 25.0],\
-				\cf4 \\bss\cf0 : [\cf4 \\ou\cf0 , ~abus, \cf4 \\fr\cf0 , 60.0, \cf4 \\dr\cf0 , 0.05, \cf4 \\am\cf0 , 4.0],\
-				\cf4 \\clck\cf0 : [\cf4 \\ou\cf0 , ~abus, \cf4 \\ef\cf0 , 99, \cf4 \\am\cf0 , 8.0, \cf4 \\dr\cf0 , 0.2, \cf4 \\bt\cf0 , 1, \cf4 \\ea\cf0 , 1],\
-				\cf4 \\nzsnr\cf0 : [\cf4 \\ou\cf0 , ~abus, \cf4 \\am\cf0 , 4, \cf4 \\fr\cf0 , 700, \cf4 \\dr\cf0 , 0.2],\
-				\cf4 \\pnk\cf0 : [\cf4 \\ou\cf0 , ~abus, \cf4 \\dr\cf0 , 0.05, \cf4 \\am\cf0 , 4.0],\
-				\cf4 \\fmsnth\cf0 : [\cf4 \\ou\cf0 , ~abus, \cf4 \\ef\cf0 , 99, \cf4 \\dr\cf0 , 0.05, \cf4 \\gd\cf0 , 0.015, \cf4 \\cf\cf0 , 500, \cf4 \\mf\cf0 , 0.5, \cf4 \\in\cf0 , 12, \
-					\cf4 \\on\cf0 , 1, \cf4 \\am\cf0 , 2]\
+				\cf5 \\kck\cf2 : [\cf5 \\ou\cf2 , ~abus, \cf5 \\ef\cf2 , 99, \cf5 \\fr\cf2 , 50.0, \cf5 \\at\cf2 , 0.1, \cf5 \\dr\cf2 , 0.05, \cf5 \\cr\cf2 , -4, \cf5 \\ea\cf2 , 1, \
+					\cf5 \\on\cf2 , 1, \cf5 \\am\cf2 , 1.0],\
+				\cf5 \\snr\cf2 : [\cf5 \\ou\cf2 , ~abus, \cf5 \\fr\cf2 , 400, \cf5 \\at\cf2 , 0.008, \cf5 \\dr\cf2 , 0.05, \cf5 \\cr\cf2 , -6, \cf5 \\dc\cf2 , 2, \cf5 \\dl\cf2 , 0.125, \cf5 \\wt\cf2 , 3,\
+					\cf5 \\am\cf2 , 12],\
+				\cf5 \\hh\cf2 : [\cf5 \\ou\cf2 , ~abus, \cf5 \\dr\cf2 , 0.04, \cf5 \\fr\cf2 , 2500, \cf5 \\am\cf2 , 25.0],\
+				\cf5 \\bss\cf2 : [\cf5 \\ou\cf2 , ~abus, \cf5 \\fr\cf2 , 60.0, \cf5 \\dr\cf2 , 0.05, \cf5 \\am\cf2 , 4.0],\
+				\cf5 \\clck\cf2 : [\cf5 \\ou\cf2 , ~abus, \cf5 \\ef\cf2 , 99, \cf5 \\am\cf2 , 8.0, \cf5 \\dr\cf2 , 0.2, \cf5 \\bt\cf2 , 1, \cf5 \\ea\cf2 , 1],\
+				\cf5 \\nzsnr\cf2 : [\cf5 \\ou\cf2 , ~abus, \cf5 \\am\cf2 , 4, \cf5 \\fr\cf2 , 700, \cf5 \\dr\cf2 , 0.2],\
+				\cf5 \\pnk\cf2 : [\cf5 \\ou\cf2 , ~abus, \cf5 \\dr\cf2 , 0.05, \cf5 \\am\cf2 , 4.0],\
+				\cf5 \\fmsnth\cf2 : [\cf5 \\ou\cf2 , ~abus, \cf5 \\ef\cf2 , 99, \cf5 \\dr\cf2 , 0.05, \cf5 \\gd\cf2 , 0.015, \cf5 \\cf\cf2 , 500, \cf5 \\mf\cf2 , 0.5, \cf5 \\in\cf2 , 12, \
+					\cf5 \\on\cf2 , 1, \cf5 \\am\cf2 , 2]\
 			);	\
 			\
-			~addSynth = \{\cf2 |index, invalues|\cf0 \
-				\cf2 var\cf0  states = \cf2 Pseq\cf0 (invalues.states[~indices[index]], 2).asStream;\
-				\cf2 Synth\cf0 .head(~agrp, ~z3defs[index].name, ~z3pmaps[~z3defs[index].name.asSymbol] \
-					++ [\cf4 \\az\cf0 , [-pi, pi].asSpec.map(states.next)]);\
-				~z3synths[index] = \cf2 Synth\cf0 .head(~agrp, \cf4 \\rwarpfldatk\cf0 , \
-					[\cf4 \\out\cf0 , ~abus, \cf4 \\efx\cf0 , ~rbus, \cf4 \\gate\cf0 , 1.0, \cf4 \\amp\cf0 , 1.0,\
-					\cf4 \\eamp\cf0 , 0.5, \cf4 \\maxdel\cf0 , 0.1, \cf4 \\dur\cf0 , 1, \cf4 \\buf\cf0 , ~loops[~loopind[index]]\
-					] ++ ~z3map.collect(\{\cf2 |spec|\cf0  spec.map(states.next) \}).asKeyValuePairs )\
-						.setn(\cf4 \\env\cf0 , \cf2 Env\cf0 ([1, 1, 0], [0.8, 0.2], \cf4 \\lin\cf0 , 2, 1).asArray)\
-						.setn(\cf4 \\delays\cf0 , \cf2 Array\cf0 .geom(4, [0.005, 0.01].asSpec.map(states.next), 1.618 ))\
-						.setn(\cf4 \\shifts\cf0 , [1, 0.5, 0.25, 1])\
-						.setn(\cf4 \\wins\cf0 , \cf2 Array\cf0 .geom(4, [0.01, 0.05].asSpec.map(states.next), 1.618 ))\
-						.setn(\cf4 \\amps\cf0 , \cf2 Array\cf0 .geom(4, 1.0, 8/13));\
+			~addSynth = \{\cf3 |index, invalues|\cf2 \
+				\cf3 var\cf2  states = \cf3 Pseq\cf2 (invalues.states[~indices[index]], 2).asStream;\
+				\cf3 Synth\cf2 .head(~agrp, ~z3defs[index].name, ~z3pmaps[~z3defs[index].name.asSymbol] \
+					++ [\cf5 \\az\cf2 , [-pi, pi].asSpec.map(states.next)]);\
+				~z3synths[index] = \cf3 Synth\cf2 .head(~agrp, \cf5 \\rwarpfldatk\cf2 , \
+					[\cf5 \\out\cf2 , ~abus, \cf5 \\efx\cf2 , ~rbus, \cf5 \\gate\cf2 , 1.0, \cf5 \\amp\cf2 , 1.0,\
+					\cf5 \\eamp\cf2 , 0.5, \cf5 \\maxdel\cf2 , 0.1, \cf5 \\dur\cf2 , 1, \cf5 \\buf\cf2 , ~loops[~loopind[index]]\
+					] ++ ~z3map.collect(\{\cf3 |spec|\cf2  spec.map(states.next) \}).asKeyValuePairs )\
+						.setn(\cf5 \\env\cf2 , \cf3 Env\cf2 ([1, 1, 0], [0.8, 0.2], \cf5 \\lin\cf2 , 2, 1).asArray)\
+						.setn(\cf5 \\delays\cf2 , \cf3 Array\cf2 .geom(4, [0.005, 0.01].asSpec.map(states.next), 1.618 ))\
+						.setn(\cf5 \\shifts\cf2 , [1, 0.5, 0.25, 1])\
+						.setn(\cf5 \\wins\cf2 , \cf3 Array\cf2 .geom(4, [0.01, 0.05].asSpec.map(states.next), 1.618 ))\
+						.setn(\cf5 \\amps\cf2 , \cf3 Array\cf2 .geom(4, 1.0, 8/13));\
 			\};\
 			\
 			~release = -1.0;\
 		\
-			~removeSynth = \{\cf2 |index|\cf0 \
-				~z3synths[index].set(\cf4 \\gate\cf0 , ~release);\
-				~z3synths[index] = \cf2 nil\cf0 ;	\
+			~removeSynth = \{\cf3 |index|\cf2 \
+				~z3synths[index].set(\cf5 \\gate\cf2 , ~release);\
+				~z3synths[index] = \cf3 nil\cf2 ;	\
 			\};			\
 			\
 		\});\
 		\
-		\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (5, 35, panel.bounds.width / 2 - 5, 25))\
-			.states_([[\cf3 "states OFF"\cf0 , colors.orange, colors.steel ], [\cf3 "states ON"\cf0 , colors.steel, colors.orange ]])\
+		\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (5, 35, panel.bounds.width / 2 - 5, 25))\
+			.states_([[\cf4 "states OFF"\cf2 , colors.orange, colors.steel ], [\cf4 "states ON"\cf2 , colors.steel, colors.orange ]])\
 			.font_(fonts.lucida9)\
-			.action_(\{\cf2 |bt|\cf0 \
+			.action_(\{\cf3 |bt|\cf2 \
 				if (bt.value == 1)\
 				\{\
-					~fx.addStatesFunction(\cf4 \\zone3\cf0 , \{\cf2 |invalues|\cf0 \
-						~indices.do(\{ \cf2 |index, i|\cf0 \
-							\cf2 var\cf0  map, states, params = invalues.states[index];\
+					~fx.addStatesFunction(\cf5 \\zone3\cf2 , \{\cf3 |invalues|\cf2 \
+						~indices.do(\{ \cf3 |index, i|\cf2 \
+							\cf3 var\cf2  map, states, params = invalues.states[index];\
 							map = ~trigmap[i];\
 							\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf5 //							if (~z3synths[i].notNil)\cf0 \
-\cf5 //							\{\cf0 \
-\cf5 //								states = Pseq(invalues.states[~indices[i]], 2).asStream;\cf0 \
-\cf5 //								~z3synths[i].set(*~z3map.collect(\{|spec| spec.map(states.next) \}).asKeyValuePairs)\cf0 \
-\cf5 //							\};\cf0 \
+\cf6 //							if (~z3synths[i].notNil)\cf2 \
+\cf6 //							\{\cf2 \
+\cf6 //								states = Pseq(invalues.states[~indices[i]], 2).asStream;\cf2 \
+\cf6 //								~z3synths[i].set(*~z3map.collect(\{|spec| spec.map(states.next) \}).asKeyValuePairs)\cf2 \
+\cf6 //							\};\cf2 \
 							\
 							if (map.on > map.off) \{\
 								if ((map.active.not).and(params[0] > map.off).and(params[0] < map.on))\
 								\{\
 									~addSynth.value(i, invalues);\
-									map.active = \cf2 true\cf0 ;\
+									map.active = \cf3 true\cf2 ;\
 								\};\
 								if ((map.active).and((params[0] < map.off).or(params[0] > map.on) ))\
 								\{\
 									~removeSynth.value(i);\
-									map.active = \cf2 false\cf0 ;\
+									map.active = \cf3 false\cf2 ;\
 								\}\
 							\}\
 							\{\
 								if ((map.active.not).and(params[0] < map.off).and(params[0] > map.on))\
 								\{\
 									~addSynth.value(i, invalues);\
-									map.active = \cf2 true\cf0 ;\
+									map.active = \cf3 true\cf2 ;\
 								\};\
 								if ((map.active).and((params[0] > map.off).or(params[0] < map.on) ))\
 								\{\
 									~removeSynth.value(i);\
-									map.active = \cf2 false\cf0 ;\
+									map.active = \cf3 false\cf2 ;\
 								\}\
 							\
 							\}	\
 						\})\
 \pard\pardeftab720\ql\qnatural
-\cf0 			 	\})\
+\cf2 			 	\})\
 			 \}\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 				\{\
-					~fx.removeStatesFunction(\cf4 \\zone3\cf0 )	\
+\cf2 				\{\
+					~fx.removeStatesFunction(\cf5 \\zone3\cf2 )	\
 				\}\
 			\});\
 \
 		~z3items = (\
-			\cf4 \\det_0_7\cf0 : \{  \
-				\cf2 Routine\cf0 (\{				\
-					(0..7).do(\{\cf2 |ind, i|\cf0 \
+			\cf5 \\det_0_7\cf2 : \{  \
+				\cf3 Routine\cf2 (\{				\
+					(0..7).do(\{\cf3 |ind, i|\cf2 \
 						~loopind[i] = ind;\
 						4.wait;\
 					\})\
 				\}).play\
 			\},\
-			\cf4 \\det_8_15\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
-					(8..15).do(\{\cf2 |ind, i|\cf0 \
+			\cf5 \\det_8_15\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
+					(8..15).do(\{\cf3 |ind, i|\cf2 \
 						~loopind[i] = ind;\
 						4.wait;\
 					\})\
 				\}).play\
 			\},\
-			\cf4 \\fx_0_7\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
-					(21..28).do(\{\cf2 |ind, i|\cf0 \
+			\cf5 \\fx_0_7\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
+					(21..28).do(\{\cf3 |ind, i|\cf2 \
 						~loopind[i] = ind;\
 						4.wait;\
 					\})\
 				\}).play\
 			\},\
-			\cf4 \\mem_last\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
-					(68..75).do(\{\cf2 |ind, i|\cf0 \
+			\cf5 \\mem_last\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
+					(68..75).do(\{\cf3 |ind, i|\cf2 \
 						~loopind[i] = ind;\
 						4.wait;\
 					\})\
 				\}).play\
 			\},\
-			\cf4 \\misc_0_4\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
-					(76..79).do(\{\cf2 |ind, i|\cf0 \
+			\cf5 \\misc_0_4\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
+					(76..79).do(\{\cf3 |ind, i|\cf2 \
 						~loopind[i] = ind;\
 						4.wait;\
 					\})\
 				\}).play\
 			\},\
-			\cf4 \\oop\cf0 : \{  \
-				\cf2 Routine\cf0 (\{\
-					(104..111).do(\{\cf2 |ind, i|\cf0 \
+			\cf5 \\oop\cf2 : \{  \
+				\cf3 Routine\cf2 (\{\
+					(104..111).do(\{\cf3 |ind, i|\cf2 \
 						~loopind[i] = ind;\
 						4.wait;\
 					\})\
 				\}).play\
 			\},\
-			\cf4 \\nim\cf0 : \{\
-				\cf2 Routine\cf0 (\{\
-					(150..157).do(\{\cf2 |ind, i|\cf0 \
+			\cf5 \\nim\cf2 : \{\
+				\cf3 Routine\cf2 (\{\
+					(150..157).do(\{\cf3 |ind, i|\cf2 \
 						~loopind[i] = ind;\
 						4.wait;\
 					\})\
 				\}).play			\
 			\},\
-			\cf4 \\sum\cf0 : \{\
-				\cf2 Routine\cf0 (\{\
-					(188..195).do(\{\cf2 |ind, i|\cf0 \
+			\cf5 \\sum\cf2 : \{\
+				\cf3 Routine\cf2 (\{\
+					(188..195).do(\{\cf3 |ind, i|\cf2 \
 						~loopind[i] = ind;\
 						4.wait;\
 					\})\
 				\}).play			\
 			\},\
-			\cf4 \\teh\cf0 : \{\
-				\cf2 Routine\cf0 (\{\
-					(230..237).do(\{\cf2 |ind, i|\cf0 \
+			\cf5 \\teh\cf2 : \{\
+				\cf3 Routine\cf2 (\{\
+					(230..237).do(\{\cf3 |ind, i|\cf2 \
 						~loopind[i] = ind;\
 						4.wait;\
 					\})\
@@ -1022,47 +1023,47 @@
 			\
 		);\
 		\
-		~z3pm = \cf2 SCPopUpMenu\cf0 (panel, \cf2 Rect\cf0 (5, 155, panel.bounds.width / 1.5 - 5, 25))\
+		~z3pm = \cf3 SCPopUpMenu\cf2 (panel, \cf3 Rect\cf2 (5, 155, panel.bounds.width / 1.5 - 5, 25))\
 			.background_(colors.steel)\
 			.font_(fonts.lucida9)			\
 			.stringColor_(colors.orange)\
-			.items_(~z3items.keys(\cf2 Array\cf0 ).sort);\
+			.items_(~z3items.keys(\cf3 Array\cf2 ).sort);\
 		\
-		\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (panel.bounds.width / 1.5 + 5, 155, panel.bounds.width / 3 - 10, 25))\
+		\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (panel.bounds.width / 1.5 + 5, 155, panel.bounds.width / 3 - 10, 25))\
 			.font_(fonts.lucida9)\
-			.states_([[\cf3 "send"\cf0 , colors.orange, colors.steel]])\
+			.states_([[\cf4 "send"\cf2 , colors.orange, colors.steel]])\
 			.action_(\{\
 				~z3items[~z3pm.items[~z3pm.value].asSymbol].value\
 			\});	\
 			\
 		~z3smspecs = (\
-			\cf4 \\aamp\cf0 : \cf2 ControlSpec\cf0 (1.0, 2.0),\
-			\cf4 \\wrp\cf0 : \cf2 ControlSpec\cf0 (1/4, 1, step: 2**(1/5) ),\
-			\cf4 \\wsz\cf0 : \cf2 ControlSpec\cf0 (0.5, 0.125, step: 2**(1/5) )\
+			\cf5 \\aamp\cf2 : \cf3 ControlSpec\cf2 (1.0, 2.0),\
+			\cf5 \\wrp\cf2 : \cf3 ControlSpec\cf2 (1/4, 1, step: 2**(1/5) ),\
+			\cf5 \\wsz\cf2 : \cf3 ControlSpec\cf2 (0.5, 0.125, step: 2**(1/5) )\
 		);					\
 \
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (0 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.action_(\{\cf2 |sl|\cf0 \
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (0 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.action_(\{\cf3 |sl|\cf2 \
 				~release = [-1.0, -4.0].asSpec.map(sl.value)\
 			\});\
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (1 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.action_(\{\cf2 |sl|\cf0 \
-				~z3map[\cf4 \\aamp\cf0 ].spec.minval = ~z3smspecs[\cf4 \\aamp\cf0 ].map(sl.value)\
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (1 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.action_(\{\cf3 |sl|\cf2 \
+				~z3map[\cf5 \\aamp\cf2 ].spec.minval = ~z3smspecs[\cf5 \\aamp\cf2 ].map(sl.value)\
 			\});\
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (2 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.action_(\{\cf2 |sl|\cf0 \
-				~z3map[\cf4 \\wrp\cf0 ].spec.maxval = ~z3smspecs[\cf4 \\wrp\cf0 ].map(sl.value)\
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (2 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.action_(\{\cf3 |sl|\cf2 \
+				~z3map[\cf5 \\wrp\cf2 ].spec.maxval = ~z3smspecs[\cf5 \\wrp\cf2 ].map(sl.value)\
 			\});\
-		\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (3 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
-			.action_(\{\cf2 |sl|\cf0 \
-				~z3map[\cf4 \\wsz\cf0 ].spec.maxval = ~z3smspecs[\cf4 \\wsz\cf0 ].map(sl.value)\
+		\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (3 * 45 + 5, 215, panel.bounds.width / 4 - 5, 140))\
+			.action_(\{\cf3 |sl|\cf2 \
+				~z3map[\cf5 \\wsz\cf2 ].spec.maxval = ~z3smspecs[\cf5 \\wsz\cf2 ].map(sl.value)\
 			\});\
 \
-		[\cf3 "reltime"\cf0 , \cf3 "aamp"\cf0 , \cf3 "wrp"\cf0 , \cf3 "wsz"\cf0  ].do(\{\cf2 |txt, i|\cf0 \
-			\cf2 SCStaticText\cf0 (panel, \cf2 Rect\cf0 (i * 45 + 5, 215, panel.bounds.width / 4 - 5, 25))\
+		[\cf4 "reltime"\cf2 , \cf4 "aamp"\cf2 , \cf4 "wrp"\cf2 , \cf4 "wsz"\cf2  ].do(\{\cf3 |txt, i|\cf2 \
+			\cf3 SCStaticText\cf2 (panel, \cf3 Rect\cf2 (i * 45 + 5, 215, panel.bounds.width / 4 - 5, 25))\
 				.font_(fonts.skia)\
 				.stringColor_(colors.orange)\
-				.align_(\cf4 \\center\cf0 )\
+				.align_(\cf5 \\center\cf2 )\
 				.string_(txt)\
 		\})\
 			\

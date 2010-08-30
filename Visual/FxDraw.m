@@ -209,138 +209,29 @@
 }
 - (void) grid {
 
-	float lwid, step, endleft, endbottom, endfront; 
-	int i, targetIndex;
-	NSMutableDictionary * events;
-	Cell * target;
-	NSArray * ind;
-
 	[self setCommon];
-	left = (float)indexi * size - halfscreen + (size * 0.5f); 
-	bottom = (float)indexj * size - halfscreen + (size * 0.5f);
-	front = (float)indexk * size - halfscreen + (size * 0.5f);
-	width = height = depth = size;
-	lwid = 0.1f;
-
-	alpha = 0.3f;
-	red = green = blue = 0.2f;
-
-	[self drawVertex3f:left :bottom :front :left - width :bottom :front :lwid ];
-	[self drawVertex3f:left :bottom :front :left :bottom - height :front :lwid ];
-	[self drawVertex3f:left :bottom :front :left :bottom :front - depth :lwid ];	
 	
-	events = [[patches objectForKey: @"grid"] events];
-	if ([events objectForKey: @"x"] == nil)
+	left = (float)indexi * size - halfscreen + size -  (size * 2.0f * state);
+	bottom = (float)indexj * size - halfscreen + size -  (size * 2.0f * state);
+	front = (float)indexk * size - halfscreen + size -  (size * 2.0f * state);
+	height = width = depth = size * 4.0f * state;
+	
+	if (isEven(indexk))
 	{
-		[events setObject:[NSNumber numberWithInt:4] forKey:@"x"];
-		[events setObject:[NSNumber numberWithInt:9] forKey:@"y"];
-		[events setObject:[NSNumber numberWithInt:3] forKey:@"z"];
-		[events setObject:[NSNumber numberWithInt:0] forKey:@"phase"];
-		[events setObject:[NSNumber numberWithInt:2] forKey:@"target"];
+		[self drawPoint: left : bottom : front : 1.0f ];
+		[self drawPoint: left : bottom : front + depth : 1.0f ];
+		//		[self drawPoint: left : bottom + height : front : 1.0f ];
+		//		[self drawPoint: left : bottom + height : front + depth : 1.0f ];
 	}
 	
-	if (indexi == [[events objectForKey:@"x"] intValue] && 
-		indexj == [[events objectForKey:@"y"] intValue] && 
-		indexk == [[events objectForKey:@"z"] intValue])
+	if (!isEven(indexi))
 	{
-				
-		left = (float)indexi * size - 5.2f + (size / 2.0f);
-		bottom = (float)indexj * size - 5.2f + (size / 2.0f);
-		front = (float)indexk * size - 5.2f + (size / 2.0f);
-		width = height = depth = size;
-		endleft = left;
-		endbottom = bottom;
-		endfront = front;
-		
-		step = size / frameRateRatio;
-		
-		for (i = 0; i <= [[events objectForKey:@"phase"] intValue]; i++)
-		{
-			alpha = 1.0f;
-			red = green = blue = 0.9f;
-			switch ([[events objectForKey:@"target"] intValue])
-			{
-				case 4:
-					left -= step;
-					endleft = left - step;
-					break;
-				case 10:
-					bottom -= step;
-					endbottom = bottom - step;
-					break;
-				case 12: 
-					front -= step;
-					endfront = front - step;
-					break;
-				case 14:
-					front += step;
-					endfront = front + step;
-					break;
-				case 16:
-					bottom += step;
-					endbottom = bottom + step;
-					break;
-				case 22:
-					left += step;
-					endleft = left + step;
-					break;
-			}
-			lwid = 2.0f;
-			[self drawVertex3f:left :bottom :front :endleft :endbottom :endfront :lwid];
-		}
-		
-		if ([[events objectForKey:@"phase"] intValue] == frameRateRatio)
-		{
-			[events setObject:[NSNumber numberWithInt:0] forKey:@"phase"];		
-		}
-		else
-		{
-			[events setObject:[NSNumber numberWithInt:[[events objectForKey:@"phase"] intValue] + 1] forKey:@"phase"];
-		}
-		
-		if ([[events objectForKey:@"phase"] intValue] == 0)
-		{
-//			ind = [NSArray arrayWithObjects: 
-//				   [NSNumber numberWithInt:4],	//left
-//				   [NSNumber numberWithInt:10],	//down
-//				   [NSNumber numberWithInt:12],	//back
-//				   [NSNumber numberWithInt:14],	//front
-//				   [NSNumber numberWithInt:16],	//up
-//				   [NSNumber numberWithInt:22],	//right
-//				   nil
-//				   ];
-
-			ind = [NSArray arrayWithObjects: 
-				   [NSNumber numberWithInt:0],	//left
-				   [NSNumber numberWithInt:1],	//down
-				   [NSNumber numberWithInt:2],	//back
-				   [NSNumber numberWithInt:3],	//front
-				   [NSNumber numberWithInt:4],	//up
-				   [NSNumber numberWithInt:5],	//right
-				   nil
-				   ];			
-			
-			target = [[currentCell habitat] objectAtIndex: [[events objectForKey: @"target"] intValue]];
-			targetIndex = [[events objectForKey: @"target"] intValue];
-//			targetIndex = [[ind objectAtIndex:(int)randfloat(0.0f, 5.0f)] intValue];
-//			target = [[currentCell habitat] objectAtIndex:targetIndex];
-			for (i = 0; i < [ind count]; i++)
-			{
-				//fabs([[[currentCell habitat] objectAtIndex:[[ind objectAtIndex: i] intValue]] state] - [currentCell state]);
-				if ( [[[currentCell habitat] objectAtIndex:[[ind objectAtIndex: i] intValue]] state] > [target state] )
-				{
-					targetIndex = [[ind objectAtIndex: i] intValue];
-					target = [[currentCell habitat] objectAtIndex:targetIndex];
-				}
-			}
-			[events setObject:[NSNumber numberWithInt: [target coordX]] forKey:@"x"];
-			[events setObject:[NSNumber numberWithInt: [target coordY]] forKey:@"y"];
-			[events setObject:[NSNumber numberWithInt: [target coordZ]] forKey:@"z"];
-			[events setObject:[NSNumber numberWithInt: targetIndex] forKey:@"target"];
-			
-		}
-		
+		//		[self drawPoint: left + width : bottom : front : 1.0f ];
+		//		[self drawPoint: left + width : bottom : front + depth : 1.0f ];
+		[self drawPoint: left + width : bottom + height : front : 1.0f ];
+		[self drawPoint: left + width : bottom + height : front + depth : 1.0f ];
 	}
+	//	[self drawLine: left: bottom: front: left: bottom + height: front: map(1.0f - state, 0.1f, 2.0f)];
 	
 }
 - (void) horizons {
@@ -361,27 +252,15 @@
 
 	[self setCommon];
 		
-	left = (float)indexi * size - halfscreen + size -  (size * 2.0f * state);
-	bottom = (float)indexj * size - halfscreen + size -  (size * 2.0f * state);
-	front = (float)indexk * size - halfscreen + size -  (size * 2.0f * state);
-	height = width = depth = size * 4.0f * state;
-
-	if (isEven(indexk))
+	left = (float)indexi * size - halfscreen;
+	bottom = (float)indexj * size - halfscreen + (size / 2.0f);
+	front = (float)indexk * size - halfscreen + (size / 2.0f);
+	height = size;
+	
+	if (isEven(indexk) && !isEven(indexi))
 	{
-		[self drawPoint: left : bottom : front : 1.0f ];
-		[self drawPoint: left : bottom : front + depth : 1.0f ];
-		[self drawPoint: left : bottom + height : front : 1.0f ];
-		[self drawPoint: left : bottom + height : front + depth : 1.0f ];
+		[self drawLine: left: bottom: front: left: bottom + height: front: map(1.0f - state, 1.0f, 2.0f)];
 	}
-
-	if (!isEven(indexi))
-	{
-		[self drawPoint: left + width : bottom : front : 1.0f ];
-		[self drawPoint: left + width : bottom : front + depth : 1.0f ];
-		[self drawPoint: left + width : bottom + height : front : 1.0f ];
-		[self drawPoint: left + width : bottom + height : front + depth : 1.0f ];
-	}
-	//	[self drawLine: left: bottom: front: left: bottom + height: front: map(1.0f - state, 0.1f, 2.0f)];
 
 }
 

@@ -44,7 +44,7 @@
 	sig = sig + \cf3 Reverb\cf0 .ar(rev, rtm);\
 	enc = \cf3 BFEncode1\cf0 .ar(sig * amp, \cf3 Demand\cf0 .kr(trg, 0, azm), \cf3 Demand\cf0 .kr(trg, 0, elv) );\
 	\cf3 Out\cf0 .ar(out, enc * \cf3 EnvGen\cf0 .kr(env, gate, doneAction: doneAction))\
-\}).memStore;\
+\}).add;\
 \
 \cf3 SynthDef\cf0 (\cf5 \\line\cf0 , \{\cf3 |out, in, gate = 1.0, i_wrp = 0.1, frq, wsz, dns, rnd, amp|\cf0 \
 	\cf3 var\cf0  bufs, recs, ptrs, phases, deltimes, output, trigs, input;\
@@ -71,7 +71,7 @@
 			\cf3 DelayN\cf0 .ar(output, 0.03, 0.03)\
 		) * amp\
 	)\
-\}).memStore;\
+\}).add;\
 \
 \
 \pard\pardeftab720\ql\qnatural
@@ -85,7 +85,7 @@
 	sig = \cf3 LeakDC\cf0 .ar(sig ** 0.5);\
 	\cf3 Out\cf0 .ar(efx, sig * eamp);\
 	\cf3 Out\cf0 .ar(out, sig * aamp);\
-\}).memStore;\
+\}).add;\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
 \cf0 \
 \pard\pardeftab720\ql\qnatural
@@ -98,7 +98,7 @@
 	sig = \cf3 LeakDC\cf0 .ar(sig ** 0.5);\
 	\cf3 Out\cf0 .ar(efx, sig * eamp);\
 	\cf3 Out\cf0 .ar(out, sig * aamp)\
-\}).memStore;\
+\}).add;\
 \
 \cf3 SynthDef\cf0 (\cf5 \\atkencodedel\cf0 , \{\cf3 |out, in|\cf0 \
 	\cf3 var\cf0  src, del, azm, elv, sig, a, b, c, d;\
@@ -118,7 +118,7 @@
 	 d = \cf3 BHiShelf\cf0 .ar(\cf3 AtkMonoToB\cf0 .ar(sig@3, azm@3, elv@3), 7500.0, 1, 0.0 );\
 	 \cf3 Out\cf0 .ar(out, a + b + c + d);\
 \pard\pardeftab720\ql\qnatural
-\cf0 \}).memStore;\
+\cf0 \}).add;\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0 \
 \pard\pardeftab720\ql\qnatural
@@ -134,7 +134,7 @@
 \cf2 //	#w, x, y, z = AtkPush.ar(w, x, y, z, push, focus, zoom );\cf0 \
 \cf2 //	#w, x, y, z = AtkFocus.ar(w, x, y, z, focus, zoom, push );\cf0 \
 	\cf3 Out\cf0 .ar(out, [w, x, y, z])\
-\}).memStore;\
+\}).add;\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0 \
 )\

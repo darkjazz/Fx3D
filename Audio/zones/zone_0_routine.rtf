@@ -1,0 +1,483 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red96\green96\blue96;\red0\green115\blue0;
+\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 (\
+~loadAts = \cf2 true\cf0 ;\
+~localDecoder = \cf2 true\cf0 ;\
+~stereoOutput = \cf2 true\cf0 ;\
+\cf3 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf0 .load;\
+)\
+\
+(\
+\
+~zone0abufs = \cf2 Array\cf0 (); \
+\
+\cf3 "/Users/alo/sounds/tehis/aformat/*"\cf0 .pathMatch.do(\{\cf2 |path|\cf0  ~zone0abufs = ~zone0abufs.add(\cf2 Buffer\cf0 .read(~serv, path)) \});\
+\
+~fund = 1.1574e-05 * (2**21);\
+\
+~min3scale = \cf2 Array\cf0 .geom(23, ~fund, 19/16);\
+\
+~min3scale = ~min3scale.stutter(2) * ([1,36/35].lace(32));\
+\
+~bfreqs = [ 20, 100, 200, 300, 400, 510, 630, 770, 920, 1080, 1270, 1480, 1720,\
+	  2000, 2320, 2700, 3150, 3700, 4400, 5300, 6400, 7700, 9500, 12000, 15500, 20000 ];\
+\
+~cfreqs = \cf2 Array\cf0 .newClear(~bfreqs.size - 1);\
+~cbands = \cf2 Array\cf0 .newClear(~bfreqs.size - 1);\
+~bfreqs.doAdjacentPairs(\{\cf2 |lo, hi, i|\cf0 \
+	~cfreqs.put(i, lo + (hi - lo / 2));\
+	~cbands.put(i, hi - lo / 2 );\
+\});\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 SynthDef\cf0 (\cf4 \\freeze\cf0 , \{\cf2 |out, gate, tgate, dur, maxdel, xang, yang, zang, aa, ab, ac, ad, \
+		room = 1500, damp, inbw, spr, early, tail, doneAction|\cf0 \
+	\cf2 var\cf0  sig, env, bw, fq, amp, trig, rt, gv, del, shift, a, b, c, d, w, x, y, z;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 	env = \cf2 EnvGen\cf0 .kr(\cf2 EnvControl\cf0 .kr, gate, timeScale: dur, doneAction: doneAction);\
+	del = \cf2 ArrayControl\cf0 .kr(\cf4 \\delays\cf0 , 4, 0);\
+	shift = \cf2 ArrayControl\cf0 .kr(\cf4 \\shifts\cf0 , 4, 1);	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 	trig = \cf2 Impulse\cf0 .kr(tgate);\
+	bw = \cf2 EnvGen\cf0 .kr(\cf2 EnvControl\cf0 .kr(\cf4 \\bw\cf0 ), trig);\
+	fq = \cf2 EnvGen\cf0 .kr(\cf2 EnvControl\cf0 .kr(\cf4 \\fq\cf0 ), trig);\
+	amp = \cf2 EnvGen\cf0 .kr(\cf2 EnvControl\cf0 .kr(\cf4 \\amp\cf0 ), trig);\
+	rt = \cf2 EnvGen\cf0 .kr(\cf2 EnvControl\cf0 .kr(\cf4 \\rt\cf0 ), trig);\
+	sig = \cf2 SinOsc\cf0 .ar(\cf2 LFNoise2\cf0 .ar(10000, bw, fq).round(100)) * amp;\
+	gv = sig + \cf2 DelayN\cf0 .ar(\cf2 GVerb\cf0 .ar(sig, room, rt, damp, inbw, spr, 0.0, early, tail, room), 4, 4);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 	a = \cf2 PitchShift\cf0 .ar(\cf2 DelayN\cf0 .ar(gv@0, maxdel, del@0), shift@0) * aa;\
+	b = \cf2 PitchShift\cf0 .ar(\cf2 DelayN\cf0 .ar(gv@1, maxdel, del@1), shift@1) * ab;\
+	c = \cf2 PitchShift\cf0 .ar(\cf2 DelayN\cf0 .ar(gv@0, maxdel, del@2), shift@2) * ac;\
+	d = \cf2 PitchShift\cf0 .ar(\cf2 DelayN\cf0 .ar(gv@1, maxdel, del@3), shift@3) * ad;\
+	#w, x, y, z = \cf2 A2B\cf0 .ar(a, b, c, d) * env;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 	\cf2 Out\cf0 .ar(out, \cf2 AtkRotateXYZ\cf0 .ar(w, x, y, z, xang, yang, zang))\
+\}).add;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf2 SynthDef\cf0 (\cf4 \\zone0_grain\cf0 , \{\cf2 |out, efx, aamp, gate, dur, buffer, maxdel, tfrq, tdev, gdur, pos, brate, \
+		envA, envB, envf, xang, yang, zang|\cf0 \
+	\cf2 var\cf0  trig, sig, del, shift, a, b, c, d, env, w, x, y, z;\
+	env = \cf2 EnvGen\cf0 .kr(\cf2 EnvControl\cf0 .kr, gate, timeScale: dur, doneAction: 2);\
+	del = \cf2 ArrayControl\cf0 .kr(\cf4 \\delays\cf0 , 4, 0);\
+	shift = \cf2 ArrayControl\cf0 .kr(\cf4 \\shifts\cf0 , 4, 1);\
+	trig = \cf2 DelayN\cf0 .ar(\cf2 Impulse\cf0 .ar(tfrq), 0.1, \cf2 TRand\cf0 .ar(0.0, tdev, \cf2 Impulse\cf0 .ar(tfrq)));\
+	sig = \cf2 BufGrainI\cf0 .ar(trig, gdur, buffer, brate, pos, envA, envB, envf, 1) * env;\
+	#a, b, c, d = \cf2 Array\cf0 .fill(4, \{\cf2 |i|\cf0 \
+		\cf2 PitchShift\cf0 .ar(\cf2 DelayN\cf0 .ar(sig, maxdel, del[i]), shift[i]) * aamp;\
+	\});\
+	#w, x, y, z = \cf2 A2B\cf0 .ar(a, b, c, d);\
+	\cf2 Out\cf0 .ar(out, \cf2 AtkRotateXYZ\cf0 .ar(w, x, y, z, xang, yang, zang))\
+\}).add;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+\cf2 SynthDef\cf0 (\cf4 \\zone0_aformat\cf0 , \{\cf2 |out, buf, rate, amp, xang, yang, zang|\cf0 \
+	\cf2 var\cf0  a, b, c, d, w, x, y, z;\
+	#a, b, c, d = \cf2 PlayBuf\cf0 .ar(4, buf, rate, doneAction: 2);\
+	#w, x, y, z = \cf2 A2B\cf0 .ar(a, b, c, d) * amp;\
+	\cf2 Out\cf0 .ar(out, \cf2 AtkRotateXYZ\cf0 .ar(w, x, y, z, xang, yang, zang));\
+\}).add;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 SynthDef\cf0 (\cf4 \\zone0_pluck\cf0 , \{\cf2 |in, amp, dur|\cf0 \
+	\cf2 var\cf0  sig, trg, frq;\
+	trg = \cf2 InTrig\cf0 .kr(in,5);\
+	frq = \cf2 ArrayControl\cf0 .kr(\cf4 \\frq\cf0 ,5,\{\cf2 |i|\cf0  i+1*100\});\
+	sig = \cf2 Mix\cf0 (\cf2 Pluck\cf0 .ar(\cf2 SinOsc\cf0 .ar(frq,0,\cf2 Dust\cf0 .ar(frq*10,0.5,1.0)),trg,1/frq,1/frq,dur) * \cf2 AmpComp\cf0 .kr(frq)\
+		* \cf2 EnvGen\cf0 .kr(\cf2 Env\cf0 .perc,trg@0,levelScale:trg,timeScale:dur));\
+	sig = sig + \cf2 Reverb\cf0 .ar(sig * 0.01, 4) + \cf2 CombN\cf0 .ar(sig*0.2,0.5,0.5,4);\
+	\cf2 Out\cf0 .ar(0, sig.dup * amp)\
+\}).add;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+\pard\pardeftab720\ql\qnatural
+\cf0 ~flt = (\
+	\cf4 \\bpf\cf0 : \{\cf2 |src, freqs, rq, amps|\cf0  \cf2 BPF\cf0 .ar(src, freqs, rq, 50) \},\
+	\cf4 \\eq\cf0 : \{\cf2 |src, freqs, rq, amps|\cf0  \cf2 MidEQ\cf0 .ar(src, freqs, rq, 20) \},\
+	\cf4 \\rhpf\cf0 : \{\cf2 |src, freqs, rq, amps|\cf0  \cf2 RHPF\cf0 .ar(src, freqs, rq, 50) \}\
+);\
+\
+~nzw = (\
+	\cf4 \\logistic\cf0 : \{\cf2 |freq, amp|\cf0  \cf2 Logistic\cf0 .ar(3.7, freq, 0.25, amp) \},\
+	\cf4 \\dust\cf0 : \{\cf2 |freq, amp|\cf0  \cf2 Dust2\cf0 .ar(freq.linlin(60, 17750, 60, 1755), amp) \},\
+	\cf4 \\lfn\cf0 : \{\cf2 |freq, amp|\cf0  \cf2 LFNoise0\cf0 .ar(freq, amp)\}\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf0 );\
+\
+\pard\pardeftab720\ql\qnatural
+\cf0 ~ndef = \{\cf2 |name, nfunc, ffunc|\cf0 \
+	\cf2 SynthDef\cf0 (name, \{\cf2 |out, efx, aamp, eamp, samp, dur, rate, buffer, clip, \
+			xang, yang, zang, xpush, ypush, zpush, doneAction = 2|\cf0 \
+		\cf2 var\cf0  env, sig, args, pointer, nsrc, filt, noise, azm, elv, rho, clumped, a, b, c, d, w, x, y, z;\
+		env = \cf2 Control\cf0 .names([\cf4 \\env\cf0 ]).kr(\cf2 Env\cf0 .newClear(8).asArray);\
+		pointer = \cf2 LFSaw\cf0 .kr(rate, 1, 0.5, 0.5);\
+		noise = \cf2 AtsNoise\cf0 .kr(buffer, (0..23), pointer);\
+		nsrc = \cf2 SynthDef\cf0 .wrap(nfunc, \cf2 nil\cf0 , [~cfreqs, noise]) * samp;\
+		filt = \cf2 SynthDef\cf0 .wrap(ffunc, \cf2 nil\cf0 , [nsrc, ~cfreqs, ~cbands / ~cfreqs]);\
+		sig = (filt ** 0.5).clip2(clip) \
+			* \cf2 EnvGen\cf0 .kr(env, timeScale: dur, doneAction: doneAction);\
+		\cf2 Out\cf0 .ar(efx, sig * eamp);\
+		clumped = sig.clump(6);\
+		#a, b, c, d = \cf2 Array\cf0 .fill(4, \{\cf2 |i|\cf0  \cf2 Mix\cf0 (clumped[i]) \});\
+		#w, x, y, z = \cf2 A2B\cf0 .ar(a, b, c, d);\
+		#w, x, y, z = \cf2 AtkPush\cf0 .ar(w, x, y, z, xpush, ypush, zpush);\
+		\cf2 Out\cf0 .ar(out, \cf2 AtkRotateXYZ\cf0 .ar(w, x, y, z, xang, yang, zang) * aamp);\
+	\}).add;\
+\};\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf0 ~nzw.keysValuesDo(\{\cf2 |skey, sfnc|\cf0 \
+	~flt.keysValuesDo(\{\cf2 |fkey, ffnc|\cf0 \
+		~noisedefs = ~noisedefs.add((fkey ++ skey).asSymbol);\
+		~ndef.value((fkey ++ skey).asSymbol, sfnc, ffnc);\
+	\})\
+\});\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+)\
+\
+(\
+\
+\pard\pardeftab720\ql\qnatural
+\cf0 	~mapping = (\
+	\
+		\cf4 \\freeze\cf0  : (\
+			\cf4 \\xang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi, step: pi/8)),\
+			\cf4 \\yang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi, step: pi/8)),\
+			\cf4 \\zang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi, step: pi/8)),\
+			\cf4 \\aa\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 1.0, step: 0.1)),\
+			\cf4 \\ab\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 1.0, step: 0.1)),\
+			\cf4 \\ac\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 1.0, step: 0.1)),\
+			\cf4 \\ad\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 1.0, step: 0.1))\
+		),\
+		\
+		\cf4 \\zone0_aformat\cf0  : (\
+			\cf4 \\amp\cf0 : \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (2.0, 0.1, step: 0.1)),\
+			\cf4 \\xang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi, step: pi/8)),\
+			\cf4 \\yang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi, step: pi/8)),\
+			\cf4 \\zang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi, step: pi/8))\
+		),\
+		\
+		\cf4 \\zone0_grain\cf0 : (\
+			\cf4 \\tdev\cf0 : \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 0.01, step: 0.001)),\
+			\cf4 \\tfrq\cf0 : \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (64, 4, step: 8)),\
+			\cf4 \\gdur\cf0 : \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (0.004, 1.6, step:0.004)),\
+			\cf4 \\pos\cf0 : \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 1.0, step: 1/16)),\
+			\cf4 \\envf\cf0 : \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 1.0, step: 1/8)),\
+			\cf4 \\aamp\cf0 : \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (2.0, 0.4)),\
+			\cf4 \\xang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi)),\
+			\cf4 \\yang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (pi, -pi)),\
+			\cf4 \\zang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi))\
+		)\
+	);	\
+\
+	~envs = (\
+		\cf4 \\gauss\cf0 : \cf2 Env\cf0 .sine,\
+		\cf4 \\quasigauss\cf0 : \cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf4 \\sine\cf0 ),\
+		\cf4 \\perc\cf0 : \cf2 Env\cf0 .perc,\
+		\cf4 \\reversed\cf0 : \cf2 Env\cf0 ([0.001, 1.0, 0.001], [0.95, 0.05], \cf4 \\sine\cf0 ),\
+		\cf4 \\triangle\cf0 : \cf2 Env\cf0 .triangle,\
+		\cf4 \\linear\cf0 : \cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3]),\
+		\cf4 \\sine\cf0 : \cf2 InterplPairs\cf0 ([[0.0, 0.0], [0.2, 0.1], [0.25, -0.1], [0.5, 1.0], [0.75, -0.1], \
+			[0.8, 0.1], [1.0, 0.0]], \cf4 \\sin\cf0 ).asEnv\
+	).collect(\{\cf2 |env|\cf0  \cf2 Buffer\cf0 .sendCollection(~serv, env.discretize) \}); \
+	\
+	~zone0loops = ~loops.select(\{\cf2 |buf|\cf0  \
+		buf.path.contains(\cf3 "monooop"\cf0 )\
+	\});\
+	\
+	~mapParams = \{\cf2 |values|\cf0 \
+		\
+		\cf2 var\cf0  params = values.states.clump(8);\
+		~synths.do(\{\cf2 |synth, i|\cf0 \
+		\
+			\cf2 var\cf0  states, args, data, j = 3;\
+			states = \cf2 Pseq\cf0 (params[i], \cf2 inf\cf0 ).asStream;				\
+			args = ~mapping[synth.defName.asSymbol].collect(\{\cf2 |spec|\cf0  spec.map(states.next) \});\
+			synth.set(*args.asKeyValuePairs);\
+									\
+		\});\
+		\
+	\};\
+		\
+	~zone0ats = \cf2 Pseq\cf0 (~atsdata.selectIndices(\{\cf2 |data, i|\cf0  data.file.contains(\cf3 "monooop_1"\cf0 ).and(data.dur == 2) \}), \cf2 inf\cf0 ).asStream;\
+\
+\pard\pardeftab720\ql\qnatural
+\cf5 //	~trigdefs = Pseq(~noisedefs.select(\{|defname| defname.asString.contains("rhpf") \}), inf).asStream;\cf0 \
+\
+	~trigdefs = \cf2 Pseq\cf0 (~noisedefs.select(\{\cf2 |defname|\cf0  defname.asString.contains(\cf3 "dust"\cf0 ) \}), \cf2 inf\cf0 ).asStream;\
+\
+	~pushspec = \cf2 ControlSpec\cf0 (0.5pi/3, 0.0);\
+	~triggerCount = 12;\
+	~trigampspec = \cf2 ControlSpec\cf0 (0.001, 0.01);\
+	\
+	~triggerGrain = \{\cf2 |values|\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 		\cf2 var\cf0  x, y, z, xang, yang, zang, xpush, ypush, zpush, xp, yp, zp, data;\
+		if (~triggerCount == 24) \
+		\{\
+			x = values.coordX; y = values.coordY; z = values.coordZ;\
+			xp = \cf2 Point\cf0 (y - 8 / 8, z - 8 / 8).asPolar;\
+			yp = \cf2 Point\cf0 (z - 8 / 8, x - 8 / 8).asPolar;\
+			zp = \cf2 Point\cf0 (x - 8 / 8, y - 8 / 8).asPolar;\
+			xang = xp.theta; xpush = ~pushspec.map(xp.rho);\
+			yang = yp.theta; ypush = ~pushspec.map(yp.rho);\
+			zang = zp.theta; zpush = ~pushspec.map(zp.rho);\
+			data = ~atsdata[~zone0ats.next];\
+			\cf2 Synth\cf0 .tail(~agrp, ~trigdefs.next, \
+				[\cf4 \\out\cf0 , ~abus, \cf4 \\efx\cf0 , ~rout, \cf4 \\aamp\cf0 , ~trigampspec.map(values.maxstate), \cf4 \\eamp\cf0 , 0.5, \cf4 \\samp\cf0 , 1.0, \
+					\cf4 \\dur\cf0 , data.dur, \cf4 \\rate\cf0 , 1.0, \
+					\cf4 \\buffer\cf0 , data.buffer, \cf4 \\rq\cf0 , 0.3, \cf4 \\clip\cf0 , 0.95, \cf4 \\xang\cf0 , xang, \cf4 \\yang\cf0 , yang, \cf4 \\zang\cf0 , zang, \
+					\cf4 \\xpush\cf0 , xpush, \cf4 \\ypush\cf0 , ypush, \cf4 \\zpush\cf0 , zpush])\
+				.setn(\cf4 \\env\cf0 , \cf2 Env\cf0 ([0, 1, 1, 0], [0.0, 0.9, 0.1]).asArray);\
+			~triggerCount = 0;\
+		\}\
+		\{\
+			~triggerCount = ~triggerCount + 1;\
+		\}\
+	 \};\
+\pard\pardeftab720\ql\qnatural
+\cf0 	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+)\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf0 (\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 ~recordActive = \cf2 false\cf0 ;\
+~recordPath = \cf3 "/Users/alo/sounds/fx/zone_0_"\cf0  ++ \cf2 Date\cf0 .getDate.stamp ++ \cf3 ".aif"\cf0 ;\
+\
+~rout = \cf2 Routine\cf0 (\{\
+	\
+	~gvimap = (\
+		alpha: \cf2 ControlSpec\cf0 (0.8, 0.8),\
+		clear: \cf2 ControlSpec\cf0 (0.5, 0.6),\
+		add: \cf2 ControlSpec\cf0 (0.03, 0.03),\
+		transz: \cf2 ControlSpec\cf0 (-4.0, -4.0),\
+		angle: \cf2 ControlSpec\cf0 (-0.05, 0.05),\
+		rotX: \cf2 ControlSpec\cf0 (0.0, 1.0),\
+		rotY: \cf2 ControlSpec\cf0 (1.0, 0.0),\
+		rotZ: \cf2 ControlSpec\cf0 (0.0, 1.0)\
+	);\
+	\
+	~gvimapto = (\
+		alpha: \cf4 \\avglbf\cf0 ,\
+		clear: \cf4 \\avgrbf\cf0 ,\
+		add: \cf4 \\avgrbb\cf0 ,\
+		transz: \cf4 \\avglbb\cf0 ,\
+		angle: \cf4 \\avgltf\cf0 ,\
+		rotX: \cf4 \\avgrtf\cf0 ,\
+		rotY: \cf4 \\avgrtb\cf0 ,\
+		rotZ: \cf4 \\avgltb\cf0 \
+	);\
+	\
+	~fx.startFx;\
+	\
+	7.wait;\
+	\
+	~fx.visualdict.globals[\cf4 \\alpha\cf0 ] = 1.0;\
+	~fx.visualdict.globals[\cf4 \\clear\cf0 ] = 0.6;\
+	~fx.visualdict.globals[\cf4 \\add\cf0 ] = 0.02;\
+	~fx.visualdict.globals[\cf4 \\transx\cf0 ] = 0.0;\
+	~fx.visualdict.globals[\cf4 \\transy\cf0 ] = 0.0;\
+	~fx.visualdict.globals[\cf4 \\transz\cf0 ] = -4.0;\
+	~fx.visualdict.globals[\cf4 \\angle\cf0 ] = 0.0;\
+	~fx.visualdict.globals[\cf4 \\rotX\cf0 ] = 0.0;\
+	~fx.visualdict.globals[\cf4 \\rotY\cf0 ] = 0.0;\
+	~fx.visualdict.globals[\cf4 \\rotZ\cf0 ] = 0.0;\
+	~fx.visualdict.globals[\cf4 \\frame\cf0 ] = 4;\
+	\
+	~fx.sendCurrentSettings;\
+	\
+	if (~recordActive) \{ ~serv.prepareForRecord(~recordPath) \};\
+	\
+	5.wait;\
+	\
+	if (~recordActive) \{ ~serv.record \};\
+	\
+	~fx.addGlobalsResponder;\
+	~fx.addStatesResponder;\
+	~fx.addTriggerResponder;\
+	\
+	~fx.visualdict.globals[\cf4 \\clear\cf0 ] = 0.0;\
+	~fx.sendCurrentSettings;\
+\
+	0.1.wait;\
+\
+	~fx.visualdict.globals[\cf4 \\clear\cf0 ] = 0.6;\
+	~fx.sendCurrentSettings;\
+	\
+	~timer = \cf2 Date\cf0 .getDate.bootSeconds;\
+	\
+	~fx.sendPollIndices(~fx.getPollIndices(1));\
+\
+	1.wait;		\
+			\
+	~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *(1.0 ! 26));\
+\
+	1.wait;		\
+\
+	~synths = \cf2 Array\cf0 ();\
+\
+	~fx.addGlobalsFunction(\cf4 \\zone0\cf0 , \{\cf2 |values|\cf0 \
+		~gvimap.keysValuesDo(\{\cf2 |key, spec|\cf0 \
+			~fx.visualdict.globals[key] = spec.map(values[~gvimapto[key]])\
+		\});\
+		~fx.sendCurrentSettings;\
+	\});\
+	~fx.addStatesFunction(\cf4 \\zone0\cf0 , ~mapParams);\
+		\
+	~synths = ~synths.add(\
+		\cf2 Synth\cf0 .tail(~agrp, \cf4 \\freeze\cf0 , [\cf4 \\out\cf0 , ~abus, \cf4 \\gate\cf0 , 1.0, \cf4 \\tgate\cf0 , 1/30, \cf4 \\dur\cf0 , 30, \cf4 \\maxdel\cf0 , 0.1, \
+			 	\cf4 \\room\cf0 , 1500, \cf4 \\damp\cf0 , 0.5, \cf4 \\inbw\cf0 , 0.5, \cf4 \\spr\cf0 , 20, \cf4 \\early\cf0 , 0.2, \cf4 \\tail\cf0 , 1.0, \cf4 \\doneAction\cf0 , 2])\
+			 	.setn(\cf4 \\bw\cf0 , \cf2 Env\cf0 ([100.0, 1000.0, 100.0], [20, 0.0], [6, -4]).asArray)\
+			 	.setn(\cf4 \\fq\cf0 , \cf2 Env\cf0 ([15000.0, 6000.0, 15000.0], [20, 0.0], [6, -4]).asArray)\
+			 	.setn(\cf4 \\amp\cf0 , \cf2 Env\cf0 ([0.01, 0.6, 0.01], [20, 0], [6, -4]).asArray)\
+			 	.setn(\cf4 \\rt\cf0 , \cf2 Env\cf0 ([60, 1, 60], [20, 10], [4, -4]).asArray)\
+			 	.setn(\cf4 \\env\cf0 , \cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf4 \\sine\cf0 , 2, 1).asArray)\
+				.setn(\cf4 \\delays\cf0 , \cf2 Array\cf0 .geom(4, 0.01, 1.618).scramble)\
+				.setn(\cf4 \\shifts\cf0 , [1.0, 35/36, 16/15, 36/35])\
+	);\
+	\
+	20.wait;\
+	\
+	\cf2 Routine\cf0 (\{\
+		\
+		24.do(\{\cf2 |i|\cf0 \
+			\cf2 var\cf0  synth, rate, buf;\
+			buf = ~zone0abufs.wrapAt(i);\
+			rate = 1.0;\
+			synth = \cf2 Synth\cf0 .tail(~agrp, \cf4 \\zone0_aformat\cf0 , [\cf4 \\out\cf0 , ~abus, \cf4 \\buf\cf0 , buf, \cf4 \\rate\cf0 , rate, \
+				\cf4 \\amp\cf0 , 0.25, \cf4 \\xang\cf0 , 0, \cf4 \\yang\cf0 , 0, \cf4 \\zang\cf0 , 0]);\
+			~synths = ~synths.add(synth);\
+			\cf2 SystemClock\cf0 .sched(rate.reciprocal * (buf.numFrames / buf.sampleRate ), \{ ~synths.remove(synth); \cf2 nil\cf0  \});\
+			(rate.reciprocal * (buf.numFrames / buf.sampleRate ) * 0.75).wait;\
+		\})\
+		\
+	\}).play;\
+	\
+	~fx.activatePatch(\cf4 \\grid\cf0 , 0);\
+	1.wait;\
+	~fx.sendPatchCmd(\cf4 \\grid\cf0 , \cf4 \\alphahi\cf0 , 0.0, 1.0, 0);\
+	1.wait;\
+	~fx.sendPatchCmd(\cf4 \\grid\cf0 , \cf4 \\alphamap\cf0 , 0, 1, 0);	\
+	1.wait;\
+	~fx.sendPatchCmd(\cf4 \\grid\cf0 , \cf4 \\colormap\cf0 , 1, 0, 0);\
+	\
+	10.wait;\
+	\
+	\cf2 Routine\cf0 (\{\
+		\
+		\cf2 var\cf0  vals, targ, step, dur = 3000;\
+		\
+		vals = [0.8, 0.5, 0.03, -4.0, 0.05, 1.0, 1.0, 1.0];\
+		targ = [1.0, 0.2, 0.15, -24.0, 0.5, 0.5, 0.75, 0.25];\
+		step = targ - vals / dur;\
+		\
+		dur.do(\{\
+			vals = vals + step;\
+			~gvimap[\cf4 \\alpha\cf0 ].maxval_(vals[0]);\
+			~gvimap[\cf4 \\clear\cf0 ].maxval_(vals[1]);\
+			~gvimap[\cf4 \\add\cf0 ].maxval_(vals[2]);\
+			~gvimap[\cf4 \\transz\cf0 ].maxval_(vals[3]);\
+			~gvimap[\cf4 \\angle\cf0 ].maxval_(vals[4]);\
+			~gvimap[\cf4 \\rotX\cf0 ].maxval_(vals[5]);\
+			~gvimap[\cf4 \\rotY\cf0 ].maxval_(vals[6]);\
+			~gvimap[\cf4 \\rotZ\cf0 ].maxval_(vals[7]);			\
+			0.06.wait;\
+		\});\
+		\
+		\cf3 "gvimap completed!"\cf0 .postln;\
+			\
+	\}).play;		\
+		\
+	60.wait;\
+	\
+	~fx.addTriggerFunction(\cf4 \\zone0\cf0 , ~triggerGrain);		\
+	\
+	30.wait;\
+\
+	\cf2 Routine\cf0 (\{\
+		\cf2 var\cf0  lo, hi, enlo, enhi;\
+		lo = 0.1; hi = 0.01; enlo = 0.6; enhi = 0.3;\
+		1000.do(\{\
+			lo = lo + (enlo - 0.1 / 1000);\
+			hi = hi + (enhi - 0.01 / 1000);\
+			~mapping[\cf4 \\zone0_grain\cf0 ][\cf4 \\aamp\cf0 ].spec.minval_(lo);\
+			~mapping[\cf4 \\zone0_grain\cf0 ][\cf4 \\aamp\cf0 ].spec.maxval_(hi);\
+			0.06.wait;\
+		\})	\
+	\}).play;\
+\
+	\cf2 Routine\cf0 (\{\
+		4.do(\{\cf2 |i|\cf0 \
+			\
+			~synths = ~synths.add(\
+				\cf2 Synth\cf0 .tail(~agrp, \cf4 \\zone0_grain\cf0 , [\cf4 \\out\cf0 , ~abus, \cf4 \\efx\cf0 , ~rbus, \cf4 \\gate\cf0 , 1.0, \cf4 \\dur\cf0 , 10.0, \
+					\cf4 \\buffer\cf0 , ~zone0loops[i], \cf4 \\maxdel\cf0 , 0.1, \cf4 \\brate\cf0 , 1.0, \cf4 \\envA\cf0 , ~envs.perc, \
+					\cf4 \\envB\cf0 , ~envs.sine])\
+						.setn(\cf4 \\env\cf0 , \cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.5, 0.2, 0.3], [6, 0, -2], 2, 1).asArray)\
+						.setn(\cf4 \\delays\cf0 , ([0.0] ++ \cf2 Array\cf0 .geom(3, 0.01, 1.618)).scramble )\
+						.setn(\cf4 \\shifts\cf0 , [1.0, 35/36, 0.5, 36/35])\
+			);\
+			12.wait\
+			\
+		\})\
+	\}).play;\
+	\
+	24.wait;\
+	\
+	~fx.activatePatch(\cf4 \\blinds\cf0 , 0);\
+	1.wait;\
+	~fx.sendPatchCmd(\cf4 \\blinds\cf0 , \cf4 \\alphahi\cf0 , 0.0, 0.1, 0);\
+	1.wait;\
+	~fx.sendPatchCmd(\cf4 \\blinds\cf0 , \cf4 \\alphamap\cf0 , 0, 1, 0);	\
+	1.wait;\
+	\
+	~zone0ats = \cf2 Pseq\cf0 (~atsdata.selectIndices(\{\cf2 |data, i|\cf0  data.file.contains(\cf3 "monooop_1"\cf0 ).and(data.dur == 2) \}) ++  \
+		~atsdata.selectIndices(\{\cf2 |data, i|\cf0  data.file.contains(\cf3 "monooop_2"\cf0 ).and(data.dur == 3) \}), \cf2 inf\cf0 ).asStream;\
+		\
+	~trigampspec = \cf2 ControlSpec\cf0 (0.01, 0.05);\
+	\
+	~trigdefs = \cf2 Pseq\cf0 (~noisedefs.select(\{\cf2 |defname|\cf0  defname.asString.contains(\cf3 "rhpf"\cf0 ) \}), \cf2 inf\cf0 ).asStream;	\
+	4.wait;\
+	\
+	~trigdefs = \cf2 Pseq\cf0 (~noisedefs.select(\{\cf2 |defname|\cf0  defname.asString.contains(\cf3 "dust"\cf0 ) \}), \cf2 inf\cf0 ).asStream;\
+	\
+	4.wait;\
+	\
+	~trigdefs = \cf2 Pseq\cf0 (~noisedefs, \cf2 inf\cf0 ).asStream;\
+	\
+	4.wait;\
+\
+	~trigdefs = \cf2 Pseq\cf0 (~noisedefs.select(\{\cf2 |defname|\cf0  defname.asString.contains(\cf3 "dust"\cf0 ) \}), \cf2 inf\cf0 ).asStream;\
+\
+	~zone0ats = \cf2 Pseq\cf0 (~atsdata.selectIndices(\{\cf2 |data, i|\cf0  data.file.contains(\cf3 "monooop_"\cf0 ).and(data.dur <= 3) \}), \
+		\cf2 inf\cf0 ).asStream;\
+\
+	\
+		\
+	if (~recordActive) \{ ~serv.stopRecording \};\
+	\
+\
+	\
+\}).play\
+\
+)\
+~fx.invalues.states\
+\
+~rout.stop\
+\
+~fx.removeAllStatesFunctions;\
+~fx.removeAllTriggerFunctions;\
+~fx.removeAllGlobalsFunctions;\
+\
+~synths.do(\{\cf2 |sy|\cf0  sy.set(\cf4 \\gate\cf0 , -10) \})\
+}
