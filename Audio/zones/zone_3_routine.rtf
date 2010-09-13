@@ -1,0 +1,1029 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 //alo allik. f(x).\cf0 \
+(\
+~loadAts = \cf3 false\cf0 ;\
+~localDecoder = \cf3 true\cf0 ;\
+~stereoOutput = \cf3 true\cf0 ;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf4 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf0 .load;\
+)\
+\
+(\
+~defs = [	\
+	\cf3 SynthDef\cf0 (\cf5 \\kck\cf0 , \{\cf3 |ou, ef, fr, at, dr, cr, az, ea, on, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 Env\cf0 .perc(at, 1.0 - at, 1, cr);\
+		sig = \cf3 BLowPass\cf0 .ar(\
+			\cf3 Mix\cf0 (\
+				\cf3 SinOsc\cf0 .ar(\
+					\cf3 Array\cf0 .series(5, fr, 10) * \cf3 LFNoise0\cf0 .ar(1000.0).range(35/36, 36/35), \
+					0.5pi \
+				)\
+			),\
+			300.0,\
+			1.0\
+		) * \cf3 EnvGen\cf0 .kr(env, timeScale: dr, levelScale: am, doneAction: 2) * on;\
+		\cf3 Out\cf0 .ar(ef, sig * ea);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr)\
+	\}),\
+	\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\snr\cf0 , \{\cf3 |ou, fr, at, dr, cr, dc, dl, wt, az, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr, nr;\
+		nr = 5;\
+		env = \cf3 Env\cf0 .perc(at, 1.0 - at, 1, cr);\
+		sig = \cf3 Dust\cf0 .ar(fr, dc * 0.5) + \cf3 BPF\cf0 .ar(\cf3 WhiteNoise\cf0 .ar, \cf3 Line\cf0 .kr(fr*1.5, fr*0.667, dr), 0.5) \
+			* \cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr * am)\
+	\}),\
+		\
+	\cf3 SynthDef\cf0 (\cf5 \\hh\cf0 , \{\cf3 |ou, dr, fr, az, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(0.05, 0.95, 1, -16), timeScale: dr, doneAction: 2);\
+		sig = \cf3 RHPF\cf0 .ar(\cf3 PinkNoise\cf0 .ar, fr, 0.3) * env;\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);	\
+		\cf3 Out\cf0 .ar(ou, bfr * am);\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\bss\cf0 , \{\cf3 |ou, fr, dr, az, am|\cf0 \
+		\cf3 var\cf0  env, sig, bfr;\
+		env = \cf3 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.01, 0.8, 0.19], \cf5 \\sine\cf0 );\
+		sig = \cf3 SinOsc\cf0 .ar(fr * \cf3 LFNoise2\cf0 .ar(\cf3 SinOsc\cf0 .ar(1, 0, 500, 10000)).range(15/16, 16/15), \
+			\cf3 SinOsc\cf0 .kr(2.25, 0, pi, pi), 10).distort\
+			* \cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		sig = \cf3 Reverb\cf0 .ar(sig * 0.1, 3) + sig;\
+		sig = \cf3 Compander\cf0 .ar(sig, sig, 0.2, 1.0, 0.01);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr * am)\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\clck\cf0 , \{\cf3 |ou, ef, am, az, dr, bt, ea|\cf0 \
+		\cf3 var\cf0  sig, bfr;\
+		sig = \cf3 BPF\cf0 .ar(\
+			\cf3 VarSaw\cf0 .ar(15000, 0.0, 0.1, \cf3 Decay\cf0 .ar(\cf3 Impulse\cf0 .ar(bt), 0.001)),\
+			15000,\
+			0.9,\
+			25 * \cf3 LFNoise1\cf0 .ar(8).range(0, 1)\
+		).fold(-1, 1);\
+		sig = sig * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 ([0, 1, 1, 0], [0, 1, 0]), timeScale: dr, doneAction: 2);\
+		\cf3 Out\cf0 .ar(ef, sig * ea);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr * am)\
+	\}),\
+			\
+	\cf3 SynthDef\cf0 (\cf5 \\nzsnr\cf0 , \{\cf3 |ou, am, az, fr, dr|\cf0 \
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(0.05, 0.95, 1, -16), timeScale: dr, doneAction: 2);\
+		sig = \cf3 Dust\cf0 .ar(fr) * \cf3 SinOsc\cf0 .ar(fr) * env;\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr * am);\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\pnk\cf0 , \{\cf3 |ou, az, dr, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(0.05, 0.95, 1, -16), timeScale: dr, doneAction: 2);\
+		sig = \cf3 PinkNoise\cf0 .ar * env;\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr * am)\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\fmsnth\cf0 , \{\cf3 |ou, ef, dr, gd, cf, mf, in, az, on, am|\cf0 \
+		\
+		\cf3 var\cf0  sig, env, bfr, trg, dev, amps, n = 7;\
+		trg = \cf3 Impulse\cf0 .kr(gd.reciprocal);\
+		env = \cf3 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.1, 0.5, 0.4], [0, 0, 3]);\
+		dev = \cf3 Array\cf0 .rand(n, 0.5, 2.0).round(1 - (2**(1/24)));\
+		amps = \cf3 Array\cf0 .geom(n, 1.0, 13 / 21);\
+		sig = \cf3 Mix\cf0 .fill(n, \{\cf3 |i|\cf0 \
+			\cf3 var\cf0  frq = cf * dev[i];\
+			\cf3 DelayC\cf0 .ar(\cf3 FMGrain\cf0 .ar(trg, gd, frq, frq * mf, in, amps[i]), 0.1, \cf3 Rand\cf0 (0, 0.1))\
+		\}) * \cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig * am, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr)	\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\hgls\cf0 , \{\cf3 |ou, dr, fr, wd, ws, wr, gr, az, on, am|\cf0 \
+		\
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.2, 0.5, 0.3], \cf5 \\sine\cf0 );\
+		sig = \cf3 VarSaw\cf0 .ar(\cf3 XLine\cf0 .kr(fr, fr * 0.5, dr), 0, wd);\
+		sig = \cf3 GrainIn\cf0 .ar(1, \cf3 Impulse\cf0 .kr(gr * \cf3 TRand\cf0 .kr(1-wr, 1+wr, \cf3 Impulse\cf0 .kr(gr))), ws, sig) * \
+			\cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig * am, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr)\
+		\
+	\}),\
+\
+	\cf3 SynthDef\cf0 (\cf5 \\dbkck\cf0 , \{\cf3 |ou, ef, dr, gd, az, ea, on, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr, fr;\
+		fr = \cf3 Array\cf0 .geom(24, 14.midicps, 2**(1/24)) * (1..4).stutter(6).reverse;\
+		env = \cf3 Env\cf0 ([0.001, 8.0, 1.0, 0.001], [0.01, 0.1, 0.89], [0, 0, -16]);\
+		sig = \cf3 Mix\cf0 (\cf3 SinGrain\cf0 .ar(\cf3 Impulse\cf0 .kr(gd.reciprocal * 4), gd, fr, 0.4)); \
+		sig = sig * \cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		sig = sig.clip(-0.9, 0.9);\
+		\cf3 Out\cf0 .ar(ef, sig * ea);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig * am, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr)\
+	\
+	\}),\
+	\
+	\cf3 SynthDef\cf0 (\cf5 \\dbclp\cf0 , \{\cf3 |ou, ef, at, dc, cr, dr, co, ds, az, ea, on, am|\cf0 \
+		\cf3 var\cf0  sig, env, bfr;\
+		env = \cf3 Env\cf0 .perc(at, dc, 1, cr);\
+		sig = \cf3 Crackle\cf0 .ar(co, ds).clip(-0.9, 0.9) * \
+			\cf3 EnvGen\cf0 .kr(env, timeScale: dr, doneAction: 2);\
+		\cf3 Out\cf0 .ar(ef, sig * ea);\
+		bfr = \cf3 BFEncode1\cf0 .ar(sig * am, az, 0, 0.5);\
+		\cf3 Out\cf0 .ar(ou, bfr)\
+	\})\
+	\
+];\
+\
+\pard\pardeftab720\ql\qnatural
+\cf3 SynthDef\cf0 (\cf5 \\rwarpfldatk\cf0 , \{\cf3 |out, efx, gate, aamp, eamp, maxdel, dur, buf, str, end, wrp, frq, wsz, \
+		dns, rnd, xang, yang, zang, doneAction = 2|\cf0 \
+	\cf3 var\cf0  ptr, sig, bf, delays, shifts, wins, amps, a, b, c, d, w, x, y, z;\
+	delays = \cf3 ArrayControl\cf0 .kr(\cf5 \\delays\cf0 , 4, 0);\
+	shifts = \cf3 ArrayControl\cf0 .kr(\cf5 \\shifts\cf0 , 4, 1);\
+	wins = \cf3 ArrayControl\cf0 .kr(\cf5 \\wins\cf0 , 4, 0.1);\
+	amps = \cf3 ArrayControl\cf0 .kr(\cf5 \\amps\cf0 , 4, 1);\
+	ptr = \cf3 LFSaw\cf0 .kr(wrp).range(str, end);\
+	sig = \cf3 LeakDC\cf0 .ar(\cf3 Warp1\cf0 .ar(1, buf, ptr, frq, wsz, -1, dns, rnd)) * \
+		\cf3 EnvGen\cf0 .kr(\cf3 EnvControl\cf0 .kr, gate, timeScale: dur, doneAction: doneAction);\
+	sig = \cf3 LeakDC\cf0 .ar(sig ** 0.5 ** 1.5);\
+	\cf3 Out\cf0 .ar(efx, sig * eamp);\
+	#a, b, c, d = \cf3 Array\cf0 .fill(4, \{\cf3 |i|\cf0   \
+		\cf3 DelayC\cf0 .ar(\cf3 PitchShift\cf0 .ar(sig, wins@i, shifts@i), maxdel, delays@i, amps@i);\
+	\});\
+	#w, x, y, z = \cf3 A2B\cf0 .ar(a, b, c, d) * aamp;\
+	\cf3 Out\cf0 .ar(out, \cf3 AtkRotateXYZ\cf0 .ar(w, x, y, z, xang, yang, zang))\
+\}).add;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 SynthDef\cf0 (\cf5 \\point\cf0 , \{\cf3 |out, buf, tb, gate, amp, tfr, afr, sln, sfr, sam, rmp, rtm, doneAction|\cf0 \
+	\cf3 var\cf0  sig = 0, trg, azm, elv, enc, dst, s_freqs, s_amps, s_sig, env, clk, atrg, rev;\
+	env = \cf3 EnvControl\cf0 .kr(\cf5 \\env\cf0 );\
+	dst = \cf3 LFTri\cf0 .kr(afr).range(1.0, 2.0);\
+	azm = \cf3 Dseq\cf0 ([-0.25, 0.25] * pi, \cf3 inf\cf0 );\
+	elv = \cf3 Dstutter\cf0 (2, \cf3 Dseq\cf0 ([0.25, -0.25], \cf3 inf\cf0 ));\
+	trg = \cf3 InTrig\cf0 .kr(tb);\
+	atrg = \cf3 K2A\cf0 .ar(trg);\
+	sig = \cf3 PlayBuf\cf0 .ar(1, buf, trigger: trg) ** dst;\
+	clk = \cf3 Mix\cf0 (\
+		\cf3 BPF\cf0 .ar(\
+\pard\pardeftab720\ql\qnatural
+\cf0 		\cf3 PinkNoise\cf0 .ar(\cf3 Decay\cf0 .ar(atrg, 0.001 * \cf3 LFNoise1\cf0 .ar(4).abs)),\
+		15000,\'a0\
+		0.9,\'a0\
+		25 * \cf3 LFNoise1\cf0 .ar(8).range(0, 1)\'a0\
+		).fold(-1, 1)\
+     );	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 	s_sig = \cf3 SinOsc\cf0 .ar(sfr, 0, sam) \
+		* \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.0, 0.9, 0.1]), \
+			\cf3 PulseDivider\cf0 .ar(trg, 2.0), timeScale: sln);\
+	#sig, rev = \cf3 DistAmp\cf0 .ar(sig + s_sig + clk, dst, rmp);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //	sig = sig + Reverb.ar(rev, rtm);\cf0 \
+	enc = \cf3 BFEncode1\cf0 .ar(sig * amp, \cf3 Demand\cf0 .kr(trg, 0, azm), \cf3 Demand\cf0 .kr(trg, 0, elv) );\
+	\cf3 Out\cf0 .ar(out, enc * \cf3 EnvGen\cf0 .kr(env, gate, doneAction: doneAction))\
+\}).add;\
+\pard\pardeftab720\ql\qnatural
+\cf0 \
+\cf3 SynthDef\cf0 (\cf5 \\zone3_doublemono\cf0 , \{\cf3 |out, efx, amp, eamp, bufL, bufR, azm, wid, elv, dur, xang, yang, zang|\cf0 \
+     	\cf3 var\cf0  l, r, env;\
+     	env = \cf3 EnvControl\cf0 .kr;\
+     	l = \cf3 PlayBuf\cf0 .ar(1, bufL);\
+     	r = \cf3 PlayBuf\cf0 .ar(1, bufR);\
+     	\cf3 Out\cf0 .ar(efx, (l * 0.7) + (r * 0.7));\
+     	#w, x, y, z = \cf3 AtkSterToB\cf0 .ar(l, r, azm, wid, elv) \
+     		* \cf3 EnvGen\cf0 .kr(env, timeScale: dur, doneAction: 2);\
+     	\cf3 Out\cf0 .ar(out, \cf3 AtkRotateXYZ\cf0 .ar(w, x, y, z, xang, zang, yang))\
+\}).add;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 SynthDef\cf0 (\cf5 \\bell\cf0 , \{\cf3 |ou, am, fr, dr, ph, pn, rt, ra, at, re, cu, du|\cf0 \
+	\cf3 var\cf0  sig,frqs;\
+	frqs = \cf3 Array\cf0 .geom(5,1,4**(1/5));\
+	sig = \cf3 SinOsc\cf0 .ar(fr,ph,am)*\cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(at,re,curve:cu),timeScale:dr);\
+	sig = sig + \cf3 Klank\cf0 .ar(`[fr*frqs,frqs.reciprocal,dr*frqs.reciprocal],\cf3 Reverb\cf0 .ar(sig*ra,rt));\
+	\cf3 Line\cf0 .kr(dur: du, doneAction: 2);\
+	\cf3 Out\cf0 .ar(ou,\cf3 BFEncode1\cf0 .ar(sig,pn));\
+\}).add;\
+\
+\cf3 SynthDef\cf0 (\cf5 \\beat\cf0 , \{\cf3 |ou, am, cf, mf, pf, dr, fi, ip, pn, rt, ra, at, re, cu, du|\cf0 \
+	\cf3 var\cf0  sig, car;\
+	car = \cf3 SinOsc\cf0 .ar(mf,\cf3 SinOsc\cf0 .ar(pf,0,ip),fi);\
+	sig = \cf3 SinOsc\cf0 .ar(cf+car)*\cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(at,re,curve:cu),timeScale:dr);\
+	sig = sig + \cf3 Reverb\cf0 .ar(sig*ra,rt);\
+	\cf3 Line\cf0 .kr(dur: du, doneAction: 2);\
+	\cf3 Out\cf0 .ar(ou,\cf3 BFEncode1\cf0 .ar(sig,pn))\
+\}).add;\
+\
+\cf3 SynthDef\cf0 (\cf5 \\bass\cf0 , \{\cf3 |ou, fr, nf, am, nm, wd, dr, pn, rt, ra, at, re, cu, du|\cf0 \
+	\cf3 var\cf0  sig, frqs;\
+	frqs = \cf3 Array\cf0 .geom(5,1,19/16);\
+	sig = \cf3 VarSaw\cf0 .ar(fr+\cf3 LFNoise0\cf0 .ar(nf,nm),0,wd)*\cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(at,re,curve:cu),timeScale:dr);\
+	sig = sig+\cf3 Klank\cf0 .ar(`[fr*frqs,frqs.reciprocal,dr*frqs.reciprocal],sig*ra);\
+	\cf3 Line\cf0 .kr(dur: du, doneAction: 2);\
+	\cf3 Out\cf0 .ar(ou,\cf3 BFEncode1\cf0 .ar(sig,pn))\
+\}).add;\
+\
+~defs.do(\cf3 _\cf0 .add);\
+\
+)\
+\
+~loops.do(\cf3 _\cf0 .postln)\
+\
+(\
+	\
+	~wfspath = \cf4 "/Users/alo/sounds/wfsfx/"\cf0 ;\
+\
+	~wfsbufs = [\cf4 "bogino-duu"\cf0 , \cf4 "ghana"\cf0 , \cf4 "morinkhuur"\cf0 , \cf4 "urtinduu"\cf0 ].stutter(2);\
+	\
+	[\cf4 "L"\cf0 , \cf4 "R"\cf0 ].lace(8).do(\{\cf3 |str, i|\cf0 \
+		~wfsbufs[i] = \cf3 Buffer\cf0 .read(~serv, ~wfspath ++ ~wfsbufs[i] ++ \cf4 "-gverb"\cf0  ++ str ++ \cf4 ".aif"\cf0 );\
+	\});\
+	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //	~loopind = [201, 174, 182, 189, 225, 230, 232, 237];\cf0 \
+\
+\cf2 // 	~loopind = [85, 87, 98, 101, 103, 113, 115, 120];\cf0 \
+	\
+\cf2 //	~loopind = [225, 230, 232, 237] ++ (0..3)\cf0 \
+\
+	~scale = \cf3 Array\cf0 .geom(40, 1.1574e-05 * (2**21), 2**(1/5)).clump(5);\
+\
+	~loopind = (68..75);\
+\
+\cf2 //	~loopind = (33..40)\cf0 \
+		\
+\cf2 //	~indices = (0..63).clump(2).clump(2).flop.flatten(2).clump(4).perfectShuffle\cf0 \
+\cf2 //			.clump(4).flop.flatten(2).clump(8).sort(\{|a, b| a[0] < b[0] \});\cf0 \
+\
+	~indices = ((0,2..15) ++ (1,3..15) ++ (16,20..47) ++ (17,21..47) \
+			++ (18,22..47) ++ (19,23..47) ++ (48,50..63) ++ (49,51..63)).clump(8);\
+	\
+	~trigmap = [\
+		(\cf5 \\on\cf0 : 0.3, \cf5 \\off\cf0 : 0.1, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.4, \cf5 \\off\cf0 : 0.2, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.5, \cf5 \\off\cf0 : 0.3, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.6, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.9, \cf5 \\off\cf0 : 0.7, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.8, \cf5 \\off\cf0 : 0.6, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.7, \cf5 \\off\cf0 : 0.5, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+		(\cf5 \\on\cf0 : 0.6, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  )\
+	];	\
+		\
+	~synths = \cf3 Array\cf0 .newClear(8);\
+		\
+	~z3map = (\
+		\cf5 \\aamp\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (0.5, 0.1)),\
+		\cf5 \\str\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (0, 0.5)),\
+		\cf5 \\end\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (0.5, 1.0)),\
+		\cf5 \\wrp\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (0.125/4 , 1/4, step: 2**(1/5) )),\
+		\cf5 \\frq\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (1.0, 1.0 )),\
+		\cf5 \\wsz\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (1/64, 1/4, step: 1/64 )),\
+		\cf5 \\dns\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (2, 16)),\
+		\cf5 \\rnd\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (0.1, 0.2)),\
+		\cf5 \\xang\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) )),\
+		\cf5 \\yang\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) )),\
+		\cf5 \\zang\cf0 : \cf3 LinearWarp\cf0 (\cf3 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) ))\
+	);\
+\
+	~z3pmaps = (\
+		\cf5 \\kck\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\ef\cf0 , ~rbus, \cf5 \\fr\cf0 , 50.0, \cf5 \\at\cf0 , 0.1, \cf5 \\dr\cf0 , 0.05, \cf5 \\cr\cf0 , -4, \cf5 \\ea\cf0 , 0.1, \
+			\cf5 \\on\cf0 , 1, \cf5 \\am\cf0 , 1.0],\
+		\cf5 \\snr\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\fr\cf0 , 400, \cf5 \\at\cf0 , 0.008, \cf5 \\dr\cf0 , 0.05, \cf5 \\cr\cf0 , -6, \cf5 \\dc\cf0 , 2, \cf5 \\dl\cf0 , 0.125, \cf5 \\wt\cf0 , 3,\
+			\cf5 \\am\cf0 , 12],\
+		\cf5 \\hh\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\dr\cf0 , 0.04, \cf5 \\fr\cf0 , 2500, \cf5 \\am\cf0 , 25.0],\
+		\cf5 \\bss\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\fr\cf0 , 60.0, \cf5 \\dr\cf0 , 0.05, \cf5 \\am\cf0 , 4.0],\
+		\cf5 \\clck\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\ef\cf0 , ~rbus, \cf5 \\am\cf0 , 8.0, \cf5 \\dr\cf0 , 0.2, \cf5 \\bt\cf0 , 1, \cf5 \\ea\cf0 , 0.1],\
+		\cf5 \\nzsnr\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\am\cf0 , 4, \cf5 \\fr\cf0 , 700, \cf5 \\dr\cf0 , 0.2],\
+		\cf5 \\pnk\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\dr\cf0 , 0.05, \cf5 \\am\cf0 , 4.0],\
+		\cf5 \\fmsnth\cf0 : [\cf5 \\ou\cf0 , ~abus, \cf5 \\ef\cf0 , ~rbus, \cf5 \\dr\cf0 , 0.05, \cf5 \\gd\cf0 , 0.015, \cf5 \\cf\cf0 , 500, \cf5 \\mf\cf0 , 0.5, \cf5 \\in\cf0 , 12, \
+			\cf5 \\on\cf0 , 1, \cf5 \\am\cf0 , 2]\
+	);	\
+	\
+	~z3patlib = (\
+		bell: (\
+			args: (\cf5 \\ou\cf0 : ~abus, \cf5 \\am\cf0 : 0.2, \cf5 \\fr\cf0 : ~scale[4][2], \cf5 \\dr\cf0 : 0.001, \cf5 \\ph\cf0 : 0.5pi, \cf5 \\pn\cf0 : 0, \
+				\cf5 \\rt\cf0 : 0.5, \cf5 \\ra\cf0 : 0.01, \cf5 \\at\cf0 : 0.01, \cf5 \\re\cf0 : 0.99, \cf5 \\cu\cf0 : 4, \cf5 \\du\cf0 : 0.005)\
+		),\
+		\
+		bass: (\
+			args: (\cf5 \\ou\cf0 : ~abus, \cf5 \\am\cf0 : 0.03, \cf5 \\nm\cf0 : 20, \cf5 \\wd\cf0 : 0.001, \cf5 \\dr\cf0 : 0.001, \cf5 \\pn\cf0 : 0, \cf5 \\ra\cf0 : 0.1, \
+				\cf5 \\du\cf0 : 0.005),\
+			lo: (\cf5 \\fr\cf0 : ~scale[2][2], \cf5 \\nf\cf0 : ~scale[6][0], \cf5 \\at\cf0 : 0.01, \cf5 \\re\cf0 : 0.99, \cf5 \\cu\cf0 : 4),\
+			mi: (\cf5 \\fr\cf0 : ~scale[1][4], \cf5 \\nf\cf0 : ~scale[7][4], \cf5 \\at\cf0 : 0.1, \cf5 \\re\cf0 : 0.9, \cf5 \\cu\cf0 : -4)\
+		),\
+		\
+		beat: (\
+			args: (\cf5 \\ou\cf0 : ~abus, \cf5 \\am\cf0 : 0.05, \cf5 \\dr\cf0 : 0.001, \cf5 \\pn\cf0 : 0, \cf5 \\rt\cf0 : 1, \cf5 \\ra\cf0 : 0.1, \cf5 \\du\cf0 : 0.005),\
+			lo: (\cf5 \\cf\cf0 : ~scale[1][4], \cf5 \\mf\cf0 : ~scale[1][0], \cf5 \\pf\cf0 : ~scale[1][2], \
+				\cf5 \\fi\cf0 : 50, \cf5 \\ip\cf0 : 25, \cf5 \\at\cf0 : 0.001, \cf5 \\re\cf0 : 0.999, \cf5 \\cu\cf0 : 4),\
+		 	mi: (\cf5 \\cf\cf0 : ~scale[2][4], \cf5 \\mf\cf0 : ~scale[2][0], \cf5 \\pf\cf0 : ~scale[2][2], \
+		 		\cf5 \\fi\cf0 : 75, \cf5 \\ip\cf0 : 50, \cf5 \\at\cf0 : 0.2, \cf5 \\re\cf0 : 0.8, \cf5 \\cu\cf0 : -2),\
+		 	hi: (\cf5 \\cf\cf0 : ~scale[4][4], \cf5 \\mf\cf0 : ~scale[4][0], \cf5 \\pf\cf0 : ~scale[4][2], \
+		 		\cf5 \\fi\cf0 : 100, \cf5 \\ip\cf0 : 75, \cf5 \\at\cf0 : 0.1, \cf5 \\re\cf0 : 0.9, \cf5 \\cu\cf0 : 4)\
+		)\
+	);\
+	\
+	~maprhythm = \{\cf3 |key|\cf0 \
+		~z3patlib[\cf5 \\bell\cf0 ][\cf5 \\pat\cf0 ] = \cf3 Pseq\cf0 (~rhythmlib[key][\cf5 \\bell\cf0 ][\cf5 \\pat\cf0 ], \cf3 inf\cf0 ).asStream;\
+		~z3patlib[\cf5 \\bass\cf0 ][\cf5 \\pat\cf0 ] = \cf3 Pseq\cf0 (~rhythmlib[key][\cf5 \\bass\cf0 ][\cf5 \\pat\cf0 ], \cf3 inf\cf0 ).asStream;\
+		~z3patlib[\cf5 \\bass\cf0 ][\cf5 \\seq\cf0 ] = \cf3 Pseq\cf0 (~rhythmlib[key][\cf5 \\bass\cf0 ][\cf5 \\seq\cf0 ], \cf3 inf\cf0 ).asStream;\
+		~z3patlib[\cf5 \\beat\cf0 ][\cf5 \\pat1\cf0 ] = \cf3 Pseq\cf0 (~rhythmlib[key][\cf5 \\beat\cf0 ][\cf5 \\pat1\cf0 ], \cf3 inf\cf0 ).asStream;\
+		~z3patlib[\cf5 \\beat\cf0 ][\cf5 \\seq1\cf0 ] = \cf3 Pseq\cf0 (~rhythmlib[key][\cf5 \\beat\cf0 ][\cf5 \\seq1\cf0 ], \cf3 inf\cf0 ).asStream;\
+		~z3patlib[\cf5 \\beat\cf0 ][\cf5 \\pat2\cf0 ] = \cf3 Pseq\cf0 (~rhythmlib[key][\cf5 \\beat\cf0 ][\cf5 \\pat2\cf0 ], \cf3 inf\cf0 ).asStream;\
+		~z3patlib[\cf5 \\beat\cf0 ][\cf5 \\seq2\cf0 ] = \cf3 Pseq\cf0 (~rhythmlib[key][\cf5 \\beat\cf0 ][\cf5 \\seq2\cf0 ], \cf3 inf\cf0 ).asStream;\
+		~z3patlib[\cf5 \\beat\cf0 ][\cf5 \\pat3\cf0 ] = \cf3 Pseq\cf0 (~rhythmlib[key][\cf5 \\beat\cf0 ][\cf5 \\pat3\cf0 ], \cf3 inf\cf0 ).asStream;\
+		~z3patlib[\cf5 \\beat\cf0 ][\cf5 \\seq3\cf0 ] = \cf3 Pseq\cf0 (~rhythmlib[key][\cf5 \\beat\cf0 ][\cf5 \\seq3\cf0 ], \cf3 inf\cf0 ).asStream;\
+	\};\
+			\
+	~rhythmlib = (\
+		kakilambe: (\
+			bell: (\
+				pat: [1,0,1,0,1,0,1,1,0,1,1,0] \
+			),\
+			bass: (\
+				pat: [1,0,1,0,1,0,0,1,0,1,0,0,1,0,0,0,1,0,0,1,0,1,0,0],\
+				seq: #[lo,mi,lo,lo,mi]\
+			),\
+			beat: (\
+			 	pat1: [1,0,1,1,1,0,1,1,0,1,1,0],\
+			 	seq1: #[lo,mi,mi,hi,lo,mi,mi,hi],\
+			 	pat2: [1,0,1,0,1,0,0,1,0,1,1,0,1,0,0,0,1,0,0,1,0,1,1,0],\
+			 	seq2: #[lo,lo,lo,hi,mi,hi,lo,hi,mi,mi,hi],\
+			 	pat3: [1,0,1,1,0,1,1,0,1,1,0,1],\
+			 	seq3: #[lo,lo,lo,mi,mi,lo,mi,mi,mi]\
+			)\
+		),\
+		\
+		basikolo: (\
+			bell: (\
+				pat: [1,0,1,1,1,0,1,1,0,1,0,1]\
+			),\
+			bass: (\
+				pat: [1,0,0,1,1,0,1,0,0,1,0,0],\
+				seq: #[lo,mi,lo,lo,mi]\
+			),\
+			beat: (\
+			 	pat1: [1,1,1,0,1,0,0,1,0,1,1,0],\
+			 	seq1: #[lo,hi,mi,hi,hi,lo,hi],\
+			 	pat2: [1,0,0,0,1,1,1,0,0,1,1,1],\
+			 	seq2: #[hi,mi,mi,hi,hi,mi,mi],\
+			 	pat3: [1,0,1,1,0,0,1,1,1,1,0,0],\
+			 	seq3: #[hi,mi,mi,hi,mi,mi,hi]\
+			)\
+		),\
+\
+		tiriba: (\
+			bell: (\
+				pat: [1,0,1,0,1,1,0,1,0,1,0,1]\
+			),\
+			bass: (\
+				pat: [1,0,0,0,1,1,0,1,0,1,0,0],\
+				seq: #[lo,lo,lo,mi,lo]\
+			),\
+			beat: (\
+			 	pat1: [1,0,1,1,1,1,1,1,1,1,1,0],\
+			 	seq1: #[lo,hi,lo,mi,mi,lo,hi,hi,lo,mi],\
+			 	pat2: [1,0,1,1,0,0,1,0,1,1,0,0],\
+			 	seq2: #[hi,mi,mi,hi,mi,mi],\
+			 	pat3: [1,0,1,0,1,1,0,0,0,0,1,1],\
+			 	seq3: #[lo,lo,mi,mi,mi,mi]\
+			)\
+		)\
+\
+	);\
+	\
+	~addSynth = \{\cf3 |index, values|\cf0 \
+		\cf3 var\cf0  states = \cf3 Pseq\cf0 (values.states[~indices[index]], 2).asStream;\
+		\cf3 Synth\cf0 .head(~agrp, ~defs[index].name, ~z3pmaps[~defs[index].name.asSymbol] \
+			++ [\cf5 \\az\cf0 , [-pi, pi].asSpec.map(states.next)]);\
+		~synths[index] = \cf3 Synth\cf0 .head(~agrp, \cf5 \\rwarpfldatk\cf0 , \
+			[\cf5 \\out\cf0 , ~abus, \cf5 \\efx\cf0 , ~rbus, \cf5 \\gate\cf0 , 1.0, \cf5 \\aamp\cf0 , 0.5, \
+			\cf5 \\eamp\cf0 , 0.1, \cf5 \\maxdel\cf0 , 0.1, \cf5 \\dur\cf0 , 1, \cf5 \\buf\cf0 , ~loopind[index]\
+			] ++ ~z3map.collect(\{\cf3 |spec|\cf0  spec.map(states.next) \}).asKeyValuePairs )\
+				.setn(\cf5 \\env\cf0 , \cf3 Env\cf0 ([1, 1, 0], [0.8, 0.2], \cf5 \\lin\cf0 , 2, 1).asArray)\
+				.setn(\cf5 \\delays\cf0 , \cf3 Array\cf0 .geom(4, [0.005, 0.01].asSpec.map(states.next), 1.618 ))\
+				.setn(\cf5 \\shifts\cf0 , [1, 0.5, 0.25, 1])\
+				.setn(\cf5 \\wins\cf0 , \cf3 Array\cf0 .geom(4, [0.01, 0.05].asSpec.map(states.next), 1.618 ))\
+				.setn(\cf5 \\amps\cf0 , \cf3 Array\cf0 .geom(4, 1.0, 8/13));\
+		if (0.1.coin) \{ ~changeFx.value(values) \};\
+	\};\
+\
+	~removeSynth = \{\cf3 |index|\cf0 \
+		~synths[index].set(\cf5 \\gate\cf0 , -1.0);\
+		~synths[index] = \cf3 nil\cf0 ;	\
+	\};\
+\
+	~mapParams = \{\cf3 |values|\cf0 \
+					\
+		~indices.do(\{ \cf3 |index, i|\cf0 \
+			\cf3 var\cf0  map, states, params = values.states[index];\
+			map = ~trigmap[i];\
+			\
+			if (~synths[i].notNil)\
+			\{\
+				states = \cf3 Pseq\cf0 (values.states[~indices[i]], 2).asStream;\
+				~synths[i].set(~z3map.collect(\{\cf3 |spec|\cf0  spec.map(states.next) \}).asKeyValuePairs)\
+			\};\
+			\
+			if (map.on > map.off) \{\
+				if ((map.active.not).and(params[0] > map.off).and(params[0] < map.on))\
+				\{\
+					~addSynth.value(i, values);\
+					map.active = \cf3 true\cf0 ;\
+				\};\
+				if ((map.active).and((params[0] < map.off).or(params[0] > map.on) ))\
+				\{\
+					~removeSynth.value(i);\
+					map.active = \cf3 false\cf0 ;\
+				\}\
+			\}\
+			\{\
+				if ((map.active.not).and(params[0] < map.off).and(params[0] > map.on))\
+				\{\
+					~addSynth.value(i, values);\
+					map.active = \cf3 true\cf0 ;\
+				\};\
+				if ((map.active).and((params[0] > map.off).or(params[0] < map.on) ))\
+				\{\
+					~removeSynth.value(i);\
+					map.active = \cf3 false\cf0 ;\
+				\}\
+			\
+			\};\
+\
+			\
+		\})\
+			\
+	\};\
+	\
+	~beatCounter = 2;\
+\
+	~beatdiv = 2;\
+		\
+	~nextBeat = \{\cf3 |values|\cf0 \
+		\
+		if (~beatCounter == ~beatdiv)\
+		\{\
+		\
+			if (~z3patlib.beat.pat1.next==1) \{ \
+				\cf3 Synth\cf0 (\cf5 \\beat\cf0 , ~z3patlib.beat.args.asKeyValuePairs \
+					++ ~z3patlib.beat[~z3patlib.beat.seq1.next].asKeyValuePairs); \
+			\};\
+	\
+			if (~z3patlib.beat.pat2.next==1) \{ \
+				\cf3 Synth\cf0 (\cf5 \\beat\cf0 , ~z3patlib.beat.args.asKeyValuePairs\
+				 	++ ~z3patlib.beat[~z3patlib.beat.seq2.next].asKeyValuePairs); \
+			\};\
+	\
+			if (~z3patlib.beat.pat3.next==1) \{ \
+				\cf3 Synth\cf0 (\cf5 \\beat\cf0 , ~z3patlib.beat.args.asKeyValuePairs\
+				 	++ ~z3patlib.beat[~z3patlib.beat.seq3.next].asKeyValuePairs); \
+			\};\
+	\
+			if (~z3patlib.bass.pat.next==1) \{ \
+				\cf3 Synth\cf0 (\cf5 \\bass\cf0 , ~z3patlib.bass.args.asKeyValuePairs\
+				 	++ ~z3patlib.bass[~z3patlib.bass.seq.next].asKeyValuePairs); \
+			\};\
+	\
+			if (~z3patlib.bell.pat.next==1) \{ \
+				\cf3 Synth\cf0 (\cf5 \\beat\cf0 , ~z3patlib.bell.args.asKeyValuePairs); \
+			\};\
+			\
+			~beatCounter = 0;\
+			\
+		\}\
+		\
+		\{\
+		\
+			~beatCounter = ~beatCounter + 1;\
+		\
+		\}\
+	\};\
+		\
+	~startWfs = \{\cf3 |section, dur|\cf0   \cf2 // 0,2,4,6\cf0 \
+		\cf3 var\cf0  synth, bufL, bufR;\
+		#bufL, bufR = ~wfsbufs[section..section+1];\
+		synth = \cf3 Synth\cf0 .tail(~agrp, \cf5 \\zone3_doublemono\cf0 , [\cf5 \\out\cf0 , ~abus, \cf5 \\efx\cf0 , ~rbus, \cf5 \\amp\cf0 , 1.0, \
+			\cf5 \\eamp\cf0 , 0.5, \cf5 \\bufL\cf0 , bufL, \cf5 \\bufR\cf0 , bufR, \cf5 \\azm\cf0 , 0, \cf5 \\wid\cf0 , 0.5pi, \cf5 \\elv\cf0 , 0, \cf5 \\dur\cf0 , dur,\
+			\cf5 \\xang\cf0 , 0, \cf5 \\yang\cf0 , 0, \cf5 \\zang\cf0 , 0])\
+			.setn(\cf5 \\env\cf0 , \cf3 Env\cf0 ([0.1, 1.0, 0.0], [1, 0.01], [4, 0]).asArray);\
+	\}\
+)\
+\
+(\
+	~recordActive = \cf3 true\cf0 ;\
+	~recordPath = \cf4 "/Users/alo/sounds/fx/zone_3_"\cf0  ++ \cf3 Date\cf0 .getDate.stamp ++ \cf4 ".aif"\cf0 ;\
+\
+	~rout = \cf3 Routine\cf0 (\{\
+		\
+		3.wait;\
+		\
+		~fx.startFx;\
+		\
+		7.wait;\
+		\
+		~fx.visualdict.globals[\cf5 \\alpha\cf0 ] = 1.0;\
+		~fx.visualdict.globals[\cf5 \\clear\cf0 ] = 0.1;\
+		~fx.visualdict.globals[\cf5 \\add\cf0 ] = 0.96;\
+		~fx.visualdict.globals[\cf5 \\transx\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\transy\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\transz\cf0 ] = -32.0;\
+		~fx.visualdict.globals[\cf5 \\angle\cf0 ] = -0.2;\
+		~fx.visualdict.globals[\cf5 \\rotX\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\rotY\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\rotZ\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\frame\cf0 ] = 4;\
+		\
+		~fx.sendCurrentSettings;\
+		\
+		if (~recordActive) \{ ~serv.prepareForRecord(~recordPath) \};\
+		\
+		5.wait;\
+		\
+		if (~recordActive) \{ ~serv.record \};\
+		\
+		~fx.addGlobalsResponder;\
+		~fx.addStatesResponder;\
+		~fx.addTriggerResponder;\
+		\
+		~fx.visualdict.globals[\cf5 \\clear\cf0 ] = 1.0;\
+		~fx.sendCurrentSettings;\
+	\
+		0.1.wait;\
+	\
+		~fx.visualdict.globals[\cf5 \\clear\cf0 ] = 0.1;\
+		~fx.sendCurrentSettings;\
+		\
+		~timer = \cf3 Date\cf0 .getDate.bootSeconds;\
+		\
+		~fx.sendPollIndices(~fx.getPollIndices(2));\
+		\
+		1.wait;		\
+		\
+		~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.equal.value);\
+\
+		(1/12).wait;		\
+		\
+		~startWfs.value(0, 30);\
+				\
+		~fx.activatePatch(\cf5 \\horizons\cf0 , 0);		\
+		\
+		(1/12).wait;\
+		\
+		~fx.sendPatchCmd(\cf5 \\horizons\cf0 , \cf5 \\color\cf0 , 0, 1, 0);\
+\
+		(1/12).wait;\
+		\
+		~fx.sendPatchCmd(\cf5 \\horizons\cf0 , \cf5 \\alphahi\cf0 , 0, 0.3, 10);				\
+		32.wait;		\
+		\
+		~fx.deactivatePatch(\cf5 \\horizons\cf0 , 0);\
+		\
+		(1/12).wait;		\
+				\
+		~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.symmetry.value);\
+		~fx.addStatesFunction(\cf5 \\zone3\cf0 , ~mapParams);\
+		(1/12).wait;\
+		~fx.activatePatch(\cf5 \\mesh\cf0 , 0);\
+		(1/12).wait;\
+		~fx.sendPatchCmd(\cf5 \\mesh\cf0 , \cf5 \\color\cf0 , 0, 2, 0);\
+		(1/12).wait;\
+		~fx.sendPatchCmd(\cf5 \\mesh\cf0 , \cf5 \\alphamap\cf0 , 0, 1, 0);\
+		(1/12).wait;\
+		~fx.sendPatchCmd(\cf5 \\mesh\cf0 , \cf5 \\alphahi\cf0 , 0, 1, 0);			(1/12).wait;	\
+		~fx.visualdict.globals[\cf5 \\angle\cf0 ] = 0.25;\
+		~fx.sendCurrentSettings;\
+\
+		20.wait;\
+		\
+		\cf3 Routine\cf0 (\{\
+			\cf3 var\cf0  add, start, end, dur = 50;\
+			start = 0.95; end = 0.8; add = 0.95;\
+			dur.do(\{\
+				add = add + (end - start / dur);\
+				~fx.visualdict.globals[\cf5 \\add\cf0 ] = add;\
+				~fx.sendCurrentSettings;\
+				0.06.wait;\
+			\});\
+			1.wait;\
+			~fx.visualdict.globals[\cf5 \\add\cf0 ] = 0.95;\
+			~fx.sendCurrentSettings;\
+		\}).play;\
+\
+		8.wait;\
+\
+		\cf3 Routine\cf0 (\{\
+			\cf3 var\cf0  add, start, end, dur = 50;\
+			start = 0.95; end = 0.8; add = 0.95;\
+			dur.do(\{\
+				add = add + (end - start / dur);\
+				~fx.visualdict.globals[\cf5 \\add\cf0 ] = add;\
+				~fx.sendCurrentSettings;\
+				0.06.wait;\
+			\});\
+			1.wait;\
+			~fx.visualdict.globals[\cf5 \\add\cf0 ] = 0.93;\
+			~fx.sendCurrentSettings;\
+		\}).play;\
+\
+		8.wait;\
+		\
+		\cf3 Routine\cf0 (\{\
+			\cf3 var\cf0  add, start, end, dur = 50;\
+			start = 0.95; end = 0.7; add = 0.95;\
+			dur.do(\{\
+				add = add + (end - start / dur);\
+				~fx.visualdict.globals[\cf5 \\add\cf0 ] = add;\
+				~fx.sendCurrentSettings;\
+				0.06.wait;\
+			\});\
+			1.wait;\
+			~fx.visualdict.globals[\cf5 \\add\cf0 ] = 0.9;\
+			~fx.sendCurrentSettings;\
+		\}).play;\
+		\
+		8.wait;\
+				\
+		\cf3 Routine\cf0 (\{\
+			(11..18).do(\{\cf3 |ind, i|\cf0 \
+				~loopind[i] = ind;\
+				2.wait;\
+			\})\
+		\}).play;\
+		\
+		\cf3 Routine\cf0 (\{\
+			\cf3 var\cf0  add, start, end, dur = 50;\
+			start = 0.95; end = 0.1; add = 0.95;\
+			dur.do(\{\
+				add = add + (end - start / dur);\
+				~fx.visualdict.globals[\cf5 \\add\cf0 ] = add;\
+				~fx.sendCurrentSettings;\
+				0.06.wait;\
+			\});\
+		\}).play;\
+				\
+		~trigmap = [\
+			(\cf5 \\on\cf0 : 0.2, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.4, \cf5 \\off\cf0 : 0.6, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.6, \cf5 \\off\cf0 : 0.8, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.1, \cf5 \\off\cf0 : 0.9, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.9, \cf5 \\off\cf0 : 0.1, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.8, \cf5 \\off\cf0 : 0.6, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.6, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.4, \cf5 \\off\cf0 : 0.2, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  )\
+		];	\
+						\
+		16.wait;		\
+						\
+		~fx.removeStatesFunction(\cf5 \\zone3\cf0 );\
+		\
+		~fx.deactivatePatch(\cf5 \\mesh\cf0 , 0);		\
+		\
+		(1/12).wait;\
+		~fx.sendPatchCmd(\cf5 \\horizons\cf0 , \cf5 \\alphahi\cf0 , 0.3, 0.0, 0);\
+				\
+		(1/12).wait;\
+		\
+		~fx.activatePatch(\cf5 \\horizons\cf0 , 0);\
+				\
+		(1/12).wait;	\
+		~fx.visualdict.globals[\cf5 \\angle\cf0 ] = -0.2;\
+		~fx.sendCurrentSettings;		\
+\
+		(1/12).wait;\
+		\
+		~fx.sendPatchCmd(\cf5 \\horizons\cf0 , \cf5 \\alphahi\cf0 , 0, 0.4, 10);		\
+		~startWfs.value(2, 32);\
+						\
+		\cf3 Routine\cf0 (\{\
+			\cf3 var\cf0  add, start, end, dur = 100;\
+			start = 0.1; end = 0.3; add = 0.1;\
+			dur.do(\{\
+				add = add + (end - start / dur);\
+				~fx.visualdict.globals[\cf5 \\add\cf0 ] = add;\
+				~fx.sendCurrentSettings;\
+				0.06.wait;\
+			\});\
+			2.wait;\
+			~fx.visualdict.globals[\cf5 \\add\cf0 ] = 0.1;\
+			~fx.sendCurrentSettings;\
+		\}).play;\
+				\
+		32.wait;\
+				\
+		~fx.deactivatePatch(\cf5 \\horizons\cf0 , 0);		\
+		\
+		(1/12).wait;\
+								\
+		~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.cross.value);\
+		\
+		~fx.addStatesFunction(\cf5 \\zone3\cf0 , ~mapParams);\
+		\
+		(1/12).wait;\
+		\
+		~fx.activatePatch(\cf5 \\mesh\cf0 , 0);\
+		\
+		(1/12).wait;	\
+		~fx.visualdict.globals[\cf5 \\angle\cf0 ] = 0.3;\
+		~fx.visualdict.globals[\cf5 \\rotY\cf0 ] = 1.0;\
+\
+		~fx.sendCurrentSettings;		\
+		\
+		\cf3 Routine\cf0 (\{\
+			\cf3 var\cf0  add, start, end, dur = 100;\
+			start = 0.3; end = 0.9; add = 0.3;\
+			dur.do(\{\
+				add = add + (end - start / dur);\
+				~fx.visualdict.globals[\cf5 \\add\cf0 ] = add;\
+				~fx.sendCurrentSettings;\
+				0.06.wait;\
+			\});\
+		\}).play;		\
+		\
+		\cf3 Routine\cf0 (\{\
+			(0..7).do(\{\cf3 |ind, i|\cf0 \
+				~loopind[i] = ind;\
+				2.wait;\
+			\})\
+		\}).play;		\
+		\
+		~trigmap = [\
+			(\cf5 \\on\cf0 : 0.3, \cf5 \\off\cf0 : 0.1, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.4, \cf5 \\off\cf0 : 0.2, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.5, \cf5 \\off\cf0 : 0.3, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.6, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.9, \cf5 \\off\cf0 : 0.7, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.8, \cf5 \\off\cf0 : 0.6, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.7, \cf5 \\off\cf0 : 0.5, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.6, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  )\
+		];				\
+		\
+		32.wait;\
+		\
+		\cf3 Routine\cf0 (\{\
+			\cf3 var\cf0  add, start, end, dur = 100;\
+			start = 0.1; end = 0.5; add = 0.1;\
+			dur.do(\{\
+				add = add + (end - start / dur);\
+				~fx.visualdict.globals[\cf5 \\add\cf0 ] = add;\
+				~fx.sendCurrentSettings;\
+				0.06.wait;\
+			\});\
+			2.wait;\
+			~fx.visualdict.globals[\cf5 \\add\cf0 ] = 0.2;\
+			~fx.sendCurrentSettings;\
+		\}).play;		\
+		\
+		16.wait;		\
+				\
+		~fx.removeStatesFunction(\cf5 \\zone3\cf0 );\
+				\
+		~fx.deactivatePatch(\cf5 \\mesh\cf0 , 0);\
+		\
+		~startWfs.value(4, 32);		\
+\
+		(1/12).wait;\
+		\
+		~fx.sendPatchCmd(\cf5 \\horizons\cf0 , \cf5 \\alphahi\cf0 , 0.4, 0.0, 0);				\
+		(1/12).wait;\
+		\
+		~fx.activatePatch(\cf5 \\horizons\cf0 , 0);\
+		\
+		(1/12).wait;	\
+		~fx.visualdict.globals[\cf5 \\angle\cf0 ] = -0.2;\
+		~fx.visualdict.globals[\cf5 \\rotY\cf0 ] = 0.0;\
+\
+		~fx.sendCurrentSettings;		\
+\
+		(1/12).wait;\
+		\
+		~fx.sendPatchCmd(\cf5 \\horizons\cf0 , \cf5 \\alphahi\cf0 , 0.0, 0.35, 10);		\
+		32.wait;\
+				\
+		\cf3 Routine\cf0 (\{\
+			(68..75).do(\{\cf3 |ind, i|\cf0 \
+				~loopind[i] = ind;\
+				2.wait;\
+			\})\
+		\}).play;\
+		\
+		~fx.deactivatePatch(\cf5 \\horizons\cf0 , 0);	\
+		\
+		(1/12).wait;\
+		\
+		~fx.activatePatch(\cf5 \\mesh\cf0 , 0);	\
+			\
+		~fx.addStatesFunction(\cf5 \\zone3\cf0 , ~mapParams);\
+\
+		~trigmap = [\
+			(\cf5 \\on\cf0 : 0.1, \cf5 \\off\cf0 : 0.3, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.2, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.3, \cf5 \\off\cf0 : 0.5, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.4, \cf5 \\off\cf0 : 0.6, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.9, \cf5 \\off\cf0 : 0.7, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.8, \cf5 \\off\cf0 : 0.6, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.7, \cf5 \\off\cf0 : 0.5, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  ),\
+			(\cf5 \\on\cf0 : 0.6, \cf5 \\off\cf0 : 0.4, \cf5 \\last\cf0 : 0, \cf5 \\active\cf0 : \cf3 false\cf0  )\
+		];\
+		\
+		(1/12).wait;\
+		\
+		~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.rand.value);\
+		\
+		(1/12).wait;	\
+		~fx.visualdict.globals[\cf5 \\angle\cf0 ] = 0.4;\
+		~fx.visualdict.globals[\cf5 \\rotZ\cf0 ] = 1.0;\
+		\
+		~fx.sendCurrentSettings;				\
+				\
+		\cf3 Routine\cf0 (\{\
+			\cf3 var\cf0  add, start, end, dur = 50;\
+			start = 0.2; end = 0.7; add = 0.2;\
+			dur.do(\{\
+				add = add + (end - start / dur);\
+				~fx.visualdict.globals[\cf5 \\add\cf0 ] = add;\
+				~fx.sendCurrentSettings;\
+				0.06.wait;\
+			\});\
+			1.wait;\
+			~fx.visualdict.globals[\cf5 \\add\cf0 ] = 0.1;\
+			~fx.sendCurrentSettings;\
+		\}).play;		\
+		\
+		8.wait;\
+\
+		\cf3 Routine\cf0 (\{\
+			\cf3 var\cf0  add, start, end, dur = 50;\
+			start = 0.2; end = 0.7; add = 0.2;\
+			dur.do(\{\
+				add = add + (end - start / dur);\
+				~fx.visualdict.globals[\cf5 \\add\cf0 ] = add;\
+				~fx.sendCurrentSettings;\
+				0.06.wait;\
+			\});\
+			1.wait;\
+			~fx.visualdict.globals[\cf5 \\add\cf0 ] = 0.1;\
+			~fx.sendCurrentSettings;\
+		\}).play;		\
+		\
+		8.wait;\
+		\
+		\cf3 Routine\cf0 (\{\
+			\cf3 var\cf0  add, start, end, dur = 100;\
+			start = 0.2; end = 0.9; add = 0.2;\
+			dur.do(\{\
+				add = add + (end - start / dur);\
+				~fx.visualdict.globals[\cf5 \\add\cf0 ] = add;\
+				~fx.sendCurrentSettings;\
+				0.06.wait;\
+			\});\
+			1.wait;\
+			~fx.visualdict.globals[\cf5 \\add\cf0 ] = 0.1;\
+			~fx.sendCurrentSettings;\
+		\}).play;				\
+		\
+		48.wait;\
+		\
+		~fx.removeStatesFunction(\cf5 \\zone3\cf0 );\
+				\
+		~fx.deactivatePatch(\cf5 \\mesh\cf0 , 0);		\
+		\
+		(1/12).wait;\
+		\
+		~fx.sendPatchCmd(\cf5 \\horizons\cf0 , \cf5 \\alphahi\cf0 , 0.35, 0.0, 0);\
+				\
+		(1/12).wait;\
+						\
+		~fx.activatePatch(\cf5 \\horizons\cf0 , 0);\
+		\
+		~startWfs.value(6, 32);		\
+		\
+		(1/12).wait;	\
+		~fx.visualdict.globals[\cf5 \\angle\cf0 ] = -0.2;\
+		~fx.visualdict.globals[\cf5 \\rotZ\cf0 ] = 0.0;\
+		\
+		~fx.sendCurrentSettings;		\
+\
+		(1/12).wait;\
+		\
+		~fx.sendPatchCmd(\cf5 \\horizons\cf0 , \cf5 \\alphahi\cf0 , 0.0, 0.3, 10);\
+						\
+		32.wait;\
+				\
+		~fx.deactivatePatch(\cf5 \\horizons\cf0 , 0);\
+				\
+		(1/12).wait;\
+		\
+		~fx.activatePatch(\cf5 \\mesh\cf0 , 0);\
+		\
+		~fx.addStatesFunction(\cf5 \\zone3\cf0 , ~mapParams);\
+		\
+		(1/12).wait;\
+		\
+		~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.symmetry.value);\
+		\
+		(1/12).wait;	\
+		~fx.visualdict.globals[\cf5 \\angle\cf0 ] = 0.25;\
+		~fx.visualdict.globals[\cf5 \\rotX\cf0 ] = 0.33;\
+		~fx.visualdict.globals[\cf5 \\rotZ\cf0 ] = 0.66;\
+		\
+		~fx.sendCurrentSettings;\
+				\
+		\cf3 Routine\cf0 (\{\
+			\cf3 var\cf0  add, start, end, dur = 50;\
+			start = 0.1; end = 0.3; add = 0.1;\
+			dur.do(\{\
+				add = add + (end - start / dur);\
+				~fx.visualdict.globals[\cf5 \\add\cf0 ] = add;\
+				~fx.sendCurrentSettings;\
+				0.06.wait;\
+			\});\
+			1.wait;\
+			~fx.visualdict.globals[\cf5 \\add\cf0 ] = 0.1;\
+			~fx.sendCurrentSettings;\
+		\}).play;				\
+		\
+		\cf3 Routine\cf0 (\{\
+			(8..15).do(\{\cf3 |ind, i|\cf0 \
+				~loopind[i] = ind;\
+				2.wait;\
+			\})\
+		\}).play;\
+		\
+		32.wait;\
+				\
+		~fx.removeStatesFunction(\cf5 \\zone3\cf0 );\
+		\
+		~fx.deactivatePatch(\cf5 \\mesh\cf0 , 0);\
+		\
+		(1/12).wait;\
+		\
+		~fx.sendPatchCmd(\cf5 \\horizons\cf0 , \cf5 \\alphahi\cf0 , 0.3, 0.0, 0);\
+		\
+		(1/12).wait;\
+\
+		~fx.activatePatch(\cf5 \\horizons\cf0 , 0);\
+						\
+		~startWfs.value(0, 54);		\
+		\
+		(1/12).wait;	\
+		~fx.visualdict.globals[\cf5 \\angle\cf0 ] = -0.15;\
+		~fx.visualdict.globals[\cf5 \\rotX\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\rotZ\cf0 ] = 0.0;\
+		\
+		~fx.sendCurrentSettings;\
+		\
+		(1/12).wait;\
+		\
+		~fx.sendPatchCmd(\cf5 \\horizons\cf0 , \cf5 \\alphahi\cf0 , 0.0, 0.4, 10);\
+		\
+		32.wait;\
+						\
+		~fx.visualdict.globals[\cf5 \\add\cf0 ] = 0.05;\
+		~fx.sendCurrentSettings;\
+		\
+		(1/12).wait;		\
+		\
+		~fx.sendPatchCmd(\cf5 \\horizons\cf0 , \cf5 \\alphahi\cf0 , 0.4, 0.0, 32);				\
+		40.wait;\
+				\
+		~fx.removeAllStatesFunctions;\
+		~fx.removeAllTriggerFunctions;\
+		~fx.removeAllGlobalsFunctions;\
+		\
+		\cf4 "MAIN FINISHED!"\cf0 .postln;\
+		(\cf4 "time elapsed: "\cf0  ++ (\cf3 Date\cf0 .getDate.bootSeconds - ~timer).asString).postln;\
+		\
+		if (~recordActive) \{ ~serv.stopRecording \};\
+				\
+	\}).play\
+	\
+)\
+\
+~point.set(\cf5 \\amp\cf0 , 2)\
+\
+~maprhythm.value(\cf5 \\kakilambe\cf0 );\
+\
+~fx.addTriggerFunction(\cf5 \\beats\cf0 , ~nextBeat);\
+\
+~fx.removeTriggerFunction(\cf5 \\beats\cf0 );\
+\
+~fx.addGlobalsResponder;\
+~fx.addStatesResponder;\
+~fx.addTriggerResponder;\
+\
+~fx = \cf3 Fx3D\cf0 ().makeOglGui\
+~fx.startFx}

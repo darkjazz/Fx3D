@@ -12,13 +12,9 @@
 (~livepath ++ \cf4 "initiate_live.rtf"\cf2 ).load;\
 )\
 \
-~loops.do(\cf3 _\cf2 .postln)\
-\
-	~fx.startFx\
-\
-	(~livepath ++ \cf4 "start_live_synths.rtf"\cf2 ).load;\
-\
 (\
+~fx.startFx\
+\
 (~livepath ++ \cf4 "synthdefs.rtf"\cf2 ).load;\
 \
 ~fx.initLive;\

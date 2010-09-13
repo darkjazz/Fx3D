@@ -1,3 +1,9 @@
+19f064e0da6cf4641069d24d24f6a77f abeaa6b25c8b0609a42b8a897262ed90 ffffffffffffffffffffffffffffffff 102 /Users/alo/Development/Fx3D/Visual/build/Release/fx.app
+0a78357c205ca044c64dcc26e4a23b69 67ab667f12b5f9d545f57d3d78e5dc6e ffffffffffffffffffffffffffffffff 199492 /Users/alo/Development/Fx3D/Visual/build/Release/fx.app/Contents/MacOS/fx
+f30c5374cf092ed8ead5b69d08a28258 7406585bef506bff3eccddedd6b90586 ffffffffffffffffffffffffffffffff 97092 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/i386/fx
+44ac9da434787a0b89aa4a38595216a7 c9dea3f7347d9f689bfeed6e63ebaa10 ffffffffffffffffffffffffffffffff 97684 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/ppc/fx
+000000004fa55f360000000000007cba ed9dbbe0bcfd3938a8d4f3765a2b8d2c ffffffffffffffffffffffffffffffff 26516 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/i386/FxDraw.o
+000000004fa55f360000000000007cba 5c1f8eda348ac56198d3cbf92f165918 ffffffffffffffffffffffffffffffff 31076 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/ppc/FxDraw.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 5904 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/i386/Patch.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 6392 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/ppc/Patch.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 996 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/i386/timetag.o
@@ -32,16 +38,10 @@ ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffff
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 2584 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/ppc/fxutil.o
 00000000016c12de00000000000000d4 db444ac24ebbfbddc5025da93f7b96c5 ffffffffffffffffffffffffffffffff 16372 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/i386/FxOSC.o
 00000000016c12de00000000000000d4 6c2395604d00b128757293d4f9d51ac1 ffffffffffffffffffffffffffffffff 22312 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/ppc/FxOSC.o
-000000004fbed6d30000000000004bf4 ed9dbbe0bcfd3938a8d4f3765a2b8d2c ffffffffffffffffffffffffffffffff 31208 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/i386/FxDraw.o
-000000004fbed6d30000000000004bf4 5c1f8eda348ac56198d3cbf92f165918 ffffffffffffffffffffffffffffffff 36608 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/ppc/FxDraw.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 5964 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/i386/Cell.o
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 7040 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/ppc/Cell.o
 000000000ddffee0000000000003efd3 e469a96715afd8b753149ec1fb23c108 ffffffffffffffffffffffffffffffff 4268 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/i386/main.o
 000000000ddffee0000000000003efd3 56dbe7207e9bbbad368bbbb2a803aee0 ffffffffffffffffffffffffffffffff 5308 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/ppc/main.o
-19f064e0da6cf4641069d24d24f6a77f abeaa6b25c8b0609a42b8a897262ed90 ffffffffffffffffffffffffffffffff 102 /Users/alo/Development/Fx3D/Visual/build/Release/fx.app
-0a78357c205ca044c64dcc26e4a23b69 67ab667f12b5f9d545f57d3d78e5dc6e ffffffffffffffffffffffffffffffff 207724 /Users/alo/Development/Fx3D/Visual/build/Release/fx.app/Contents/MacOS/fx
-f30c5374cf12a73dead5b69d08a2b516 7406585bef506bff3eccddedd6b90586 ffffffffffffffffffffffffffffffff 101228 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/i386/fx
-44ac9da43463f3ee89aa4a38595221e9 c9dea3f7347d9f689bfeed6e63ebaa10 ffffffffffffffffffffffffffffffff 101820 /Users/alo/Development/Fx3D/Visual/build/Fx.build/Release/f(x).build/Objects-normal/ppc/fx
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 45419 /Users/alo/Development/Fx3D/Visual/build/Release/fx.app/Contents/Resources/fxv2.icns
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 56660 /Users/alo/Development/Fx3D/Visual/build/Release/fx.app/Contents/Resources/fx.icns
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 202 /Users/alo/Development/Fx3D/Visual/build/Release/fx.app/Contents/Resources/English.lproj/InfoPlist.strings

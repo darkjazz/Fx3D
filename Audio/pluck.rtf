@@ -47,13 +47,13 @@ b = \cf2 Bus\cf0 .control(s, 5)\
 	intervals = \cf2 Array\cf0 .geom(4, 0.666, 0.5);\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf4 //	x = Synth(\\pluck, [\\in, b, \\dec, 3, \\amp, 0.1]);\cf0 \
-	x = \cf2 Synth\cf0 (\cf3 \\sinp\cf0 , [\cf3 \\in\cf0 , b, \cf3 \\amp\cf0 , 0.5, \cf3 \\dur\cf0 , 0.01]);\
+	x = \cf2 Synth\cf0 (\cf3 \\sinp\cf0 , [\cf3 \\in\cf0 , b, \cf3 \\amp\cf0 , 0.1, \cf3 \\dur\cf0 , 0.01]);\
 	64.do(\{\
 		\cf2 var\cf0  times;\
 		times = \cf2 Array\cf0 .rand(rrand(2, 6), 0.0, 1.0).normalizeSum.round(0.125);\
 		times.do(\{\cf2 |time|\cf0 \
 			x.setn(\cf3 \\frq\cf0 ,~min3scale[\cf2 Array\cf0 .rand(5,0,~min3scale.lastIndex).sort]);\
-			x.set(\cf3 \\dur\cf0 ,rrand(0.05, 0.2));\
+			x.set(\cf3 \\dur\cf0 ,rrand(0.04, 0.1));\
 			b.set(*\cf2 Array\cf0 .rand(5,0.5,0.9).sort);\
 	\cf4 //		b.set(*1!5);\cf0 \
 			time.wait;\
@@ -66,7 +66,7 @@ b = \cf2 Bus\cf0 .control(s, 5)\
 \
 )\
 \
-\
+0.5/3\
 \
 x.set(\cf3 \\dec\cf0 , 5.0)\
 x.free\
