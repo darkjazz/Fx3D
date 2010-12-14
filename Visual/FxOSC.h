@@ -47,6 +47,7 @@ int quit_handler(const char *path, const char *types, lo_arg **argv, int argc,
 	(float) albb: (float) altf: (float) artf: (float) artb: (float) altb;
 - (void) sendMessage: (NSMutableArray*) states;
 - (void) sendTrigger: (int) x: (int) y: (int) z: (float) phase;
+- (void) sendRenew;
 - (void) startListener;
 - (void) stopListener;
 - (float) getAlpha;

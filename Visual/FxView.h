@@ -18,7 +18,7 @@
 #define BITS_PER_PIXEL          32.0
 #define DEPTH_SIZE              32.0
 #define WORLD_SIZE				16
-#define SC_ADDRESS				"127.0.0.1"
+#define SC_ADDRESS				"127.0.0.1" // "192.168.0.102"
 #define SC_PORT					"57120"
 
 @interface FxView : NSWindow {

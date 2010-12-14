@@ -188,10 +188,14 @@ float state;
 	
 }
 
-
 - (void) sendTrigger: (int) x: (int) y: (int) z: (float) phase
 {
 	lo_send(addr, "/fx/trigger", "iiif", x, y, z, phase);
+}
+
+- (void) sendRenew 
+{
+	lo_send(addr, "/fx/renew", "i", 0);
 }
 
 - (void) startListener

@@ -1,0 +1,119 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 (\
+~loadAts = \cf3 false\cf2 ;\
+~localDecoder = \cf3 true\cf2 ;\
+~stereoOutput = \cf3 true\cf2 ;\
+\cf4 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf2 .load;\
+)\
+\
+(\
+\cf3 SynthDef\cf2 (\cf5 \\zone4_waveTerrain\cf2 , \{\cf3 |out, buffer, aa, ab, ac, ad,\
+		pxa, pya, pxb, pyb, pxc, pyc, pxd, pyd, xang, yang, zang|\cf2 \
+	\cf3 var\cf2  a, b, c, d, w, x, y, z, raL, raR, rcL, rcR;\
+	a = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxa).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pya).range(0.0, 1.0), 8, 8) * aa;\
+	b = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxb).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyb).range(0.0, 1.0), 8, 8) * ab;\
+	c = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxc).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyc).range(0.0, 1.0), 8, 8) * ac;\
+	d = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxd).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyd).range(0.0, 1.0), 8, 8) * ad;\
+	#raL, raR = \cf3 PitchShift\cf2 .ar(\cf3 GVerb\cf2 .ar(a, 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, 0.5);\
+	#rcL, rcR = \cf3 PitchShift\cf2 .ar(\cf3 GVerb\cf2 .ar(a, 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, 0.5);\
+	a = \cf3 Compander\cf2 .ar(a, a, 0.95, 1.0, 0.1);\
+	b = \cf3 Compander\cf2 .ar(b, b, 0.95, 1.0, 0.1);\
+	c = \cf3 Compander\cf2 .ar(c, c, 0.95, 1.0, 0.1);\
+	d = \cf3 Compander\cf2 .ar(d, d, 0.95, 1.0, 0.1);\
+	#a, b, c, d = [a, b, c, d].distort + [raL, raR, rcL, rcR];\
+	#w, x, y, z = \cf3 A2B\cf2 .ar(a, b, c, d);\
+	\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang))\
+\}).add;\
+\
+\cf3 SynthDef\cf2 (\cf5 \\rough\cf2 , \{\cf3 |dur=1|\cf2 \
+	\cf3 var\cf2  sig, frqs;\
+	frqs = \cf3 Array\cf2 .geom(7, pi**pi*1.5, 2**(1/5));\
+	sig = \cf3 Mix\cf2 (\
+		\cf3 Resonz\cf2 .ar(\
+			\cf3 LFSaw\cf2 .ar(\
+				frqs, \
+				(0,2/7..1.9),\
+				1,\
+				\cf3 LFNoise0\cf2 .kr(64).range(0, 1)\
+			), \
+			frqs+1,\
+			5/(frqs+1)\
+		)\
+	).distort * \cf3 EnvGen\cf2 .kr(\
+		\cf3 Env\cf2 ([0.001, 2.0, 0.1, 1.0, 0.001], [0.01, 0.33, 0.33, 0.33], \cf5 \\sine\cf2 ), \
+		timeScale: dur, \
+		doneAction: 2 \
+	);\
+	sig = \cf3 Compander\cf2 .ar(sig, sig, 0.99, 0.5, 0.1, 0.01, 0.01) ;\
+	\cf3 Out\cf2 .ar(0, sig.dup)\
+\}).add;\
+)\
+(\
+~glmap = (\
+	aa: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (8.0, 0.5)),\
+	ab: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (8.0, 0.5)),\
+	ac: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (8.0, 0.5)),\
+	ad: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (8.0, 0.5)),\
+	xang: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-pi, pi)),\
+	yang: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-pi, pi)),\
+	zang: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-pi, pi))\
+);\
+\
+~stmap = \cf3 Array\cf2 .fillPrimes(41)[15..22];\
+\cf6 //~stmap.removeAllSuchThat(\{|it, i| i%7!=0 \});\cf2 \
+~stspec = \cf3 ControlSpec\cf2 (0, ~stmap.size - 1, \cf5 \\lin\cf2 , 1);\
+)\
+\
+~fx = \cf3 Fx3D\cf2 ().makeOglGui\
+\
+~fx.startFx\
+\
+\cf6 //~fx.addRenewResponder;\cf2 \
+\
+~fx.addGlobalsResponder;\
+\
+~fx.addStatesResponder;\
+\
+\cf6 //~fx.addRenewFunction(\\f1, \{ Synth(\\rough, [0.25, 0.5, 1.0].wchoose([0.5, 0.3, 0.2])) \})\cf2 \
+\
+~fx.addGlobalsFunction(\cf5 \\f1\cf2 , \{\cf3 |invalues|\cf2 \
+	if (~waves.notNil) \{\
+		~waves.set(\
+			\cf5 \\aa\cf2 , ~glmap[\cf5 \\aa\cf2 ].map(invalues.avglbf),\
+			\cf5 \\ab\cf2 , ~glmap[\cf5 \\ab\cf2 ].map(invalues.avgrbf),\
+			\cf5 \\ac\cf2 , ~glmap[\cf5 \\ac\cf2 ].map(invalues.avgrbb), \
+			\cf5 \\ad\cf2 , ~glmap[\cf5 \\ad\cf2 ].map(invalues.avglbb),\
+			\cf5 \\xang\cf2 , ~glmap[\cf5 \\xang\cf2 ].map(invalues.avgltf),\
+			\cf5 \\yang\cf2 , ~glmap[\cf5 \\yang\cf2 ].map(invalues.avgrtf),\
+			\cf5 \\zang\cf2 , ~glmap[\cf5 \\zang\cf2 ].map(invalues.avgrtb)\
+		)\
+	\}\
+\});\
+\
+~fx.addStatesFunction(\cf5 \\f1\cf2 , \{\cf3 |values|\cf2  \
+	if (~buffer.isNil) \{ ~buffer = \cf3 Buffer\cf2 .sendCollection(s, values.states, 1) \}\
+	\{ ~buffer.sendCollection(values.states) \};\
+	if (~waves.notNil) \{\
+		~waves.set(*\
+			(#[pxa, pya, pxb, pyb, pxc, pyc, pxd, pyd].collect(\{\cf3 |prm, i|\cf2  \
+				[prm, ~stmap[~stspec.map(values.states[i+5*4]).asInt]] \}).flat)\
+		)\
+	\}\
+\})\
+\
+\
+~waves = \cf3 Synth\cf2 (\cf5 \\zone4_waveTerrain\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\buffer\cf2 , ~buffer]);\
+\
+~waves.free;\
+~waves = \cf3 nil\cf2 \
+\
+~fx.removeStatesFunction(\cf5 \\f1\cf2 );\
+\
+~fx.removeRenewFunction(\cf5 \\f1\cf2 );\
+\
+}

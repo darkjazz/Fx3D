@@ -4,7 +4,9 @@
 \red191\green0\blue0;\red0\green115\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs24 \cf2 ~mrmr = \cf3 FxMrmr\cf2 (\cf4 "169.254.21.56"\cf2 , 31337, \cf4 "kokopelli"\cf2 );\
+\f0\fs24 \cf2 ~mrmr = \cf3 FxMrmr\cf2 (\cf4 "192.168.1.123"\cf2 , 31337, \cf4 "kokopelli"\cf2 );\
+\
+~mrmr = \cf3 FxMrmr\cf2 (\cf4 "192.168.1.99"\cf2 , 31337, \cf4 "rob's iPhone"\cf2 );\
 \
 \pard\pardeftab560\ql\qnatural
 \cf2 (\
@@ -52,7 +54,7 @@
 \
 \cf5 // TEST INCOMING\cf2 \
 \cf3 thisProcess\cf2 .recvOSCfunc = \{\cf3 |ti, addr, msg|\cf2 \
-	if (msg[0] != \cf6 'status.reply'\cf2 ) \{\
+	if (msg[0] != \cf6 '/status.reply'\cf2 ) \{\
 		\cf4 "time: % |:|  sender: % |:|  message: % \\n"\cf2 .postf(ti, addr, msg)\
 	\}\
 \}\

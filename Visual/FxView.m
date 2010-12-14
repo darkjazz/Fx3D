@@ -76,8 +76,8 @@
 	{
 		habitat = [[Habitat new] initNeumann: 1];
 	}
-	//seed = [[Seeds new] randCube: 0: 0: 0: WORLD_SIZE - 1 : WORLD_SIZE - 1 : WORLD_SIZE - 1 ];
-	seed = [[Seeds new] wireCube: 4:4:0:8:8:1];
+
+	seed = [[Seeds new] wireCube: 6:6:6:4:4:4];
 	
 	if (isMoore)
 	{
@@ -165,7 +165,7 @@
 		}
 		else
 		{
-			//seed = [[Seeds new] randRect: [oscer getLeft]: [oscer getTop]: 0: [oscer getWidth]: [oscer getHeight]: 0];		
+			seed = [[Seeds new] randCube: [oscer getLeft]: [oscer getBottom]: [oscer getFront]: [oscer getWidth]: [oscer getHeight]: [oscer getDepth]];		
 		}
 		weights = [oscer getWeights];
 		world = [[[FxWorld new] init: WORLD_SIZE : habitat : seed : [weights retain]] retain];
@@ -327,6 +327,8 @@
 		[oscer sendMessage: avgState: stdDev: albf: arbf: arbb: albb: altf: artf: artb: altb];
 		[oscer sendMessage: oscValues];
 	}
+	
+	if (renew) { [oscer sendRenew]; }
 	
 	[oscer sendTrigger:[max coordX] :[max coordY] :[max coordZ]: [max phase]];
 	

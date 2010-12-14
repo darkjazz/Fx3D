@@ -47,9 +47,7 @@
 		name = [names objectAtIndex:i];
 		[patches setObject: [[Patch new] init] forKey: name];
 	}
-	
-//	[[patches objectForKey: @"dimensions"] setActive: true ];
-									
+										
 	return self;
 }
 
@@ -141,46 +139,37 @@
 
 - (void) ringz {
 	[self setCommon];
-	left = (float)indexi * size - halfscreen + (size / 2.0f);
-	bottom = (float)indexj * size - halfscreen + (size / 2.0f);
-	front = (float)indexk * size - halfscreen + (size / 2.0f);
-	width = height = depth = state;
-	if (isEven(indexi) && !isEven(indexj) && isEven(indexk))
-	{
-		front = front * state;
-		[self strokeRect: 0: 1.0f];
-	}
-	if (!isEven(indexi) && isEven(indexj) && isEven(indexk))
-	{
-		left = left * state;
-		[self strokeRect: 1: 1.0f];
-	}
-	if (isEven(indexi) && isEven(indexj) && !isEven(indexk))
-	{
-		bottom = bottom * state;
-		[self strokeRect: 2: 1.0f];
-	}
+	
+	left = (float)indexi * size - halfscreen + size - (size * 2.0f * state);
+	bottom = (float)indexj * size - halfscreen + size - (size * 2.0f * state);
+	front = (float)indexk * size - halfscreen + size - (size * 2.0f * state);
+	
+	width = height = depth = size * 4.0f * state;
+	
+	left *= map(state, -2.0f, 2.0f);
+	bottom *= map(state, -2.0f, 2.0f);
+	front *= map(state, -2.0, 2.0f);
+	
+	if (state > 0.25f) [self strokeCube];
+	else [self fillCube];
 	
 }
 - (void) wobble {
 	
-	if (isEven(indexk))
-		// indexk == worldSize - 1 || indexk == 0
+	float w, n, lineWidth, scale;
+
+	[self setCommon];
+
+	if (indexk == 0 || indexk == worldSize - 1) // indexk == worldSize / 2
 	{
 
-		float w, n, lineWidth, scale;
-		[self setCommon];
-		
 		left = (float)indexi * size - halfscreen + size;
 		bottom = (float)indexj * size - halfscreen + size;
 		front = (float)indexk * size - halfscreen + (size / 2.0f);
 		
-		lineWidth = map(state, 0.1f, 1.0f);
-		
-//		alpha = 1.0f;
+		lineWidth = 1.0f;
 		
 		scale = 1.0f;
-		//alpha = alpha * map(1.0f - (indexk / worldSize), 0.2f, 0.8f);
 		
 		if (indexi > 0)
 		{
@@ -190,9 +179,6 @@
 			[self drawLine: left : bottom : front + map(state, scale * -1.0f, scale) : left - size : bottom : front + map(w, scale * -1.0f, scale): lineWidth ];
 			
 		}
-		//	nw = [[[currentCell habitat] objectAtIndex:0] phase];
-		//	
-		//	[self drawLine: left : bottom : left - size : bottom - size : map(state, -2.0f, 2.0f): map(nw, -2.0f, 2.0f)];
 		
 		if (indexj > 0)
 		{
@@ -202,10 +188,71 @@
 			[self drawLine: left : bottom : front + map(state, scale * -1.0f, scale) : left : bottom - size : front + map(n, scale * -1.0f, scale) : lineWidth ];
 			
 		}
-		//	ne = [[[currentCell habitat] objectAtIndex:2] phase];
-		//	
-		//	[self drawLine: left : bottom : left + size : bottom - size : map(state, -2.0f, 2.0f): map(ne, -2.0f, 2.0f)];
 	}
+
+	if (indexj == 0 || indexj == worldSize - 1) // indexj == worldSize / 2
+	{
+				
+		left = (float)indexi * size - halfscreen + size;
+		bottom = (float)indexj * size - halfscreen + (size / 2.0f);
+		front = (float)indexk * size - halfscreen + size;
+		
+		lineWidth = 1.0f;
+		
+		scale = 1.0f;
+		
+		if (indexi > 0)
+		{
+			
+			n = [[[currentCell habitat] objectAtIndex:10] phase]; // 1 - neumann
+			
+			[self drawLine: left : bottom + map(state, scale * -1.0f, scale) : front : left - size : bottom + map(n, scale * -1.0f, scale) : front : lineWidth ];
+			
+		}
+
+		if (indexk > 0)
+		{
+			// 4, 10, 12, 13, 15, 21
+			w = [[[currentCell habitat] objectAtIndex:12] phase]; // 0 - neumann
+			
+			[self drawLine: left : bottom + map(state, scale * -1.0f, scale) : front : left : bottom + map(w, scale * -1.0f, scale): front - size : lineWidth ];
+			
+		}
+		
+	}
+
+	
+	if (indexi == 0 || indexi == worldSize - 1)  // indexj == worldSize / 2
+	{
+		
+		left = (float)indexi * size - halfscreen + (size / 2.0f);
+		bottom = (float)indexj * size - halfscreen + size;
+		front = (float)indexk * size - halfscreen + size;
+		
+		lineWidth = 1.0f;
+		
+		scale = 1.0f;
+		
+		if (indexj > 0)
+		{
+			
+			n = [[[currentCell habitat] objectAtIndex:4] phase]; // 1 - neumann
+			
+			[self drawLine: left + map(state, scale * -1.0f, scale) : bottom : front : left + map(n, scale * -1.0f, scale) : bottom - size : front : lineWidth ];
+			
+		}
+		
+		if (indexk > 0)
+		{
+			// 4, 10, 12, 13, 15, 21
+			w = [[[currentCell habitat] objectAtIndex:12] phase]; // 0 - neumann
+			
+			[self drawLine: left + map(state, scale * -1.0f, scale) : bottom : front : left + map(w, scale * -1.0f, scale) : bottom : front - size : lineWidth ];
+			
+		}
+		
+	}
+	
 }
 - (void) grid {
 
@@ -300,7 +347,7 @@
 		left = (float)indexi * size - halfscreen + size - (size * 2.0f * state);
 		bottom = (float)indexj * size - halfscreen + size - (size * 2.0f * state);
 		front = (float)indexk * size - halfscreen + size - (size * 2.0f * state);
-		width = height = depth = size * 2.0f * state;
+		width = height = depth = size * 4.0f * state;
 		
 		float a[3] = { left - width, bottom - height, front - depth };
 		float b[3] = { left - (width / 2.0f), bottom - (height / 2.0f), front - (depth / 2.0f) };
@@ -693,6 +740,53 @@
 	glEnd();
 	glDisable(GL_LINE_SMOOTH);
 
+}
+
+- (void) fillCube {
+	glColor4f(red, green, blue, alpha);
+	glEnable(GL_POLYGON_SMOOTH);
+	glLineWidth((1.0f - state) * 2.0f);
+	glBegin(GL_POLYGON);
+	
+	glVertex3f (left, bottom, front);
+	glVertex3f (left + width, bottom, front);
+	
+	glVertex3f (left + width, bottom, front);
+	glVertex3f (left + width, bottom + height, front);
+	
+	glVertex3f (left + width, bottom + height, front);
+	glVertex3f (left, bottom + height, front);
+	
+	glVertex3f (left, bottom + height, front);
+	glVertex3f (left, bottom, front);	
+	
+	glVertex3f (left, bottom, front);
+	glVertex3f (left, bottom, front + depth);
+	
+	glVertex3f (left, bottom, front + depth);
+	glVertex3f (left + width, bottom, front + depth);
+	
+	glVertex3f (left + width, bottom, front + depth);
+	glVertex3f (left + width, bottom, front);
+	
+	glVertex3f (left, bottom + height, front);
+	glVertex3f (left, bottom + height, front + depth);
+	
+	glVertex3f (left, bottom + height, front + depth);
+	glVertex3f (left + width, bottom + height, front + depth);
+	
+	glVertex3f (left + width, bottom + height, front + depth);
+	glVertex3f (left + width, bottom + height, front);
+	
+	glVertex3f (left, bottom, front + depth);
+	glVertex3f (left, bottom + height, front + depth);
+	
+	glVertex3f (left + width, bottom, front + depth);
+	glVertex3f (left + width, bottom + height, front + depth);
+	
+	glEnd();
+	glDisable(GL_POLYGON_SMOOTH);
+	
 }
 
 - (void) drawVertex3f: (float) startx: (float) starty: (float) startz: (float) endx: (float) endy: (float) endz: (float) lineWidth {

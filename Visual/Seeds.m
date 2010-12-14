@@ -64,16 +64,16 @@
 	return indices;
 }
 
--(NSMutableArray *) wireCube: (int) left: (int) top: (int) front: (int) width: (int) height: (int) depth {
+-(NSMutableArray *) wireCube: (int) left: (int) bottom: (int) front: (int) width: (int) height: (int) depth {
 	int i, j, k;
 	indices = [NSMutableArray new];
 	for (i = left; i < left + width; i++)
 	{
-		for (j = top; j < top + height; j++)
+		for (j = bottom; j < bottom + height; j++)
 		{
 			for (k = front; k < front + depth; k++)
 			{
-				if (i == left || j == top || k == front || i == (width - 1) || j == (height - 1) || k == (depth - 1))
+				if (i == left || j == bottom || k == front || i == (left + width - 1) || j == (bottom + height - 1) || k == (front + depth - 1))
 				{
 					[
 					indices addObject:
