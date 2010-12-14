@@ -1,1 +1,0 @@
-/Library/Application Support/SuperCollider/Extensions/SCClassLibrary/TehisLib/fx3d.sc
