@@ -222,6 +222,19 @@
 	if ([oscer setPoll])
 	{
 		[world setPollIndices: [oscer getPollIndices]];
+
+		for (i = 0; i < [oscValues count]; i++)
+		{
+			[[oscValues objectAtIndex:i] release ];
+		}	
+
+		oscValues = [NSMutableArray new];
+		
+		for (i = 0; i < [[world pollIndices] count]; i++)
+		{
+			[oscValues addObject: [NSNumber numberWithFloat:0.0f]];
+		}		
+		
 	}
 	 
 	add = [oscer add];

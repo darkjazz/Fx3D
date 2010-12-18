@@ -46,7 +46,8 @@ float mbb, mbm, mbf, mmb, mmf, mtb, mtm, mtf;
 float rbb, rbm, rbf, rmb, rmm, rmf, rtb, rtm, rtf;
 
 bool setpoll = false;
-float pollindex[192];
+int *pollindex;
+int pollsize;
 
 //cell
 bool setcell;
@@ -153,7 +154,7 @@ float state;
 	int i;
 	setpoll = false;
 	pollIndices = [NSMutableArray new];
-	for (i = 0; i < 192; i+=3)
+	for (i = 1; i <= pollsize; i+=3)
 	{
 		[pollIndices addObject: [NSArray arrayWithObjects:
 					[NSNumber numberWithInt: pollindex[i]],	
@@ -163,6 +164,7 @@ float state;
 			]
 		 ];
 	}
+	free(pollindex);
 	return pollIndices;
 }
 
@@ -176,15 +178,19 @@ float state;
 
 - (void) sendMessage: (NSMutableArray*) states {
 	int i;
-	float arr[64];
+	float *arr;
+	
+	arr = malloc(sizeof(float) * (int)[states count]);
 	
 	for (i = 0; i < [states count]; i++)
 	{
 		arr[i] = [[states objectAtIndex: i] floatValue];
 	}
 	
-	lo_blob data = lo_blob_new(sizeof(arr), arr);
+	lo_blob data = lo_blob_new(sizeof(float) * (int)[states count], arr);
 	lo_send(addr, "/fx/states", "b", data);
+	
+	free(arr);
 	
 }
 
@@ -335,7 +341,11 @@ int poll_handler(const char *path, const char *types, lo_arg **argv, int argc,
 {
 	int i;
 	setpoll = true;
-	for (i = 0; i < 192; i+=3) { pollindex[i] = argv[i]->i; }
+	pollsize = argv[0]->i;
+	pollindex = malloc(sizeof(int) * pollsize);
+	for (i = 1; i <= pollsize; i++) {
+		pollindex[i] = argv[i]->i; 
+	}
 	return 0;
 }
 

@@ -15,17 +15,17 @@
 \cf3 SynthDef\cf2 (\cf5 \\zone4_waveTerrain\cf2 , \{\cf3 |out, buffer, aa, ab, ac, ad,\
 		pxa, pya, pxb, pyb, pxc, pyc, pxd, pyd, xang, yang, zang|\cf2 \
 	\cf3 var\cf2  a, b, c, d, w, x, y, z, raL, raR, rcL, rcR;\
-	a = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxa).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pya).range(0.0, 1.0), 8, 8) * aa;\
-	b = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxb).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyb).range(0.0, 1.0), 8, 8) * ab;\
-	c = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxc).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyc).range(0.0, 1.0), 8, 8) * ac;\
-	d = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxd).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyd).range(0.0, 1.0), 8, 8) * ad;\
-	#raL, raR = \cf3 PitchShift\cf2 .ar(\cf3 GVerb\cf2 .ar(a, 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, 0.5);\
-	#rcL, rcR = \cf3 PitchShift\cf2 .ar(\cf3 GVerb\cf2 .ar(a, 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, 0.5);\
-	a = \cf3 Compander\cf2 .ar(a, a, 0.95, 1.0, 0.1);\
-	b = \cf3 Compander\cf2 .ar(b, b, 0.95, 1.0, 0.1);\
-	c = \cf3 Compander\cf2 .ar(c, c, 0.95, 1.0, 0.1);\
-	d = \cf3 Compander\cf2 .ar(d, d, 0.95, 1.0, 0.1);\
-	#a, b, c, d = [a, b, c, d].distort + [raL, raR, rcL, rcR];\
+	a = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxa).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pya).range(0.0, 1.0), 16, 16) * aa;\
+	b = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxb).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyb).range(0.0, 1.0), 16, 16) * ab;\
+	c = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxc).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyc).range(0.0, 1.0), 16, 16) * ac;\
+	d = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxd).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyd).range(0.0, 1.0), 16, 16) * ad;\
+	#raL, raR = \cf3 PitchShift\cf2 .ar(\cf3 GVerb\cf2 .ar(a+\cf3 Dust2\cf2 .ar(ab.linlin(0, 1, 10, 80)), 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, 0.5);\
+	#rcL, rcR = \cf3 PitchShift\cf2 .ar(\cf3 GVerb\cf2 .ar(c+\cf3 Dust2\cf2 .ar(ad.linlin(0, 1, 10, 80)), 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, 2.0);\
+	a = \cf3 Compander\cf2 .ar(a**0.5, a**0.5, 0.95, 0.1, 0.1);\
+	b = \cf3 Compander\cf2 .ar(b**0.5, b**0.5, 0.95, 0.1, 0.1);\
+	c = \cf3 Compander\cf2 .ar(c**0.5, c**0.5, 0.95, 0.1, 0.1);\
+	d = \cf3 Compander\cf2 .ar(d**0.5, d**0.5, 0.95, 0.1, 0.1);\
+	#a, b, c, d = [a, b, c, d] + [raL, raR, rcL, rcR];\
 	#w, x, y, z = \cf3 A2B\cf2 .ar(a, b, c, d);\
 	\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang))\
 \}).add;\
@@ -64,9 +64,10 @@
 	zang: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-pi, pi))\
 );\
 \
-~stmap = \cf3 Array\cf2 .fillPrimes(41)[15..22];\
-\cf6 //~stmap.removeAllSuchThat(\{|it, i| i%7!=0 \});\cf2 \
-~stspec = \cf3 ControlSpec\cf2 (0, ~stmap.size - 1, \cf5 \\lin\cf2 , 1);\
+~stmap = (\
+	\
+)\
+\
 )\
 \
 ~fx = \cf3 Fx3D\cf2 ().makeOglGui\
@@ -95,19 +96,38 @@
 	\}\
 \});\
 \
+~fx.addStatesFunction(\cf5 \\f1\cf2 , \{\cf3 |values|\cf2  values.postln \})\
+\
+\
 ~fx.addStatesFunction(\cf5 \\f1\cf2 , \{\cf3 |values|\cf2  \
-	if (~buffer.isNil) \{ ~buffer = \cf3 Buffer\cf2 .sendCollection(s, values.states, 1) \}\
-	\{ ~buffer.sendCollection(values.states) \};\
-	if (~waves.notNil) \{\
-		~waves.set(*\
-			(#[pxa, pya, pxb, pyb, pxc, pyc, pxd, pyd].collect(\{\cf3 |prm, i|\cf2  \
-				[prm, ~stmap[~stspec.map(values.states[i+5*4]).asInt]] \}).flat)\
-		)\
-	\}\
+	if (~buffer.isNil) \{ ~buffer = \cf3 Buffer\cf2 .sendCollection(s, values.states * 2 - 1, 1) \}\
+	\{ ~buffer.sendCollection(values.states * 2 - 1) \};\
 \})\
 \
+if (~waves.notNil) \{\
+	~waves.set(\
+		\cf5 \\pxa\cf2 , 10,\
+		\cf5 \\pya\cf2 , 200,\
+		\cf5 \\pxb\cf2 , 17,\
+		\cf5 \\pyb\cf2 , 2,\
+		\cf5 \\pxc\cf2 , 41,\
+		\cf5 \\pyc\cf2 , 39,\
+		\cf5 \\pxd\cf2 , 300,\
+		\cf5 \\pyd\cf2 , 31\
+	)\
+\}\
 \
-~waves = \cf3 Synth\cf2 (\cf5 \\zone4_waveTerrain\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\buffer\cf2 , ~buffer]);\
+\
+~waves = \cf3 Synth\cf2 (\cf5 \\zone4_waveTerrain\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\buffer\cf2 , ~buffer, \
+		\cf5 \\pxa\cf2 , 10,\
+		\cf5 \\pya\cf2 , 200,\
+		\cf5 \\pxb\cf2 , 17,\
+		\cf5 \\pyb\cf2 , 2,\
+		\cf5 \\pxc\cf2 , 41,\
+		\cf5 \\pyc\cf2 , 39,\
+		\cf5 \\pxd\cf2 , 300,\
+		\cf5 \\pyd\cf2 , 31\
+	]);\
 \
 ~waves.free;\
 ~waves = \cf3 nil\cf2 \
@@ -116,4 +136,6 @@
 \
 ~fx.removeRenewFunction(\cf5 \\f1\cf2 );\
 \
+\
+~fx.invalues.states.size\
 }
