@@ -30,6 +30,23 @@
 	\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang))\
 \}).add;\
 \
+\
+\cf3 SynthDef\cf2 (\cf5 \\zone4_rawOsc\cf2 , \{\cf3 |out, delay, freq|\cf2 \
+	\cf3 var\cf2  bufs, ptrs, sig, deltimes, trigs;\
+	deltimes = [0, 1 / delay * 0.5, 1 / delay];\
+	bufs = \cf3 ArrayControl\cf2 .kr(\cf5 \\bufnums\cf2 , 3, 0);\
+	ptrs = \cf3 Array\cf2 .fill(3, \{\cf3 |i|\cf2  \cf3 LFSaw\cf2 .ar(freq, 1, 0.5, 0.5) \});\
+	trigs = \cf3 Array\cf2 .fill(3, \{\cf3 |i|\cf2  \cf3 DelayN\cf2 .kr(\cf3 Impulse\cf2 .kr(delay * (2 / 3)), deltimes@i, deltimes@i) \});\
+	sig = \cf3 Mix\cf2 .fill(3, \{\cf3 |i|\cf2  \
+		\cf3 BufRd\cf2 .ar(1, bufs@i, ptrs@i) * \
+			\cf3 EnvGen\cf2 .kr(\
+				\cf3 Env\cf2 ([0.0,1.0,1.0,0.0],[0.3,0.4,0.3],\cf5 \\sine\cf2 , 0, 3), \
+				trigs.rotate(-1)@i, timeScale: 1.0 / delay\
+			)\
+	\});\
+	\cf3 Out\cf2 .ar(0, sig.dup)\
+\}).add;\
+\
 \cf3 SynthDef\cf2 (\cf5 \\rough\cf2 , \{\cf3 |dur=1|\cf2 \
 	\cf3 var\cf2  sig, frqs;\
 	frqs = \cf3 Array\cf2 .geom(7, pi**pi*1.5, 2**(1/5));\
@@ -70,6 +87,8 @@
 \
 )\
 \
+\cf3 CuspL\cf2 \
+\
 ~fx = \cf3 Fx3D\cf2 ().makeOglGui\
 \
 ~fx.startFx\
@@ -79,6 +98,24 @@
 ~fx.addGlobalsResponder;\
 \
 ~fx.addStatesResponder;\
+\
+~rawBufs = (\{ \cf3 Buffer\cf2 .sendCollection(s, \cf3 Array\cf2 .rand(256, -1.0, 1.0)) \} ! 3)\
+\
+~synth = \cf3 Synth\cf2 (\cf5 \\zone4_rawOsc\cf2 , [\cf5 \\out\cf2 , 0, \cf5 \\delay\cf2 , 0.75, \cf5 \\freq\cf2 , 10]);\
+\
+\cf3 r = Routine\cf2 (\{\
+	i = 0;\
+	\cf3 inf\cf2 .do(\{\
+		~rawBufs.wrapAt(i).sendCollection(\cf3 Array\cf2 .rand(256, -1.0, 1.0));\
+		(1/6).wait;\
+		i = i + 1;\
+	\})\
+	\
+\})\
+\
+r.stop\
+\
+~synth.free\
 \
 \cf6 //~fx.addRenewFunction(\\f1, \{ Synth(\\rough, [0.25, 0.5, 1.0].wchoose([0.5, 0.3, 0.2])) \})\cf2 \
 \

@@ -58,16 +58,65 @@
 	}
 	else if (color == 1)
 	{
-		red = 0.0f;
-		green = 0.6f;
-		blue = 1.0f;
+		if (colormap == 0)
+		{
+			red = 0.0f * state;
+			green = 0.6f * state;
+			blue = 1.0f * state;
+		}
+		else
+		{
+			red = 0.0f * (1.0f - state);
+			green = 0.6f * (1.0f - state);
+			blue = 1.0f * (1.0f - state);
+		}
 	
 	}
 	else if (color == 2)
 	{
-		red = 0.4f;
-		green = 1.0f;
-		blue = 0.0f;		
+		if (colormap == 0)
+		{
+			red = 0.4f * state;
+			green = state;
+			blue = 0.0f;		
+		}
+		else
+		{
+			red = 0.4f * (1.0f - state);
+			green = (1.0f - state);
+			blue = 0.0f;		
+		}
+	}
+	else if (color == 3)
+	{
+		if (colormap == 0)
+		{
+			red = state;
+			green = 0.63f * state;
+			blue = 0.0f;		
+		}
+		else
+		{
+			red = 1.0f - state;
+			green = 0.63f * (1.0f - state);
+			blue = 0.0f;		
+		}		
+	}
+
+	else if (color == 4)
+	{
+		if (colormap == 0)
+		{
+			red = 0.53f * state;
+			green = 0.0f;
+			blue = 0.77f * state;		
+		}
+		else
+		{
+			red = 0.53f * (1.0f - state);
+			green = 0.0f;
+			blue = 0.77f * (1.0f - state);		
+		}		
 	}
 	
 	if (alphamap == 0) { alpha = state; } else { alpha = 1.0f - state; }
