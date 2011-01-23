@@ -105,10 +105,8 @@
 
 - (void) setCommon
 {
-	size = 0.6f;
-	size *= 2.0f;
-	halfscreen = 5.2f;
-	halfscreen *= 2.0f;
+	size = 1.2f;
+	halfscreen = 10.4f;
 	[cp mapValues: indexi: indexj: state];
 	alpha = [cp alpha] * gAlpha;
 	red = [cp red]; 
@@ -341,21 +339,45 @@
 
 - (void) radial {
 	
-	if (indexi == worldSize / 2 || indexk == worldSize / 2 || indexj == worldSize / 2)
+	[self setCommon];
+
+	if (isEven(indexi) && !isEven(indexj))
 	{
-		[self setCommon];
-		left = (float)indexi * size - halfscreen + size - (size * 2.0f * state);
-		bottom = (float)indexj * size - halfscreen + size - (size * 2.0f * state);
-		front = (float)indexk * size - halfscreen + size - (size * 2.0f * state);
-		width = height = depth = size * 4.0f * state;
+		left = indexi * size - halfscreen + (size * 0.5f);
+		bottom = indexj * size - halfscreen + (size * 0.5f);
+		front = indexk * size - halfscreen + (size * 0.5f);
 		
-		float a[3] = { left - width, bottom - height, front - depth };
-		float b[3] = { left - (width / 2.0f), bottom - (height / 2.0f), front - (depth / 2.0f) };
-		float c[3] = { left + (width / 2.0f), bottom + (height / 2.0f), front + (depth / 2.0f) };
-		float d[3] = {  left + width, bottom + height, front + depth };
+		width = height = depth = state * size;
 		
-		[self drawCubicCurve: a : c : b : d : 16 : 1.0f ];
+		[self drawLine: left : bottom : front - (depth * 0.5f) : left : bottom : front + (depth * 0.5f) : state * 4.0f ];
+		
 	}
+	
+	if (isEven(indexj) && !isEven(indexk))
+	{
+		left = indexi * size - halfscreen + (size * 0.5f);
+		bottom = indexj * size - halfscreen + (size * 0.5f);
+		front = indexk * size - halfscreen + (size * 0.5f);
+		
+		width = height = depth = state * size;
+		
+		[self drawLine: left - (width * 0.5f) : bottom : front : left + (width * 0.5f) : bottom : front : state * 4.0f ];
+		
+	}
+
+	
+	
+	if (isEven(indexk) && !isEven(indexi))
+	{
+		left = indexi * size - halfscreen + (size * 0.5f);
+		bottom = indexj * size - halfscreen + (size * 0.5f);
+		front = indexk * size - halfscreen + (size * 0.5f);
+		
+		width = depth = height = state * size;
+		
+		[self drawLine: left : bottom - (height * 0.5f) : front : left : bottom + (height * 0.5f) : front : state * 4.0f ];
+	}
+
 }
 
 - (void) elastic {
@@ -485,7 +507,8 @@
 		(indexk == 8 && indexj == 8)
 		)
 	{
-		[self strokeCube];
+//		[self strokeCube];
+		[self fillCube];		
 	}
 	
 /*

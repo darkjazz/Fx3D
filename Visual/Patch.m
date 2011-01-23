@@ -92,14 +92,14 @@
 		if (colormap == 0)
 		{
 			red = state;
-			green = 0.63f * state;
-			blue = 0.0f;		
+			green = state;
+			blue = 0.16f;		
 		}
 		else
 		{
 			red = 1.0f - state;
-			green = 0.63f * (1.0f - state);
-			blue = 0.0f;		
+			green = 1.0f - state;
+			blue = 0.16f * (1.0 - state);		
 		}		
 	}
 
