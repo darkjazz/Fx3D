@@ -1,0 +1,292 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red96\green96\blue96;\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 //alo allik. f(x).\cf3 \
+(\
+~loadAts = \cf4 true\cf3 ;\
+~localDecoder = \cf4 true\cf3 ;\
+~stereoOutput = \cf4 true\cf3 ;\
+\cf5 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf3 .load;\
+)\
+\
+(\
+\
+\cf2 /*	SynthDef(\\zone2_point, \{|out, efx, buf, tb, gate, amp, eamp, tfr, afr, sln, sfr, sam, rmp, rtm, \
+			xang, yang, zang, dist, div, doneAction|\
+		var sig = 0, trg, enc, s_freqs, s_amps, s_sig, env, clk, atrg, rev, w, x, y, z;\
+		env = EnvControl.kr(\\env);\
+		trg = InTrig.kr(tb);\
+		atrg = K2A.ar(trg);\
+		sig = PlayBuf.ar(1, buf, trigger: trg);\
+		s_sig = atrg;\
+		#sig, rev = DistAmp.ar(sig + s_sig, dist, rmp);\
+		sig = sig * EnvGen.kr(env, gate, doneAction: doneAction);\
+		Out.ar(efx, sig * eamp);\
+		#w, x, y, z = AtkMonoToB.ar(sig * amp);\
+		Out.ar(out, AtkRotateXYZ.ar(w, x, y, z, xang, yang, zang))\
+	\}).add;\
+*/\cf3 	\
+	\cf4 SynthDef\cf3 (\cf6 \\zone2_point\cf3 , \{\cf4 |out, efx, buf, amp, dur, eamp, pls, xang, yang, zang|\cf3 \
+		\cf4 var\cf3  sig, w, x, y, z, fft;\
+		sig = \cf4 MulAdd\cf3 (\cf4 PlayBuf\cf3 .ar(1, buf), \cf4 LFPulse\cf3 .ar(pls).range(0,1)) ** 0.5 \
+			* \cf4 EnvGen\cf3 .kr(\cf4 EnvControl\cf3 .kr, timeScale: dur, doneAction: 2);\
+		\cf4 Out\cf3 .ar(efx, sig * eamp);\
+		#w, x, y, z = \cf4 AtkMonoToB\cf3 .ar(sig * amp);\
+		\cf4 Out\cf3 .ar(out, \cf4 AtkRotateXYZ\cf3 .ar(w, x, y, z, xang, yang, zang))\
+	\}).add;\
+\
+	\cf4 SynthDef\cf3 (\cf6 \\zone2_doublemono\cf3 , \{\cf4 |out, efx, amp, eamp, wamp, start, bufL, bufR, wrpL, wrpR, fsL, fsR, \
+			wsz, envb, dns, dur, xang, yang, zang|\cf3 \
+		\cf4 var\cf3  a, b;\
+		a = \cf4 PlayBuf\cf3 .ar(1, bufL, startPos: start * \cf4 SampleRate\cf3 .ir) * \cf4 LFSaw\cf3 .ar(19, 0, 0.5, amp);\
+		b = \cf4 PlayBuf\cf3 .ar(1, bufR, startPos: start * \cf4 SampleRate\cf3 .ir) * \cf4 LFSaw\cf3 .ar(21, 0, 0.5, amp);\
+		c = \cf4 Warp1\cf3 .ar(1, bufL, \cf4 LFSaw\cf3 .kr(wrpL, 0, 0.5, 0.5), fsL, wsz, envb, dns) * wamp;\
+		d = \cf4 Warp1\cf3 .ar(1, bufR, \cf4 LFSaw\cf3 .kr(wrpR, 0, 0.5, 0.5), fsR, wsz, envb, dns) * wamp;\
+		\cf4 Out\cf3 .ar(efx, (a * 0.7) + (b * 0.7) + (c * 0.7) + (d * 0.7) * eamp);\
+		#w, x, y, z = \cf4 A2B\cf3 .ar(a, b, c, d)\
+			* \cf4 EnvGen\cf3 .kr(\cf4 EnvControl\cf3 .kr, timeScale: dur, doneAction: 2);\
+		\cf4 Out\cf3 .ar(out, \cf4 AtkRotateXYZ\cf3 .ar(w, x, y, z, xang, zang, yang))\
+	\}).add;\
+		\
+	~pointbufs = \cf5 "/Users/alo/sounds/zones/*"\cf3 .pathMatch.collect(\{\cf4 |path|\cf3  \cf4 Buffer\cf3 .read(~serv, path) \});\
+\
+	~genv = \cf4 Buffer\cf3 .sendCollection(~serv, \cf4 Env\cf3 .perc.discretize);\
+		\
+	~zone2loops = ~loops.select(\{\cf4 |loop|\cf3  loop.path.contains(\cf5 "tehisloop"\cf3 ) \});\
+	\
+	~mapParams = \{\cf4 |values|\cf3 \
+		\cf4 var\cf3  states = \cf4 Pseq\cf3 (values.states[(16,20..47)], 1).asStream;\
+		if (~synth.notNil) \{ \
+			~synth.set(*~map.collect(\{\cf4 |spec|\cf3  spec.map(states.next) \}).asKeyValuePairs);\
+		\}\
+	\};\
+			\
+)\
+\
+\
+~syn = \cf4 Synth\cf3 .tail(~agrp, \cf6 \\zone2_point\cf3 , [\cf6 \\out\cf3 , ~abus, \cf6 \\efx\cf3 , ~rbus, \cf6 \\buf\cf3 , ~pointbufs[7], \cf6 \\nbuf\cf3 , ~pointbufs[15], \cf6 \\amp\cf3 , 10, \cf6 \\eamp\cf3 , 0])\
+\
+\
+(\
+\
+~recordActive = \cf4 false\cf3 ;\
+~recordPath = \cf5 "/Users/alo/sounds/fx/zone_2_"\cf3  ++ \cf4 Date\cf3 .getDate.stamp ++ \cf5 ".aif"\cf3 ;\
+\
+~rout = \cf4 Routine\cf3 (\{\
+		\
+	~fx.startFx;\
+	\
+	7.wait;\
+	\
+	~fx.visualdict.globals[\cf6 \\alpha\cf3 ] = 1.0;\
+	~fx.visualdict.globals[\cf6 \\clear\cf3 ] = 0.1;\
+	~fx.visualdict.globals[\cf6 \\add\cf3 ] = 0.97;\
+	~fx.visualdict.globals[\cf6 \\transx\cf3 ] = 0.0;\
+	~fx.visualdict.globals[\cf6 \\transy\cf3 ] = 0.0;\
+	~fx.visualdict.globals[\cf6 \\transz\cf3 ] = 4.0;\
+	~fx.visualdict.globals[\cf6 \\angle\cf3 ] = -0.01;\
+	~fx.visualdict.globals[\cf6 \\rotX\cf3 ] = 0.0;\
+	~fx.visualdict.globals[\cf6 \\rotY\cf3 ] = 0.0;\
+	~fx.visualdict.globals[\cf6 \\rotZ\cf3 ] = 0.0;\
+	~fx.visualdict.globals[\cf6 \\frame\cf3 ] = 4;\
+	\
+	~fx.sendCurrentSettings;\
+	\
+	if (~recordActive) \{ ~serv.prepareForRecord(~recordPath) \};\
+		\
+	5.wait;\
+	\
+	if (~recordActive) \{ ~serv.record \};\
+	\
+	~timer = \cf4 Date\cf3 .getDate.bootSeconds;\
+	\
+	~fx.addGlobalsResponder;\
+	~fx.addStatesResponder;\
+	~fx.addTriggerResponder;\
+	\
+	~fx.visualdict.globals[\cf6 \\clear\cf3 ] = 1.0;\
+	~fx.sendCurrentSettings;\
+\
+	0.1.wait;\
+\
+	~fx.visualdict.globals[\cf6 \\clear\cf3 ] = 0.1;\
+	~fx.sendCurrentSettings;\
+	\
+	~timer = \cf4 Date\cf3 .getDate.bootSeconds;\
+	\
+	~fx.sendPollIndices(~fx.getPollIndices(1));\
+\
+	1.wait;		\
+			\
+	~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *(1.0 ! 26));\
+\
+	1.wait;		\
+	\
+	~trg = 0;\
+	\
+	~z2map = (\
+		frz: \cf4 ControlSpec\cf3 (4, 32, step: 1),\
+		pfrq: \cf4 ControlSpec\cf3 (2, 6, step: 1),\
+		phs: \cf4 ControlSpec\cf3 (0, 2pi),\
+		pwid: \cf4 ControlSpec\cf3 (0.2, 0.8, step: 0.1)\
+	);\
+	\
+	~fx.addTriggerFunction(\cf6 \\zone2_point\cf3 , \{\cf4 |values|\cf3 \
+		\cf4 var\cf3  coords, xp, yp, zp, buf, nbuf, states;\
+		if (~trg == 2)\
+		\{\
+			states = values.states[[0, 3, 12, 15, 48, 51, 60, 63]];\
+			buf = ~pointbufs[states.indexOf(states.maxItem)];\
+			coords = [values.coordX, values.coordY, values.coordZ] + 1 / 16 * 2 - 1;\
+			xp = \cf4 Point\cf3 (coords[1], coords[2]);\
+			yp = \cf4 Point\cf3 (coords[2], coords[0]);\
+			zp = \cf4 Point\cf3 (coords[0], coords[1]);\
+			\cf4 Synth\cf3 .tail(~agrp, \cf6 \\zone2_point\cf3 , [\cf6 \\out\cf3 , ~abus, \cf6 \\efx\cf3 , ~rbus, \cf6 \\buf\cf3 , buf, \cf6 \\nbuf\cf3 , nbuf, \cf6 \\amp\cf3 , values.maxstate, \
+				\cf6 \\dur\cf3 , 1/6, \cf6 \\eamp\cf3 , 0.1, \cf6 \\pls\cf3 , 16, \cf6 \\xang\cf3 , xp.theta, \cf6 \\yang\cf3 , yp.theta, \cf6 \\zang\cf3 , zp.theta])\
+				.setn(\cf6 \\env\cf3 , \cf4 Env\cf3 ([0, 1, 1, 0], [0.1, 0.8, 0.1]));\
+			~trg = 0;\
+		\}\
+		\{\
+			~trg = ~trg + 1;	\
+		\}\
+	\});\
+	\
+	\
+	~fx.sendPatchCmd(\cf6 \\horizons\cf3 , \cf6 \\color\cf3 , 0, 3, 0);\
+	0.1.wait;\
+	~fx.activatePatch(\cf6 \\horizons\cf3 , 0);\
+	1.wait;\
+	\
+	~fx.sendPatchCmd(\cf6 \\horizons\cf3 , \cf6 \\alphahi\cf3 , 0.0, 1.0, 30);\
+	1.wait;\
+\
+	\cf4 Routine\cf3 (\{\
+		2500.do(\{\
+			~fx.visualdict.globals[\cf6 \\transz\cf3 ] = ~fx.visualdict.globals[\cf6 \\transz\cf3 ] - (34 / 2500);\
+			~fx.visualdict.globals[\cf6 \\angle\cf3 ] = ~fx.visualdict.globals[\cf6 \\angle\cf3 ] - (0.05 / 2500);\
+			~fx.sendCurrentSettings;	\
+			0.06.wait;	\
+		\})\
+	\}).play;\
+	\
+	10.wait;\
+	\
+	~map = (\
+		amp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.5, 2.0)),\
+		wamp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.5, 2.0)),\
+		eamp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.3, 0.8)),\
+\cf2 //		wsz: ControlSpec(0.06, 0.1, step: 0.01),\cf3 \
+\cf2 //		dns: ControlSpec(2, 10, step: 2),\cf3 \
+		xang: \cf4 ControlSpec\cf3 (-pi, pi),\
+		yang: \cf4 ControlSpec\cf3 (pi, -pi),\
+		zang: \cf4 ControlSpec\cf3 (-pi, pi)\
+	);\
+		\
+	~synth = \cf4 Synth\cf3 .tail(~agrp, \cf6 \\zone2_doublemono\cf3 , [\cf6 \\out\cf3 , ~abus, \cf6 \\efx\cf3 , ~rbus, \cf6 \\amp\cf3 , 1.0, \cf6 \\wamp\cf3 , 2.0, \cf6 \\eamp\cf3 , 0.1, \
+			\cf6 \\start\cf3 , 0, \cf6 \\bufL\cf3 , ~zone2loops[0], \cf6 \\bufR\cf3 , ~zone2loops[1], \cf6 \\wrpL\cf3 , 0.5, \cf6 \\wrpR\cf3 , 0.25, \cf6 \\fsL\cf3 , 0.25, \cf6 \\fsR\cf3 , 0.5, \
+			\cf6 \\wsz\cf3 , 1/3, \cf6 \\envb\cf3 , ~genv, \cf6 \\dns\cf3 , 2, \cf6 \\dur\cf3 , 40, \cf6 \\xang\cf3 , 0, \cf6 \\yang\cf3 , 0, \cf6 \\zang\cf3 , 0])\
+		.setn(\cf6 \\env\cf3 , \cf4 Env\cf3 ([0.001, 1.0, 0.001], [0.99, 0.01]).asArray);\
+		\
+	~fx.addStatesFunction(\cf6 \\zone2\cf3 , \{\cf4 |values|\cf3  ~mapParams.value(values) \});\
+	\
+	40.wait;\
+	\
+	~synth = \cf4 nil\cf3 ;\
+	\
+	10.wait;\
+		\
+	~map = (\
+		amp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.5, 2.0)),\
+		wamp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.5, 2.0)),\
+		eamp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.3, 0.8)),\
+\cf2 //		wsz: ControlSpec(0.05, 0.01, step: 0.01),\cf3 \
+\cf2 //		dns: ControlSpec(2, 6, step: 1),\cf3 \
+		xang: \cf4 ControlSpec\cf3 (-pi, pi),\
+		yang: \cf4 ControlSpec\cf3 (pi, -pi),\
+		zang: \cf4 ControlSpec\cf3 (-pi, pi)\
+	);\
+		\
+	~synth = \cf4 Synth\cf3 .tail(~agrp, \cf6 \\zone2_doublemono\cf3 , [\cf6 \\out\cf3 , ~abus, \cf6 \\efx\cf3 , ~rbus, \cf6 \\amp\cf3 , 1.0, \cf6 \\wamp\cf3 , 2.0, \cf6 \\eamp\cf3 , 0.1, \
+			\cf6 \\start\cf3 , 0, \cf6 \\bufL\cf3 , ~zone2loops[2], \cf6 \\bufR\cf3 , ~zone2loops[3], \cf6 \\wrpL\cf3 , 0.5, \cf6 \\wrpR\cf3 , 0.25, \cf6 \\fsL\cf3 , 0.25, \cf6 \\fsR\cf3 , 0.5, \
+			\cf6 \\wsz\cf3 , 1/3, \cf6 \\envb\cf3 , ~genv, \cf6 \\dns\cf3 , 2, \cf6 \\dur\cf3 , 35, \cf6 \\xang\cf3 , 0, \cf6 \\yang\cf3 , 0, \cf6 \\zang\cf3 , 0])\
+		.setn(\cf6 \\env\cf3 , \cf4 Env\cf3 ([0.001, 1.0, 0.001], [0.99, 0.01]).asArray);\
+	\
+	\
+	30.wait;\
+	\
+	~synth = \cf4 nil\cf3 ;\
+	\
+	5.wait;	\
+		\
+	~map = (\
+		amp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.5, 4.0)),\
+		wamp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.5, 4.0)),\
+		eamp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.4, 0.8)),\
+\cf2 //		wsz: ControlSpec(0.05, 0.01, step: 0.01),\cf3 \
+\cf2 //		dns: ControlSpec(2, 6, step: 1),\cf3 \
+		xang: \cf4 ControlSpec\cf3 (-pi, pi),\
+		yang: \cf4 ControlSpec\cf3 (pi, -pi),\
+		zang: \cf4 ControlSpec\cf3 (-pi, pi)\
+	);\
+		\
+	~synth = \cf4 Synth\cf3 .tail(~agrp, \cf6 \\zone2_doublemono\cf3 , [\cf6 \\out\cf3 , ~abus, \cf6 \\efx\cf3 , ~rbus, \cf6 \\amp\cf3 , 1.0, \cf6 \\wamp\cf3 , 2.0, \cf6 \\eamp\cf3 , 0.1, \
+			\cf6 \\start\cf3 , 0, \cf6 \\bufL\cf3 , ~zone2loops[4], \cf6 \\bufR\cf3 , ~zone2loops[5], \cf6 \\wrpL\cf3 , 0.125, \cf6 \\wrpR\cf3 , 0.25, \cf6 \\fsL\cf3 , 1.0, \cf6 \\fsR\cf3 , 0.25, \
+			\cf6 \\wsz\cf3 , 1/3, \cf6 \\envb\cf3 , ~genv, \cf6 \\dns\cf3 , 8, \cf6 \\dur\cf3 , 50, \cf6 \\xang\cf3 , 0, \cf6 \\yang\cf3 , 0, \cf6 \\zang\cf3 , 0])\
+		.setn(\cf6 \\env\cf3 , \cf4 Env\cf3 ([0.001, 1.0, 0.001], [0.99, 0.01]).asArray);\
+		\
+	50.wait;	\
+		\
+	~map = (\
+		amp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.5, 2.0)),\
+		wamp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.5, 2.0)),\
+		eamp: \cf4 ExponentialWarp\cf3 (\cf4 ControlSpec\cf3 (0.3, 0.8)),\
+\cf2 //		wsz: ControlSpec(0.05, 0.01, step: 0.01),\cf3 \
+\cf2 //		dns: ControlSpec(2, 6, step: 1),\cf3 \
+		xang: \cf4 ControlSpec\cf3 (-pi, pi),\
+		yang: \cf4 ControlSpec\cf3 (pi, -pi),\
+		zang: \cf4 ControlSpec\cf3 (-pi, pi)\
+	);\
+		\
+	~synth = \cf4 Synth\cf3 .tail(~agrp, \cf6 \\zone2_doublemono\cf3 , [\cf6 \\out\cf3 , ~abus, \cf6 \\efx\cf3 , ~rbus, \cf6 \\amp\cf3 , 1.0, \cf6 \\wamp\cf3 , 2.0, \cf6 \\eamp\cf3 , 0.1, \
+			\cf6 \\start\cf3 , 0, \cf6 \\bufL\cf3 , ~zone2loops[6], \cf6 \\bufR\cf3 , ~zone2loops[7], \cf6 \\wrpL\cf3 , 0.125, \cf6 \\wrpR\cf3 , 0.25, \cf6 \\fsL\cf3 , 1.0, \cf6 \\fsR\cf3 , 0.25, \
+			\cf6 \\wsz\cf3 , 1/3, \cf6 \\envb\cf3 , ~genv, \cf6 \\dns\cf3 , 8, \cf6 \\dur\cf3 , 60, \cf6 \\xang\cf3 , 0, \cf6 \\yang\cf3 , 0, \cf6 \\zang\cf3 , 0])\
+		.setn(\cf6 \\env\cf3 , \cf4 Env\cf3 ([0.001, 1.0, 1.0, 0.001], [0.5, 0.4, 0.1]).asArray);\
+		\
+	40.wait;	\
+	\
+	~fx.removeStatesFunction(\cf6 \\zone2\cf3 );\
+			\
+	~fx.sendPatchCmd(\cf6 \\horizons\cf3 , \cf6 \\alphahi\cf3 , 1.0, 0.0, 30);\
+	\
+	~point.set(\cf6 \\gate\cf3 , -30);\
+	\
+	8.wait;\
+	\
+	~synth = \cf4 nil\cf3 ;\
+	\
+	10.wait;\
+	\
+	~fx.removeTriggerFunction(\cf6 \\zone2_point\cf3 );\
+	\
+	15.wait;\
+	\
+	~fx.removeAllStatesFunctions;\
+	~fx.removeAllTriggerFunctions;\
+	~fx.removeAllGlobalsFunctions;\
+			\
+	~fx.deactivatePatch(\cf6 \\horizons\cf3 , 0);\
+		\
+	\cf5 "MAIN FINISHED!"\cf3 .postln;\
+	(\cf5 "time elapsed: "\cf3  ++ (\cf4 Date\cf3 .getDate.bootSeconds - ~timer).asString).postln;\
+	\
+	if (~recordActive) \{ ~serv.stopRecording \};\
+		\
+\
+\}).play\
+	\
+)\
+\
+}
