@@ -56,8 +56,19 @@
 - (void) drawFrame {
 
 	glLoadIdentity();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (bufferPhase == bufferRateRatio)
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		bufferPhase = 0;
+	}
+	else
+	{
+		bufferPhase += 1;
+	}
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
+	glAccum(GL_ACCUM, 0.5);
 	[self drawCells];
+	glAccum(GL_RETURN, 0.5);
 	[[NSOpenGLContext currentContext] flushBuffer];
 	
 }
@@ -193,10 +204,18 @@
 	NSArray * pollIndices;
 	Cell * cell;
 	Cell * max;
+	float *pollValues;
 	
 	if (rAng < 360.0f) { rAng += [oscer getAngle]; } else { rAng = 0.0f; }
 	
 	glTranslatef([oscer getTransX], [oscer getTransY], [oscer getTransZ]);
+	
+	/*
+	if ([[[draw patches] objectForKey: @"radial"] active]) {
+		[draw drawGradientBackground];
+	}	
+	*/
+
 	glRotatef(rAng, [oscer getRotateX], [oscer getRotateY], [oscer getRotateZ]);
 	
 	glAlpha = [oscer getAlpha];
@@ -222,21 +241,13 @@
 	if ([oscer setPoll])
 	{
 		[world setPollIndices: [oscer getPollIndices]];
-
-		for (i = 0; i < [oscValues count]; i++)
-		{
-			[[oscValues objectAtIndex:i] release ];
-		}	
-
-		oscValues = [NSMutableArray new];
-		
-		for (i = 0; i < [[world pollIndices] count]; i++)
-		{
-			[oscValues addObject: [NSNumber numberWithFloat:0.0f]];
-		}		
-		
+	} 
+	
+	if (enableMessage)
+	{
+		pollValues = malloc(sizeof(float) * [[world pollIndices] count]);
 	}
-	 
+	
 	add = [oscer add];
 	
 	if (phase == frameRateRatio) { renew = true; phase = 0; } else { renew = false; }
@@ -246,7 +257,7 @@
 	half = (int)(WORLD_SIZE / 2);
 	
 	max = [[[[world cells] objectAtIndex:0] objectAtIndex:0] objectAtIndex:0];
-		
+			
 	for (i = 0; i < [[world cells] count]; i++)
 	{
 		col = [[world cells] objectAtIndex: i];
@@ -264,6 +275,11 @@
 				{
 					[cell updatePhase];
 				}
+				
+				[draw setCurrentPollIndices: 
+					[[world pollIndices] objectAtIndex: [world pollIndex]]
+				];
+				
 				[draw drawCell:cell	:i :j :k :WORLD_SIZE :frameRateRatio ];
 				
 				if ([max phase] < [cell phase]) { max = cell; }
@@ -314,8 +330,7 @@
 						j == [[pollIndices objectAtIndex:1] intValue] && 
 						k == [[pollIndices objectAtIndex:2] intValue])
 					{
-						[oscValues replaceObjectAtIndex:[world pollIndex] withObject: 
-						 [NSNumber numberWithFloat: [cell phase]]];
+						pollValues[[world pollIndex]] = [cell phase];
 						[world nextPollIndex];
 					}
 					
@@ -338,7 +353,8 @@
 		artb = artb / (pow([world size], 3) / 8.0f);
 		altb = altb / (pow([world size], 3) / 8.0f);
 		[oscer sendMessage: avgState: stdDev: albf: arbf: arbb: albb: altf: artf: artb: altb];
-		[oscer sendMessage: oscValues];
+		[oscer sendMessage: pollValues : [[world pollIndices] count]];
+		free(pollValues);
 	}
 	
 	if (renew) { [oscer sendRenew]; }
@@ -357,13 +373,10 @@
 - (id) initWithFrame: (NSRect) frameRect {
 
 	NSOpenGLView* opengl;
-	int i;
 	
 	NSOpenGLPixelFormat * pf = [FxView basicPixelFormat];
 
 	[super initWithContentRect:frameRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
-
-//	self = [super initWithFrame: frameRect pixelFormat: pf];
  
 	NSRect view_bounds = NSMakeRect(0,0,frameRect.size.width, frameRect.size.height);
 	
@@ -377,21 +390,15 @@
 
 	[self initWorld];
 	
-	oscValues = [NSMutableArray new];
-
-	for (i = 0; i < [[world pollIndices] count]; i++)
-	{
-		[oscValues addObject: [NSNumber numberWithFloat:0.0f]];
-	}
-	
 	done = 0;
 	avgState = 0.0f;
 	stdDev = 0.1f;
 	enableMessage = false;
 	oscer = [[[FxOSC new] initWithAddress: SC_ADDRESS : SC_PORT: draw ] retain];	
 	phase = frameRateRatio = [oscer getFrameRate];
-	refToOscer = oscer;
 	[oscer startListener];
+	
+	bufferPhase = bufferRateRatio = 64;
 	
 	[self prepareOpenGL];
 	
@@ -404,12 +411,6 @@
 - (int) done { return done; }
 
 - (void) dealloc {
-	int i;
-	for (i = 0; i < [oscValues count]; i++)
-	{
-		[[oscValues objectAtIndex:i] release ];
-	}	
-	//[oscValues release];
 	[oscer stopListener];
 	[oscer release];
 	[world release];

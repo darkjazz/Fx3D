@@ -1,0 +1,276 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red96\green96\blue96;\red0\green115\blue0;
+\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 (\
+~loadAts = \cf2 false\cf0 ;\
+~localDecoder = \cf2 true\cf0 ;\
+~stereoOutput = \cf2 true\cf0 ;\
+\cf3 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf0 .load;\
+)\
+\
+(\
+\cf2 SynthDef\cf0 (\cf4 \\zone4_waveTerrain\cf0 , \{\cf2 |out, efx, buffer, aa, ab, ac, ad,\
+		pxa, pya, pxb, pyb, pxc, pyc, pxd, pyd, xang, yang, zang|\cf0 \
+	\cf2 var\cf0  a, b, c, d, w, x, y, z, raL, raR, rcL, rcR;\
+	a = \cf2 WaveTerrain\cf0 .ar(buffer, \cf2 LFSaw\cf0 .ar(pxa).range(0.0, 1.0), \cf2 LFSaw\cf0 .ar(pya).range(0.0, 1.0), 16, 16);\
+	b = \cf2 WaveTerrain\cf0 .ar(buffer, \cf2 LFSaw\cf0 .ar(pxb).range(0.0, 1.0), \cf2 LFSaw\cf0 .ar(pyb).range(0.0, 1.0), 16, 16);\
+	c = \cf2 WaveTerrain\cf0 .ar(buffer, \cf2 LFSaw\cf0 .ar(pxc).range(0.0, 1.0), \cf2 LFSaw\cf0 .ar(pyc).range(0.0, 1.0), 16, 16);\
+	d = \cf2 WaveTerrain\cf0 .ar(buffer, \cf2 LFSaw\cf0 .ar(pxd).range(0.0, 1.0), \cf2 LFSaw\cf0 .ar(pyd).range(0.0, 1.0), 16, 16);\
+	\cf2 Out\cf0 .ar(efx, [a, b, c, d]);\
+	#raL, raR = \cf2 PitchShift\cf0 .ar(\cf2 GVerb\cf0 .ar(a+\cf2 Dust2\cf0 .ar(ab.linlin(0, 1, 10, 80)), 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, 0.5);\
+	#rcL, rcR = \cf2 PitchShift\cf0 .ar(\cf2 GVerb\cf0 .ar(c+\cf2 Dust2\cf0 .ar(ad.linlin(0, 1, 10, 80)), 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, 2.0);\
+	a = \cf2 Compander\cf0 .ar(a**0.5, a**0.5, 0.95, 0.1, 0.1) * aa;\
+	b = \cf2 Compander\cf0 .ar(b**0.5, b**0.5, 0.95, 0.1, 0.1) * ab;\
+	c = \cf2 Compander\cf0 .ar(c**0.5, c**0.5, 0.95, 0.1, 0.1) * ac;\
+	d = \cf2 Compander\cf0 .ar(d**0.5, d**0.5, 0.95, 0.1, 0.1) * ad;\
+	#a, b, c, d = [a, b, c, d] + [raL, raR, rcL, rcR];\
+	#w, x, y, z = \cf2 A2B\cf0 .ar(a, b, c, d);\
+	\cf2 Out\cf0 .ar(out, \cf2 AtkRotateXYZ\cf0 .ar(w, x, y, z, xang, yang, zang))\
+\}).add;\
+\
+\cf2 SynthDef\cf0 (\cf4 \\line\cf0 , \{\cf2 |out, in, gate = 1.0, i_wrp = 0.1, frq, wsz, dns, rnd, amp|\cf0 \
+	\cf2 var\cf0  bufs, recs, ptrs, phases, deltimes, output, trigs, input;\
+	deltimes = [0, 1 / i_wrp * 0.5, 1 / i_wrp];\
+	bufs = \cf2 Array\cf0 .fill(3, \{ \cf2 LocalBuf\cf0 (\cf2 SampleRate\cf0 .ir * 2) \});\
+	ptrs = \cf2 Array\cf0 .fill(3, \{\cf2 |i|\cf0  \cf2 LFSaw\cf0 .kr(i_wrp, 0, 0.5, 0.5) \});\
+	trigs = \cf2 Array\cf0 .fill(3, \{\cf2 |i|\cf0  \cf2 DelayN\cf0 .kr(\cf2 Impulse\cf0 .kr(i_wrp * (2 / 3)), deltimes@i, deltimes@i) \});\
+	input = \cf2 In\cf0 .ar(in, 4);\
+	recs = \cf2 Mix\cf0 .fill(3, \{\cf2 |i|\cf0 \
+		\cf2 RecordBuf\cf0 .ar(input@i, bufs@i, loop:0.0, trigger: trigs@i);\
+	\});\
+	output = \cf2 Mix\cf0 .fill(3, \{\cf2 |i|\cf0 \
+		\cf2 Warp1\cf0 .ar(1, bufs@i, ptrs@i, frq, wsz, -1, dns, rnd)\
+			* \cf2 EnvGen\cf0 .kr(\
+				\cf2 Env\cf0 ([0.0,1.0,1.0,0.0],[0.3,0.4,0.3],\cf4 \\sine\cf0 , 0, 3),\
+				trigs.rotate(-1)@i, timeScale: 1.0 / i_wrp\
+			)\
+	\}) * \cf2 EnvGen\cf0 .kr(\cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf4 \\sine\cf0 , 2), gate, doneAction: 2);\
+	\cf2 Out\cf0 .ar(out, \
+		\cf2 A2B\cf0 .ar(\
+			output,\
+			\cf2 DelayN\cf0 .ar(output, 0.01, 0.01),\
+			\cf2 DelayN\cf0 .ar(output, 0.02, 0.02),\
+			\cf2 DelayN\cf0 .ar(output, 0.03, 0.03)\
+		) * amp\
+	)\
+\}).add;\
+\
+~glmap = (\
+	aa: \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 0.0)),\
+	ab: \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 0.0)),\
+	ac: \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 0.0)),\
+	ad: \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 0.0)),\
+	xang: \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi)),\
+	yang: \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi)),\
+	zang: \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi))\
+);\
+\
+)\
+\
+(\
+\
+	~recordActive = \cf2 true\cf0 ;\
+	~recordPath = \cf3 "/Users/alo/sounds/fx/zone_4_"\cf0  ++ \cf2 Date\cf0 .getDate.stamp ++ \cf3 ".aif"\cf0 ;\
+\
+	~rout = \cf2 Routine\cf0 (\{\
+		\
+		3.wait;\
+		\
+		~fx.startFx;\
+		\
+		7.wait;\
+		\
+		~fx.visualdict.globals[\cf4 \\alpha\cf0 ] = 1.0;\
+		~fx.visualdict.globals[\cf4 \\clear\cf0 ] = 0.4;\
+		~fx.visualdict.globals[\cf4 \\add\cf0 ] = 0.96;\
+		~fx.visualdict.globals[\cf4 \\transx\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf4 \\transy\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf4 \\transz\cf0 ] = -50.0;\
+		~fx.visualdict.globals[\cf4 \\angle\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf4 \\rotX\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf4 \\rotY\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf4 \\rotZ\cf0 ] = 0.0;\
+		~fx.visualdict.globals[\cf4 \\frame\cf0 ] = 4;\
+		\
+		~fx.sendCurrentSettings;\
+		\
+		if (~recordActive) \{ ~serv.prepareForRecord(~recordPath) \};\
+		\
+		5.wait;\
+		\
+		if (~recordActive) \{ ~serv.record \};\
+\
+		~timer = \cf2 Date\cf0 .getDate.bootSeconds;\
+		\
+		~fx.addGlobalsResponder;\
+		~fx.addStatesResponder;\
+		~fx.addTriggerResponder;\
+		\
+		~fx.visualdict.globals[\cf4 \\clear\cf0 ] = 1.0;\
+		~fx.sendCurrentSettings;\
+	\
+		0.1.wait;\
+	\
+		~fx.visualdict.globals[\cf4 \\clear\cf0 ] = 0.4;\
+		~fx.sendCurrentSettings;\
+				\
+		1.wait;\
+		\
+		~fx.sendPollIndices(~fx.getPollIndices(4));\
+		\
+		1.wait;\
+		\
+		~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.equal.value);\
+		\
+		1.wait;\
+		\
+		~fx.activatePatch(\cf4 \\ringz\cf0 );\
+		\
+		1.wait;\
+		\
+		~fx.sendPatchCmd(\cf4 \\ringz\cf0 , \cf4 \\alphamap\cf0 , 0, 1, 0);\
+		\
+		~fx.addGlobalsFunction(\cf4 \\f1\cf0 , \{\cf2 |invalues|\cf0 \
+			if (~waves.notNil) \{\
+				~waves.set(\
+					\cf4 \\aa\cf0 , ~glmap[\cf4 \\aa\cf0 ].map(invalues.avglbf),\
+					\cf4 \\ab\cf0 , ~glmap[\cf4 \\ab\cf0 ].map(invalues.avgrbf),\
+					\cf4 \\ac\cf0 , ~glmap[\cf4 \\ac\cf0 ].map(invalues.avgrbb), \
+					\cf4 \\ad\cf0 , ~glmap[\cf4 \\ad\cf0 ].map(invalues.avglbb),\
+					\cf4 \\xang\cf0 , ~glmap[\cf4 \\xang\cf0 ].map(invalues.avgltf),\
+					\cf4 \\yang\cf0 , ~glmap[\cf4 \\yang\cf0 ].map(invalues.avgrtf),\
+					\cf4 \\zang\cf0 , ~glmap[\cf4 \\zang\cf0 ].map(invalues.avgrtb)\
+				)\
+			\}\
+		\});\
+		\
+		~fx.addStatesFunction(\cf4 \\f1\cf0 , \{\cf2 |values|\cf0  \
+			if (~buffer.isNil) \{ ~buffer = \cf2 Buffer\cf0 .sendCollection(s, values.states * 2 - 1, 1) \}\
+			\{ ~buffer.sendCollection(values.states * 2 - 1) \};\
+		\});\
+		\
+		1.wait;\
+		\
+		~fx.sendPatchCmd(\cf4 \\ringz\cf0 , \cf4 \\alphahi\cf0 , 0, 1, 60);\
+		\
+		~efx = \cf2 Bus\cf0 .audio(~serv, 4);\
+		\
+		~waves = \cf2 Synth\cf0 (\cf4 \\zone4_waveTerrain\cf0 , [\cf4 \\out\cf0 , ~abus, \cf4 \\efx\cf0 , ~efx, \cf4 \\buffer\cf0 , ~buffer, \cf4 \\pxa\cf0 , 10, \cf4 \\pya\cf0 , 200, \cf4 \\pxb\cf0 , 17, \cf4 \\pyb\cf0 , 2, \cf4 \\pxc\cf0 , 41,\
+			\cf4 \\pyc\cf0 , 39, \cf4 \\pxd\cf0 , 300, \cf4 \\pyd\cf0 , 31 ]);\
+		\
+		~cycle = \cf2 Synth\cf0 .after(~waves, \cf4 \\line\cf0 , [\cf4 \\out\cf0 , ~abus, \cf4 \\in\cf0 , ~efx, \cf4 \\i_wrp\cf0 , 0.25, \cf4 \\frq\cf0 , 0.5, \cf4 \\wsz\cf0 , 0.01, \cf4 \\dns\cf0 , 4, \cf4 \\rnd\cf0 , 0, \cf4 \\amp\cf0 , 1]);\
+		\
+		\cf2 Routine\cf0 (\{\
+			\cf2 var\cf0  xamp, xstart, xend, namp, nstart, nend, dur = 500;\
+			nstart = 0.0; nend = 8.0; namp = 0.0;\
+			xstart = 0.0; xend = 0.5; xamp = 0.0;\
+			dur.do(\{\
+				namp = namp + (nend - nstart / dur);\
+				xamp = xamp + (xend - xstart / dur);\
+				#[aa, ab, ac, ad].do(\{\cf2 |argname|\cf0  ~glmap[argname].spec.minval_(namp) \});\
+				#[aa, ab, ac, ad].do(\{\cf2 |argname|\cf0  ~glmap[argname].spec.maxval_(xamp) \});\
+				0.06.wait;\
+			\});\
+		\}).play;\
+		\
+		240.wait;\
+		\
+		\cf2 Routine\cf0 (\{\
+			\cf2 var\cf0  amp, start, end, dur = 500;\
+			start = 8.0; end = 0.0; amp = 8.0;\
+			dur.do(\{\
+				amp = amp + (end - start / dur);\
+				#[aa, ab, ac, ad].do(\{\cf2 |argname|\cf0  ~glmap[argname].spec.minval_(amp) \});\
+				0.06.wait;\
+			\});\
+		\}).play;\
+		\
+		~cycle.set(\cf4 \\gate\cf0 , -40);		\
+\
+		~fx.sendPatchCmd(\cf4 \\ringz\cf0 , \cf4 \\alphahi\cf0 , 1, 0, 30);\
+		\
+		\cf2 Routine\cf0 (\{\
+			\cf2 var\cf0  xamp, xstart, xend, namp, nstart, nend, dur = 500;\
+			nstart = 8.0; nend = 0.0; namp = 8.0;\
+			xstart = 0.5; xend = 0.0; xamp = 0.5;\
+			dur.do(\{\
+				namp = namp + (nend - nstart / dur);\
+				xamp = xamp + (xend - xstart / dur);\
+				#[aa, ab, ac, ad].do(\{\cf2 |argname|\cf0  ~glmap[argname].spec.minval_(namp) \});\
+				#[aa, ab, ac, ad].do(\{\cf2 |argname|\cf0  ~glmap[argname].spec.maxval_(xamp) \});\
+				0.06.wait;\
+			\});\
+		\}).play;\
+		\
+		30.wait;		\
+										\
+		~fx.removeAllStatesFunctions;\
+		~fx.removeAllTriggerFunctions;\
+		~fx.removeAllGlobalsFunctions;\
+		\
+		~waves.free;\
+\
+		~fx.deactivatePatch(\cf4 \\ringz\cf0 );\
+						\
+		\cf3 "MAIN FINISHED!"\cf0 .postln;\
+		(\cf3 "time elapsed: "\cf0  ++ (\cf2 Date\cf0 .getDate.bootSeconds - ~timer).asString).postln;\
+		\
+		if (~recordActive) \{ ~serv.stopRecording \};\
+		\
+		\
+		\
+	\}).play\
+)\
+\
+\
+\cf5 //~fx.addRenewResponder;\cf0 \
+(\
+~fx.addGlobalsResponder;\
+\
+~fx.addStatesResponder;\
+\
+\cf5 //~fx.addRenewFunction(\\f1, \{ Synth(\\rough, [0.25, 0.5, 1.0].wchoose([0.5, 0.3, 0.2])) \})\cf0 \
+\
+)\
+\
+if (~waves.notNil) \{\
+	~waves.set(\
+		\cf4 \\pxa\cf0 , 10,\
+		\cf4 \\pya\cf0 , 200,\
+		\cf4 \\pxb\cf0 , 17,\
+		\cf4 \\pyb\cf0 , 2,\
+		\cf4 \\pxc\cf0 , 41,\
+		\cf4 \\pyc\cf0 , 39,\
+		\cf4 \\pxd\cf0 , 300,\
+		\cf4 \\pyd\cf0 , 31\
+	)\
+\}\
+\
+if (~waves.notNil) \{\
+	~waves.set(\
+		\cf4 \\pxa\cf0 , 10,\
+		\cf4 \\pya\cf0 , 200,\
+		\cf4 \\pxb\cf0 , 170,\
+		\cf4 \\pyb\cf0 , 200,\
+		\cf4 \\pxc\cf0 , 41,\
+		\cf4 \\pyc\cf0 , 39,\
+		\cf4 \\pxd\cf0 , 30,\
+		\cf4 \\pyd\cf0 , 31\
+	)\
+\}\
+\
+\
+\
+~waves.free;\
+~waves = \cf2 nil\cf0 \
+\
+~fx.removeStatesFunction(\cf4 \\f1\cf0 );\
+\
+~fx.removeRenewFunction(\cf4 \\f1\cf0 );\
+\
+275/60\
+~fx.invalues.states.size\
+}

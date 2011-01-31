@@ -22,6 +22,7 @@
 	float left, bottom, front, width, height, depth, red, green, blue, alpha, size;
 	float state, gAlpha, halfscreen;
 	Cell* currentCell;
+	NSArray * currentPollIndices;
 	Patch* cp;
 }
 
@@ -41,6 +42,8 @@
 
 -(void) setPatch: (NSString*) key: (int) on; 
 
+-(void) setCurrentPollIndices: (NSArray*) indices;
+
 -(void) dealloc;
 
 
@@ -56,6 +59,8 @@
 - (void) radial;
 - (void) elastic;
 - (void) mesh;
+
+- (void) drawGradientBackground;
 
 - (void) strokeRect;
 - (void) strokeRect: (int) plane: (float) lineWidth;

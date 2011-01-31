@@ -31,9 +31,9 @@
 	FxOSC * oscer;
 	float avgState, stdDev;
 	float bg, zoom, glAlpha, rAng, rX, rY, rZ;
-	int done, frameRateRatio;
-	bool renew, enableMessage;
-	int phase;
+	int done, frameRateRatio, bufferRateRatio;
+	bool renew, enableMessage, renewBuffer;
+	int phase, bufferPhase;
 	NSArray * pollCellCoords;
 	NSMutableArray * pollCellValues;
 	NSMutableArray * oscValues;	

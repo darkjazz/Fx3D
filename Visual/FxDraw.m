@@ -33,6 +33,8 @@
 
 }
 
+-(void) setCurrentPollIndices: (NSArray*) indices { currentPollIndices = indices; }
+
 -(FxDraw*) init {
 	NSArray* names;
 	NSString* name;
@@ -339,15 +341,36 @@
 
 - (void) radial {
 	
+	float x, y, z;
+	
 	[self setCommon];
+	
+	if (indexk == worldSize / 2 - 1 || indexk == worldSize / 2)
+	{
+		
+		x = size * cos((state + (indexj + 1 / 40)) * (2 * pi));
+		y = size * sin((state + (indexi + 1 / 40)) * (2 * pi));
 
+		left = indexi * size - halfscreen + x;
+		bottom = indexj * size - halfscreen + y;
+		front = indexk * size - halfscreen;
+		
+		width = height = depth = state * size * 0.25f;
+		
+		alpha = 1.0f;
+		
+//		[self strokeRect: 0: 4.0f];
+//		[self drawRect: left + x :bottom + y : front : 2.0f];
+		[self drawPoint: left : bottom : front : 2.0f];
+	}
+/*		
 	if (isEven(indexi) && !isEven(indexj))
 	{
 		left = indexi * size - halfscreen + (size * 0.5f);
 		bottom = indexj * size - halfscreen + (size * 0.5f);
 		front = indexk * size - halfscreen + (size * 0.5f);
 		
-		width = height = depth = state * size;
+		width = height = depth = (1.0f - state) * size * 0.5f;
 		
 		[self drawLine: left : bottom : front - (depth * 0.5f) : left : bottom : front + (depth * 0.5f) : state * 4.0f ];
 		
@@ -359,13 +382,11 @@
 		bottom = indexj * size - halfscreen + (size * 0.5f);
 		front = indexk * size - halfscreen + (size * 0.5f);
 		
-		width = height = depth = state * size;
+		width = height = depth = (1.0 - state) * size * 0.5f;
 		
 		[self drawLine: left - (width * 0.5f) : bottom : front : left + (width * 0.5f) : bottom : front : state * 4.0f ];
 		
 	}
-
-	
 	
 	if (isEven(indexk) && !isEven(indexi))
 	{
@@ -373,10 +394,11 @@
 		bottom = indexj * size - halfscreen + (size * 0.5f);
 		front = indexk * size - halfscreen + (size * 0.5f);
 		
-		width = depth = height = state * size;
+		width = depth = height = state * size * 0.5f;
 		
 		[self drawLine: left : bottom - (height * 0.5f) : front : left : bottom + (height * 0.5f) : front : state * 4.0f ];
 	}
+*/
 
 }
 
@@ -521,6 +543,32 @@
 	
 	[self stroke3Dvertex];
 */
+}
+
+- (void) drawGradientBackground {
+	
+	glBegin(GL_QUADS);
+
+	glColor4f(0.2,0.2,0.2,1.0);
+	
+	glVertex3f( 40.0, 30.0,-12.0);
+	glVertex3f(-40.0, 30.0,-12.0);
+	
+	glColor4f(0.5,0.5,0.5,1.0);	
+	
+	glVertex3f(-40.0, 0.0,-12.0);
+	glVertex3f( 40.0, 0.0,-12.0);
+
+	glVertex3f( 40.0, 0.0,-12.0);
+	glVertex3f(-40.0, 0.0,-12.0);
+
+	glColor4f(0.2,0.2,0.2,1.0);
+	
+	glVertex3f(-40.0,-30.0,-12.0);
+	glVertex3f( 40.0,-30.0,-12.0);	
+	
+	glEnd();
+	
 }
 
 // basic drawing functions

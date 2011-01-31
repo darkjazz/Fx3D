@@ -11,8 +11,6 @@
 #import "FxDraw.h"
 #import "Patch.h"
 
-id refToOscer;
-
 int setting_handler(const char *path, const char *types, lo_arg **argv, 
 	int argc, void *data, void *user_data);
 
@@ -46,6 +44,7 @@ int quit_handler(const char *path, const char *types, lo_arg **argv, int argc,
 - (void) sendMessage: (float) avg: (float) sdev: (float) albf: (float) arbf: (float) arbb: 
 	(float) albb: (float) altf: (float) artf: (float) artb: (float) altb;
 - (void) sendMessage: (NSMutableArray*) states;
+- (void) sendMessage: (float*) states: (int) size;
 - (void) sendTrigger: (int) x: (int) y: (int) z: (float) phase;
 - (void) sendRenew;
 - (void) startListener;

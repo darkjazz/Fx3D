@@ -1,0 +1,169 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 (\
+~loadAts = \cf3 false\cf2 ;\
+~localDecoder = \cf3 true\cf2 ;\
+~stereoOutput = \cf3 true\cf2 ;\
+\cf4 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf2 .load;\
+)\
+\
+(\
+\
+\cf3 SynthDef\cf2 (\cf5 \\zone5_play\cf2 , \{\cf3 |out, gate, buffer, del, amp, pch1, pch2, pch3, delg, xang, yang, zang|\cf2   \
+	\cf3 var\cf2  sig, env, delay, pitch, w, x, y, z;\
+	env = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr, gate, doneAction: 2);\
+	delay = \cf3 Array\cf2 .geom(4, del, delg);\
+	pitch = [0, pch1, pch2, pch3];\
+	sig = \cf3 PlayBuf\cf2 .ar(1, buffer, loop: 1) * env;\
+	#w, x, y, z = \cf3 A2B\cf2 .ar(\
+		*\cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2 \
+			\cf3 DelayC\cf2 .ar(\cf3 PitchShift\cf2 .ar(sig, 0.2, pitch@i), 0.2, delay@i)\
+		\})\
+	);\
+	\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang) * amp)\
+\}).add;\
+\
+~bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "reloop"\cf2 ) \});\
+\
+~map = (\
+	amp: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (0.04, 4.0)),\
+	pch1: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (35/36, 1.0)),\
+	pch2: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (1.0, 36/35)),\
+	pch3: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (35/36, 36/35)),\
+	delg: \cf3 CosineWarp\cf2 (\cf3 ControlSpec\cf2 (1.01, 1.1)),\
+	xang: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-pi, pi)),\
+	yang: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (pi, -pi)),\
+	zang: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-pi, pi))\
+);\
+\
+\
+)\
+\
+\
+\
+(\
+\
+	~recordActive = \cf3 false\cf2 ;\
+	~recordPath = \cf4 "/Users/alo/sounds/fx/zone_5_"\cf2  ++ \cf3 Date\cf2 .getDate.stamp ++ \cf4 ".aif"\cf2 ;\
+\
+	~rout = \cf3 Routine\cf2 (\{\
+		\
+		3.wait;\
+		\
+\cf6 //		~fx.startFx;\cf2 \
+		\
+		7.wait;\
+		\
+		~fx.visualdict.globals[\cf5 \\alpha\cf2 ] = 1.0;\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.6;\
+		~fx.visualdict.globals[\cf5 \\add\cf2 ] = 0.1;\
+		~fx.visualdict.globals[\cf5 \\transx\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\transy\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -24.0;\
+		~fx.visualdict.globals[\cf5 \\angle\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\rotX\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\rotY\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\rotZ\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\frame\cf2 ] = 4;\
+		\
+		~fx.sendCurrentSettings;\
+		\
+		if (~recordActive) \{ ~serv.prepareForRecord(~recordPath) \};\
+		\
+		5.wait;\
+		\
+		if (~recordActive) \{ ~serv.record \};\
+\
+		~timer = \cf3 Date\cf2 .getDate.bootSeconds;\
+		\
+		~fx.addGlobalsResponder;\
+		~fx.addStatesResponder;\
+		~fx.addTriggerResponder;\
+		\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.0;\
+		~fx.sendCurrentSettings;\
+	\
+		0.1.wait;\
+	\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.6;\
+		~fx.sendCurrentSettings;\
+				\
+		1.wait;\
+		\
+		~fx.sendPollIndices(~fx.getPollIndices(1));\
+		\
+		1.wait;\
+		\
+		~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.symmetry.value);\
+		\
+		1.wait;\
+		\
+		~fx.activatePatch(\cf5 \\radial\cf2 );\
+		\
+		1.wait;\
+		\
+		~fx.sendPatchCmd(\cf5 \\radial\cf2 , \cf5 \\colormap\cf2 , 0, 1, 0);\
+		\
+		~fx.addStatesFunction(\cf5 \\zone5\cf2 , \{\cf3 |values|\cf2 	\
+			\cf3 var\cf2  states = values.states.clump(8);\
+			~synths.do(\{\cf3 |synth, i|\cf2 \
+				\cf3 var\cf2  args = \cf3 Pseq\cf2 (states[i], \cf3 inf\cf2 ).asStream;\
+				if (synth.notNil)\
+				\{\
+					synth.set(*~map.collect(\{\cf3 |spec|\cf2  spec.map(args.next) \}).asKeyValuePairs)\
+				\}\
+			\})\
+		\});		\
+\
+		1.wait;\
+		\
+		~synths = \cf3 Array\cf2 .newClear(8);\
+		\
+		~fx.sendPatchCmd(\cf5 \\radial\cf2 , \cf5 \\alphahi\cf2 , 0, 1, 30);\
+		\
+		~states = ~fx.invalues.states.clump(8);\
+\
+		8.do(\{\cf3 |i|\cf2 \
+			\cf3 var\cf2  states = \cf3 Pseq\cf2 (~states[i], \cf3 inf\cf2 ).asStream;\
+			~synths.put(i, \cf3 Synth\cf2 .tail(~agrp, \cf5 \\playb\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\gate\cf2 , 1, \cf5 \\dur\cf2 , 1, \
+				\cf5 \\buffer\cf2 , ~bufs[i], \cf5 \\del\cf2 , 0.02 ] ++ \
+					~map.collect(\{\cf3 |spec|\cf2  spec.map(states.next) \}).asKeyValuePairs\
+				).setn(\cf5 \\env\cf2 , \cf3 Env\cf2 ([0.001, 0.001, 1.0, 1.0, 0.001, 0.001], [0.1, 0.1, 0.6, 0.1, 0.1], \cf5 \\sine\cf2 , 4, 1) )\
+			)\
+		\});\
+				\
+		60.wait;		\
+		\
+		~synths.do(\{\cf3 |synth|\cf2 \
+			synth.set(\cf5 \\gate\cf2 , -30);\
+		\});\
+		\
+		28.wait;\
+		\
+		~fx.removeStatesFunction(\cf5 \\zone5\cf2 );\
+		\
+		2.wait;\
+										\
+		~fx.removeAllStatesFunctions;\
+		~fx.removeAllTriggerFunctions;\
+		~fx.removeAllGlobalsFunctions;\
+		\
+		~fx.deactivatePatch(\cf5 \\ringz\cf2 );\
+						\
+		\cf4 "MAIN FINISHED!"\cf2 .postln;\
+		(\cf4 "time elapsed: "\cf2  ++ (\cf3 Date\cf2 .getDate.bootSeconds - ~timer).asString).postln;\
+		\
+		if (~recordActive) \{ ~serv.stopRecording \};\
+		\
+		\
+		\
+	\}).play\
+	\
+)\
+\
+\
+~fx.invalues.states.size}

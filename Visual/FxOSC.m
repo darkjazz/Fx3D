@@ -194,6 +194,13 @@ float state;
 	
 }
 
+-(void) sendMessage: (float*) states: (int) size {
+
+	lo_blob data = lo_blob_new(sizeof(float) * size, states);
+	lo_send(addr, "/fx/states", "b", data);
+
+}
+
 - (void) sendTrigger: (int) x: (int) y: (int) z: (float) phase
 {
 	lo_send(addr, "/fx/trigger", "iiif", x, y, z, phase);
