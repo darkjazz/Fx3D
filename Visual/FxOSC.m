@@ -24,6 +24,8 @@ float rotZ = 0.0f;
 float angle = 0.0f;
 
 int frameRate = 4;
+int bufferRate = 72;
+int freeze = 0;
 
 int patch = 0;
 int cmd = 0;
@@ -80,6 +82,8 @@ float state;
 - (float) getAngle { return angle; }
 
 - (int) getFrameRate { return frameRate; }
+- (int) getBufferRate { return bufferRate; }
+- (int) getFreeze { return freeze; } 
 
 - (int) getDone { return done; }
 
@@ -211,14 +215,20 @@ float state;
 	lo_send(addr, "/fx/renew", "i", 0);
 }
 
+- (void) sendPhase: (int) phase
+{
+	lo_send(addr, "/fx/phase", "i", phase);
+}
+
 - (void) startListener
 {
 	thread = lo_server_thread_new("7770", error);
-	lo_server_thread_add_method(thread, "/fx/settings", "ffffffffffi", setting_handler, NULL);
+	lo_server_thread_add_method(thread, "/fx/settings", "ffffffffffii", setting_handler, NULL);
 	lo_server_thread_add_method(thread, "/fx/cell", "iiif", cell_handler, NULL);	
 	lo_server_thread_add_method(thread, "/fx/patch", "iif", patch_handler, NULL);
 	lo_server_thread_add_method(thread, "/fx/world", "iiiiiiiiiiffffffffffffffffffffffffff", reset_handler, NULL);
 	lo_server_thread_add_method(thread, "/fx/poll", NULL, poll_handler, NULL);
+	lo_server_thread_add_method(thread, "/fx/freeze", "i", freeze_handler, NULL);
 	lo_server_thread_add_method(thread, "/fx/quit", "i", quit_handler, NULL);
 	lo_server_thread_start(thread);
 	
@@ -254,7 +264,7 @@ float state;
 	else if (cmd == 7) { [p setAlphahi: value]; }
 	else if (cmd == 8) { [p setSizelo: value]; }
 	else if (cmd == 9) { [p setSizehi: value]; }
-	else if (cmd == 10) { [p setScale: value]; }
+	else if (cmd == 10) { [p setParam: value]; }
 	
 }
 
@@ -274,6 +284,7 @@ int setting_handler(const char *path, const char *types, lo_arg **argv, int argc
 	rotY = argv[8]->f;
 	rotZ = argv[9]->f;
 	frameRate = argv[10]->i;
+	bufferRate = argv[11]->i;
 	return 0;
 }
 
@@ -353,6 +364,13 @@ int poll_handler(const char *path, const char *types, lo_arg **argv, int argc,
 	for (i = 1; i <= pollsize; i++) {
 		pollindex[i] = argv[i]->i; 
 	}
+	return 0;
+}
+
+int freeze_handler(const char *path, const char *types, lo_arg **argv, int argc,
+				 void *data, void *user_data)
+{
+	freeze = argv[0]->i;
 	return 0;
 }
 

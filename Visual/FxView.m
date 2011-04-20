@@ -56,19 +56,27 @@
 - (void) drawFrame {
 
 	glLoadIdentity();
-	if (bufferPhase == bufferRateRatio)
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		bufferPhase = 0;
+	if ([oscer getFreeze] == 1) {
+		if (bufferPhase == bufferRateRatio)
+		{
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			bufferPhase = 0;
+			bufferRateRatio = [oscer getBufferRate];
+		}
+		else
+		{
+			bufferPhase += 1;
+		}
+		[oscer sendPhase: bufferPhase];
+		glAccum(GL_ACCUM, 0.5);
+		[self drawCells];
+		glAccum(GL_RETURN, 0.5);		
 	}
 	else
 	{
-		bufferPhase += 1;
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
+		[self drawCells];
 	}
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
-	glAccum(GL_ACCUM, 0.5);
-	[self drawCells];
-	glAccum(GL_RETURN, 0.5);
 	[[NSOpenGLContext currentContext] flushBuffer];
 	
 }
@@ -210,12 +218,6 @@
 	
 	glTranslatef([oscer getTransX], [oscer getTransY], [oscer getTransZ]);
 	
-	/*
-	if ([[[draw patches] objectForKey: @"radial"] active]) {
-		[draw drawGradientBackground];
-	}	
-	*/
-
 	glRotatef(rAng, [oscer getRotateX], [oscer getRotateY], [oscer getRotateZ]);
 	
 	glAlpha = [oscer getAlpha];

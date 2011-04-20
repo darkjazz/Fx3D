@@ -18,7 +18,7 @@
 	float alphahi, alphalo;
 	float colorhi, colorlo;
 	float sizehi, sizelo;
-	float size, red, green, blue, alpha, left, bottom, scale;
+	float size, red, green, blue, alpha, left, bottom, param;
 	NSMutableDictionary * events;
 }
 
@@ -31,7 +31,7 @@
 -(float) alpha;
 -(float) bottom;
 -(float) left;
--(float) scale;
+-(float) param;
 -(NSMutableDictionary*) events;
 
 -(void) setActive: (bool) value;
@@ -46,7 +46,7 @@
 -(void) setColorlo: (float) value;
 -(void) setSizehi: (float) value;
 -(void) setSizelo: (float) value;
--(void) setScale: (float) value;
+-(void) setParam: (float) value;
 
 -(void) mapValues: (int) i: (int) j: (float) state;
 

@@ -19,7 +19,7 @@
 -(float) alpha { return alpha; }
 -(float) left { return left; }
 -(float) bottom { return bottom; }
--(float) scale { return scale; }
+-(float) param { return param; }
 -(NSMutableDictionary*) events { return events; }
 
 -(void) setActive: (bool) value { active = value; }
@@ -34,12 +34,12 @@
 -(void) setColorlo: (float) value { colorlo = value; }
 -(void) setSizehi: (float) value { sizehi = value; }
 -(void) setSizelo: (float) value { sizelo = value; }
--(void) setScale: (float) value { scale = value; }
+-(void) setParam: (float) value { param = value; }
 
 -(Patch*) init {
 	self = [super init];
 	active = false;
-	red = green = blue = scale = 1.0f;
+	red = green = blue = param = 1.0f;
 	alpha = 0.0f;
 	color = 0; colormap = 0; alphamap = 0;
 	alphalo = colorlo = sizelo = 0.0f;
@@ -93,13 +93,13 @@
 		{
 			red = state;
 			green = state;
-			blue = 0.16f;		
+			blue = 0.0f;		
 		}
 		else
 		{
 			red = 1.0f - state;
 			green = 1.0f - state;
-			blue = 0.16f * (1.0 - state);		
+			blue = 0.0f;		
 		}		
 	}
 

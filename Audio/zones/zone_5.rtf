@@ -11,94 +11,75 @@
 \cf4 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf2 .load;\
 )\
 \
-~defunc = \{\cf3 |name, ugen|\cf2 \
-	\
-	\cf3 SynthDef\cf2 (name, \{\cf3 |out, efx, dur, xang, yang, zang|\cf2 \
-		\cf3 var\cf2  sig, envm, args, w, x, y, z, frqs, dlys;\
-		args = \cf3 ArrayControl\cf2 .kr(\cf5 \\args\cf2 , 4, 1);\
-		frqs = \cf3 ArrayControl\cf2 .kr(\cf5 \\frqs\cf2 , 4, 1);\
-		dlys = \cf3 ArrayControl\cf2 .kr(\cf5 \\dlys\cf2 , 4, 1);\
-		env = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr, timeScale: dur, doneAction: 2);\
-		sig = \cf3 SynthDef\cf2 .wrap(ugen, \cf3 nil\cf2 , args) * env;\
-		\cf3 Out\cf2 .ar(efx, sig);\
-		#w, x, y, z = \cf3 A2B\cf2 .ar(\
-			*\cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2 \
-				\cf3 DelayC\cf2 .ar(\cf3 BPeakEQ\cf2 .ar(sig, frqs@i), 1.0, dlys@i)\
-			\})\
-		);\
-		\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang))\
-	\}).add\
-	\
-\};\
+(\
 \
-~efxfunc = \{\cf3 |name, ugen|\cf2 \
-	\
-	\cf3 SynthDef\cf2 (name, \{\cf3 |out, efx, in, dur, xang, yang, zang|\cf2 \
-		\cf3 var\cf2  input, sig, frqs, dlys, sfts, w, x, y, z;\
-		args = \cf3 ArrayControl\cf2 .kr(\cf5 \\args\cf2 , 4, 1);\
-		frqs = \cf3 ArrayControl\cf2 .kr(\cf5 \\frqs\cf2 , 4, 1);\
-		dlys = \cf3 ArrayControl\cf2 .kr(\cf5 \\dlys\cf2 , 4, 1);\
-		sfts = \cf3 ArrayControl\cf2 .kr(\cf5 \\sfts\cf2 , 4, 1);\
-		env = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr, timeScale: dur, doneAction: 2);\
-		input = \cf3 In\cf2 .ar(in);\
-		sig = \cf3 SynthDef\cf2 .wrap(ugen, \cf3 nil\cf2 , [sig] ++ args);\
-		\cf3 Out\cf2 .ar(efx, sig);\
-		#w, x, y, z = \cf3 A2B\cf2 .ar(\
-			*\cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2 \
-				\cf3 PitchShift\cf2 .ar(\cf3 DelayC\cf2 .ar(\cf3 BPeakEQ\cf2 .ar(sig, frqs@i), 1.0, dlys@i), pitchRatio: sfts@i)\
-			\})\
-		);\
-		\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang))\
-	\}).add\
+\cf3 SynthDef\cf2 (\cf5 \\zone5_play\cf2 , \{\cf3 |out, gate, buffer, dur, amp, pch1, pch2, pch3, wsz, dns, xang, yang, zang|\cf2   \
+	\cf3 var\cf2  env, envdel, pitch, times, warps, w, x, y, z;\
+	envdel = \cf3 ArrayControl\cf2 .kr(\cf5 \\envdel\cf2 , 4, 1);\
+	warps = \cf3 ArrayControl\cf2 .kr(\cf5 \\warps\cf2 , 4, 1);\
+	times = \cf3 ArrayControl\cf2 .kr(\cf5 \\times\cf2 , 4, 1);\
+	pitch = [1, pch1, pch2, pch3];\
+	#w, x, y, z = \cf3 A2B\cf2 .ar(\
+		*\cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2 \
+			\cf3 DelayN\cf2 .ar(\
+				\cf3 Warp1\cf2 .ar(1, buffer, \cf3 LFSaw\cf2 .kr(warps@i, 1, 0.5, 0.5), pitch@i, wsz, -1, dns) \
+					* \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.1, 0.8, 0.1], \cf5 \\sine\cf2 ), gate, timeScale: times@i), \
+				envdel@i, \
+				envdel@i\
+			)\
+		\})\
+	) * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 ([1, 1, 0], [0.9, 0.1], \cf5 \\sine\cf2 ), gate, timeScale: dur);\
+	\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang) * amp)\
+\}).add;\
 \
-\};\
+~bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "reloop"\cf2 ) \});\
 \
-~ugen = (\
-	sine: \{\cf3 |freq, beat|\cf2  \cf3 SinOsc\cf2 .ar(freq) + \cf3 SinOsc\cf2 .ar(freq + beat)\},\
-	sinearr: \{\cf3 |freq, num, grow|\cf2  \cf3 Mix\cf2 (\cf3 SinOsc\cf2 .ar(\cf3 Array\cf2 .geom(num, freq, grow))) \},\
-	saw: \{\cf3 |freq|\cf2  \cf3 Saw\cf2 .ar(freq)\},\
-	lfsaw: \{\cf3 |freq|\cf2  \cf3 LFSaw\cf2 .ar(freq) \},\
-	pulse: \{\cf3 |freq, width|\cf2  \cf3 Pulse\cf2 .ar(freq, width) \},\
-	dust: \{\cf3 |freq|\cf2  \cf3 Dust2\cf2 .ar(freq) \},\
-	lfn0: \{\cf3 |freq|\cf2  \cf3 LFNoise0\cf2 .ar(freq) \},\
-	pm: \{\cf3 |cf, mf, in|\cf2  \cf3 PMOsc\cf2 .ar(cf, mf, in) \}\
+~map = (\
+	amp: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (0.04, 4.0)),\
+	pch1: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (35/36, 1.0)),\
+	pch2: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (1.0, 36/35)),\
+	pch3: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (35/36, 36/35)),\
+	delg: \cf3 CosineWarp\cf2 (\cf3 ControlSpec\cf2 (1.01, 1.1)),\
+	xang: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-pi, pi)),\
+	yang: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (pi, -pi)),\
+	zang: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-pi, pi))\
 );\
 \
-~efx = (\
-	noefx: \{\cf3 |sig|\cf2  sig \},\
-	comb: \{\cf3 |sig, del, dec, amp|\cf2  \cf3 CombL\cf2 .ar(sig * amp, del, del, dec) \},\
-	rev: \{\cf3 |sig, rtime, amp|\cf2  \cf3 Reverb\cf2 .ar(sig * amp, rtime) \},\
-	shift: \{\cf3 |sig, wsize, pitch, amp|\cf2  \cf3 PitchShift\cf2 .ar(sig * amp, wsize, pitch) \},\
-	delay: \{\cf3 |sig, del, amp|\cf2  \cf3 DelayL\cf2 .ar(sig * amp, del, del) \},\
-	eq: \{\cf3 |sig, fund, grow, bw, amp|\cf2  \cf3 var\cf2  fr = \cf3 Array\cf2 .geom(5, fund, grow); \
-		\cf3 Mix\cf2 (\cf3 BPeakEQ\cf2 .ar(sig, fr, bw / fr, amp.ampdb)) \
-	\},\
-	median: \{\cf3 |sig, len, amp|\cf2  \cf3 Median\cf2 .ar(len, sig * amp) \},\
-	reson: \{\cf3 |sig, freq, grow, dec, amp|\cf2  \
-		\cf3 Klank\cf2 .ar(`[\cf3 Array\cf2 .geom(5, freq, grow), (dec ! 5), (amp ! 5)], sig) \
-	\} \
-);\
+~cycle = 3;\
 \
-~params = (\
-	global: (\
-		dur: \cf3 ControlSpec\cf2 (0.005, 2.0), \
-		xang: \cf3 ControlSpec\cf2 (-pi, pi), \
-		yang: \cf3 ControlSpec\cf2 (-pi, pi), \
-		zang: \cf3 ControlSpec\cf2 (-pi, pi)\
-	),\
-	sine: (\
-		freq: \cf3 ControlSpec\cf2 ()\
-	)\
-);\
+)\
 \
-~ew = \cf3 CosineWarp\cf2 (\cf3 ControlSpec\cf2 (0.0, 1.0))\
 \
-~envs = \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2 \
-	\cf3 var\cf2  mid, val = ~ew.map(1/7*i);\
-	mid = ~ew.map(1.0 - (1.0-val-val).abs / 1.5);\
-	\cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [val, mid, 1.0 - val].normalizeSum, \cf5 \\sine\cf2 );\
+~synths = \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2 \
+	\cf3 Synth\cf2 .tail(~agrp, \cf5 \\zone5_play\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\gate\cf2 , 0, \cf5 \\dur\cf2 , ~cycle - (4/24 * i), \cf5 \\buffer\cf2 , ~bufs[i], \cf5 \\amp\cf2 , 1.0, \
+		\cf5 \\pch1\cf2 , 35/36, \cf5 \\pch2\cf2 , 36/35, \cf5 \\pch3\cf2 , 2**(1/19), \cf5 \\wsz\cf2 , 0.05, \cf5 \\dns\cf2 , 4, \cf5 \\xang\cf2 , 0, \cf5 \\yang\cf2 , 0, \cf5 \\zang\cf2 , 0 ])\
+		.setn(\cf5 \\envdel\cf2 , [0] ++ \cf3 Array\cf2 .geom(3, 1/24, 2))\
+		.setn(\cf5 \\warps\cf2 , \cf3 Array\cf2 .geom(4, 1, 15/17))\
+		.setn(\cf5 \\times\cf2 , \cf3 Array\cf2 .series(4, ~cycle - (1/24 * i), (1/24).neg))\
 \});\
 \
-~ew = \cf3 nil\cf2 ;\
+\
+~synths.do(\cf3 _\cf2 .set(\cf5 \\wsz\cf2 , 1/24*0.0625))\
+\
+~synths.do(\{\cf3 |syn, i|\cf2  syn.set(\cf5 \\buffer\cf2 , ~bufs[i+8]) \})\
+\
+~rout = \cf3 Routine\cf2 (\{\
+	\cf3 inf\cf2 .do(\{\
+		~synths.do(\{\cf3 |synth|\cf2 \
+			synth.set(\cf5 \\gate\cf2 , 1.0);\
+			(2/24).wait;\
+			synth.set(\cf5 \\gate\cf2 , 0.0);\
+			(2/24).wait;\
+		\});\
+		1.667.wait;\
+	\})\
+\}).play\
+\
+~rout.stop\
+\
+~synths[0].set(\cf5 \\gate\cf2 , 1)\
+\
+\
+~synths.do(\cf3 _\cf2 .free)\
 \
 }

@@ -71,14 +71,14 @@
 			\
 		~fx = \cf2 Fx3D\cf0 ().makeOglGui;\
 		\
-		\cf2 SynthDef\cf0 (\cf4 \\verb\cf0 , \{\cf2 |out, bf, in, rtime, damp, inbw, spr, dry, early, tail, amp, aamp, \
+		\cf2 SynthDef\cf0 (\cf4 \\verb\cf0 , \{\cf2 |out, bf, in, rtime, damp, inbw, spr, dry, early, tail, eamp, aamp, \
 				fbamp = 0.01|\cf0 \
 			\cf2 var\cf0  sig, input, actr, fb;\
 			input = \cf2 In\cf0 .ar(in);\
 			fb = \cf2 LocalIn\cf0 .ar;\
 			sig = \cf2 GVerb\cf0 .ar(input + fb, 1500, rtime, damp, inbw, spr, dry, early, tail, 1500);\
 			\cf2 LocalOut\cf0 .ar(\cf2 Mix\cf0 (sig) * fbamp);\
-			\cf2 Out\cf0 .ar(out, (sig ++ sig) * amp);\
+			\cf2 Out\cf0 .ar(out, (sig ++ sig) * eamp);\
 			\cf2 Out\cf0 .ar(bf, \cf2 AtkSterToB\cf0 .ar(sig[0], sig[1]) * aamp);\
 		\}).add;\
 		\

@@ -70,7 +70,7 @@
 - (void) drawAxialRect: (float) colN: (float) colE: (float) colS: (float) colW;
 - (void) drawLine: (float) startx: (float) starty: (float) startz: 
 	(float) endx: (float) endy: (float) endz: (float) lineWidth;
-- (void) drawCircle: (float) cx: (float) cy: (float) r: (int) num_segments: (bool) fill;
+- (void) drawCircle: (int) plane: (float) r: (int) num_segments: (bool) fill;
 - (void) drawCube;
 - (void) strokeCube;
 - (void) fillCube;

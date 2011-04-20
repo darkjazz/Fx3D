@@ -9,7 +9,6 @@
 ~loadAts = \cf3 false\cf0 ;\
 ~localDecoder = \cf3 false\cf0 ;\
 ~stereoOutput = \cf3 true\cf0 ;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf4 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf0 .loadPath;\
 )\
 \
@@ -22,7 +21,6 @@
 	dst = \cf3 LFTri\cf0 .kr(afr).range(1.0, 2.0);\
 	azm = \cf3 Dseq\cf0 ([-0.25, 0.25] * pi, \cf3 inf\cf0 );\
 	elv = \cf3 Dstutter\cf0 (2, \cf3 Dseq\cf0 ([0.25, -0.25], \cf3 inf\cf0 ));\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 //	trg = Impulse.ar(tfr);\cf0 \
 	trg = \cf3 InTrig\cf0 .kr(tb);\
 	atrg = \cf3 K2A\cf0 .ar(trg);\
@@ -240,7 +238,6 @@
 		\
 \
 	~subloops = ~loops.select(\{\cf3 |loop|\cf0  loop.path.contains(\cf4 "detloop_"\cf0 ) \});\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 //	~subloops = ~loops.select(\{|loop| loop.path.contains("memor") \});\cf0 \
 	~b_bus = \cf3 Array\cf0 .fill(8, \{ \cf3 Bus\cf0 .audio(~serv) \});\
 	~t_bus = \cf3 Array\cf0 .fill(8, \{ \cf3 Bus\cf0 .audio(~serv, 4) \});\
@@ -297,7 +294,6 @@
 \
 	~activeSynths = \cf3 Array\cf0 .newClear(8);\
 	\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 //	~point = Synth(\\point, [\\out, ~abus, \\buf, ~pointbuf, \\tb, ~tr, \\gate, 1.0, \\amp, 8.0, \cf0 \
 \cf2 //		\\tfr, 4.0, \\afr, 0.05, \\sln, 0.2, \\sfr, 10000, \\sam, 0.5, \\doneAction, 2])\cf0 \
 \cf2 //		.setn(\\env, Env([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \\sine, 2, 1).asArray);\cf0 \

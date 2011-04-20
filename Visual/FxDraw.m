@@ -117,14 +117,18 @@
 }
 
 - (void) kanji {
-	float stx, sty, stz, ex, ey, ez;
+	float stx, sty, stz, ex, ey, ez, lineWidth, scale;
+	
+	lineWidth = 1.0f + [[patches objectForKey: @"kanji"] param ];
+	
+	scale = [[patches objectForKey: @"kanji"] param ];
 	
 	[self setCommon];
 	
 	left = (float)indexi * size - halfscreen;
 	bottom = (float)indexj * size - halfscreen;
 	front = (float)indexk * size - halfscreen;
-	width = height = depth = state * size * 0.5f;
+	width = height = depth = state * size * scale;
 	stx = randfloat(left + (0.25f * width), left + (width * 0.75f));
 	sty = randfloat(bottom + (0.25f * height), bottom + (height * 0.75f)); 
 	stz = randfloat(front + (0.25f * depth), front + (0.75f * depth));
@@ -134,10 +138,13 @@
 	ex = stx + randfloat(-1.0f, 1.0f) * width;
 	ey = sty + randfloat(-1.0f, 1.0f) * height;
 	ez = stz + randfloat(-1.0f, 1.0f) * depth;
-	[self drawLine: stx: sty: stz: ex: ey: ez: 0.01f];
+	[self drawLine: stx: sty: stz: ex: ey: ez: lineWidth];
 }
 
 - (void) ringz {
+
+	float prm;
+	
 	[self setCommon];
 	
 	left = (float)indexi * size - halfscreen + size - (size * 2.0f * state);
@@ -146,19 +153,30 @@
 	
 	width = height = depth = size * 4.0f * state;
 	
-	left *= map(state, -2.0f, 2.0f);
-	bottom *= map(state, -2.0f, 2.0f);
-	front *= map(state, -2.0, 2.0f);
+	prm = [[patches objectForKey: @"ringz"] param ];
 	
+	if (prm != 0)
+	{
+		left *= map(state, -1.0f - prm, 1.0f + prm); 
+		bottom *= map(state, -1.0f - prm, 1.0f + prm);
+		front *= map(state, -1.0f - prm, 1.0f + prm);
+	}
+		
 	if (state > 0.25f) [self strokeCube];
 	else [self fillCube];
 	
 }
 - (void) wobble {
 	
-	float w, n, lineWidth, scale;
+	float w, n, lineWidth, prm, scale;
 
 	[self setCommon];
+	
+	prm = 1.0f + [[patches objectForKey: @"wobble"] param ];
+
+	lineWidth = prm;
+	
+	scale = prm;	
 
 	if (indexk == 0 || indexk == worldSize - 1) // indexk == worldSize / 2
 	{
@@ -166,11 +184,7 @@
 		left = (float)indexi * size - halfscreen + size;
 		bottom = (float)indexj * size - halfscreen + size;
 		front = (float)indexk * size - halfscreen + (size / 2.0f);
-		
-		lineWidth = 1.0f;
-		
-		scale = 1.0f;
-		
+				
 		if (indexi > 0)
 		{
 			// 4, 10, 12, 13, 15, 21
@@ -196,10 +210,6 @@
 		left = (float)indexi * size - halfscreen + size;
 		bottom = (float)indexj * size - halfscreen + (size / 2.0f);
 		front = (float)indexk * size - halfscreen + size;
-		
-		lineWidth = 1.0f;
-		
-		scale = 1.0f;
 		
 		if (indexi > 0)
 		{
@@ -228,11 +238,7 @@
 		left = (float)indexi * size - halfscreen + (size / 2.0f);
 		bottom = (float)indexj * size - halfscreen + size;
 		front = (float)indexk * size - halfscreen + size;
-		
-		lineWidth = 1.0f;
-		
-		scale = 1.0f;
-		
+				
 		if (indexj > 0)
 		{
 			
@@ -255,70 +261,105 @@
 	
 }
 - (void) grid {
+	
+	float x, y, resize;
 
 	[self setCommon];
 	
-	left = (float)indexi * size - halfscreen + size -  (size * 2.0f * state);
-	bottom = (float)indexj * size - halfscreen + size -  (size * 2.0f * state);
-	front = (float)indexk * size - halfscreen + size -  (size * 2.0f * state);
-	height = width = depth = size * 4.0f * state;
-	
-	if (isEven(indexk))
+	resize = [[patches objectForKey: @"grid"] param ];
+
+	if (!isEven(indexi) && isEven(indexj))
 	{
-		[self drawPoint: left : bottom : front : 1.0f ];
-		[self drawPoint: left : bottom : front + depth : 1.0f ];
-		//		[self drawPoint: left : bottom + height : front : 1.0f ];
-		//		[self drawPoint: left : bottom + height : front + depth : 1.0f ];
+
+		x = (resize * size) * cos((state + (indexj + 1 / 40)) * (2 * pi));
+		y = (resize * size) * sin((state + (indexi + 1 / 40)) * (2 * pi));
+		
+		width = height = depth = state * size * 0.25f;
+
+		left = indexi * size - halfscreen + x + width;
+		bottom = indexj * size - halfscreen + y + height;
+		front = indexk * size - halfscreen + depth;
+				
+		[self drawPoint: left : bottom : front : 2.0f];	
 	}
-	
-	if (!isEven(indexi))
+
+	if (!isEven(indexj) && isEven(indexk))
 	{
-		//		[self drawPoint: left + width : bottom : front : 1.0f ];
-		//		[self drawPoint: left + width : bottom : front + depth : 1.0f ];
-		[self drawPoint: left + width : bottom + height : front : 1.0f ];
-		[self drawPoint: left + width : bottom + height : front + depth : 1.0f ];
+		
+		x = (resize * size) * cos((state + (indexj + 1 / 40)) * (2 * pi));
+		y = (resize * size) * sin((state + (indexi + 1 / 40)) * (2 * pi));
+		
+		width = height = depth = state * size * 0.25f;
+		
+		left = indexi * size - halfscreen + width;
+		bottom = indexj * size - halfscreen + x + height;
+		front = indexk * size - halfscreen + y + depth;
+		
+		[self drawPoint: left : bottom : front : 2.0f];	
 	}
-	//	[self drawLine: left: bottom: front: left: bottom + height: front: map(1.0f - state, 0.1f, 2.0f)];
-	
+
+	if (!isEven(indexk) && isEven(indexi))
+	{
+		
+		x = (resize * size) * cos((state + (indexj + 1 / 40)) * (2 * pi));
+		y = (resize * size) * sin((state + (indexi + 1 / 40)) * (2 * pi));
+		
+		width = height = depth = state * size * 0.25f;
+		
+		left = indexi * size - halfscreen + y + width;
+		bottom = indexj * size - halfscreen + height;
+		front = indexk * size - halfscreen + x + depth;
+		
+		[self drawPoint: left : bottom : front : 2.0f];	
+	}
+
 }
 - (void) horizons {
 	
-	[self setCommon];
-	left = (float)indexi * size - halfscreen;
-	bottom = (float)indexj * size - halfscreen + (size / 2.0f);
-	front = (float)indexk * size - halfscreen + (size / 2.0f);
-	width = size;
+	float scalar;
 
 	if (!isEven(indexk))
 	{
+		[self setCommon];
+		scalar = [[patches objectForKey: @"horizons"] param ];
+		left = (float)indexi * size - halfscreen;
+		bottom = (float)indexj * size - halfscreen + (size / 2.0f);
+		front = (float)indexk * size - halfscreen + (size / 2.0f);
+		width = size * scalar;
 		[self drawLine: left: bottom: front: left + width: bottom: front: map(1.0f - state, 1.0f, 2.0f)];
 	}
 	
 }
 - (void) blinds {
 
-	[self setCommon];
-		
-	left = (float)indexi * size - halfscreen;
-	bottom = (float)indexj * size - halfscreen + (size / 2.0f);
-	front = (float)indexk * size - halfscreen + (size / 2.0f);
-	height = size;
+	float scalar;
 	
 	if (isEven(indexk) && !isEven(indexi))
 	{
+		[self setCommon];
+		scalar = [[patches objectForKey: @"blinds"] param ];
+		
+		left = (float)indexi * size - halfscreen;
+		bottom = (float)indexj * size - halfscreen + (size / 2.0f);
+		front = (float)indexk * size - halfscreen + (size / 2.0f);
+		height = size * scalar;
 		[self drawLine: left: bottom: front: left: bottom + height: front: map(1.0f - state, 1.0f, 2.0f)];
 	}
 
 }
 
 - (void) axial {
+	float scalar;
 	[self setCommon];
-	left = (float)indexi * size - halfscreen + size - (size * 2.0f * state);
-	bottom = (float)indexj * size - halfscreen + size - (size * 2.0f * state);
-	front = (float)indexk * size - halfscreen + size - (size * 2.0f * state);
-	width = height = depth = size * 4.0f * state;
-	alpha = alpha * 0.1f;
+	scalar = map([[patches objectForKey: @"axial"] param ], 0.5f, 4.0f);
+	left = (float)indexi * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	bottom = (float)indexj * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	front = (float)indexk * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	width = height = depth = size * scalar * state;
 	if (indexk == 0) {
+		[self fillRect: 0];
+	}
+	if (indexk == worldSize - 1) {
 		[self fillRect: 0];
 	}
 	if (indexi == 0) { 
@@ -341,110 +382,63 @@
 
 - (void) radial {
 	
-	float x, y, z;
+	float scalar, seg;
 	
 	[self setCommon];
+	scalar = map([[patches objectForKey: @"radial"] param ], 0.5f, 2.0f);
+	seg = (int)map(1.0f - state, 6.0, 16.0);
 	
-	if (indexk == worldSize / 2 - 1 || indexk == worldSize / 2)
+	left = (float)indexi * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	bottom = (float)indexj * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	front = (float)indexk * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	width = height = depth = size * scalar * state;
+	//if (state > 0.79f) { red = 0.1f; green = 0.2f; blue = 1.0f; }
+	if (indexi == 0) { 
+		//left *= map(state, scale * -1.0f, scale);
+		[self drawCircle: 1 : width : seg : false ];
+	}
+	if (indexi == worldSize - 1) {
+		left += (width * state);
+		//left *= map(state, scale * -1.0f, scale);
+		[self drawCircle: 1 : width : seg : false ];
+	}
+	if (indexj == 0) {
+		//bottom *= map(state, scale * -1.0f, scale);
+		[self drawCircle: 2 : width : seg : false ];
+	}
+	if (indexj == worldSize - 1) {
+		bottom += (height * state);
+		//bottom *= map(state, scale * -1.0f, scale);
+		[self drawCircle: 2 : width : seg : false ];
+	}	
+	if (indexk == 0) {
+		//front *= map(state, scale * -1.0f, scale);
+		[self drawCircle: 0 : width : seg : false ];
+	}
+	if (indexk == worldSize - 1)
 	{
-		
-		x = size * cos((state + (indexj + 1 / 40)) * (2 * pi));
-		y = size * sin((state + (indexi + 1 / 40)) * (2 * pi));
+		front += (depth * state);
+		//front *= map(state, scale * -1.0f, scale);
+		[self drawCircle: 0 : width : seg : false ];
+	}
+	
 
-		left = indexi * size - halfscreen + x;
-		bottom = indexj * size - halfscreen + y;
-		front = indexk * size - halfscreen;
-		
-		width = height = depth = state * size * 0.25f;
-		
-		alpha = 1.0f;
-		
-//		[self strokeRect: 0: 4.0f];
-//		[self drawRect: left + x :bottom + y : front : 2.0f];
-		[self drawPoint: left : bottom : front : 2.0f];
-	}
-/*		
-	if (isEven(indexi) && !isEven(indexj))
-	{
-		left = indexi * size - halfscreen + (size * 0.5f);
-		bottom = indexj * size - halfscreen + (size * 0.5f);
-		front = indexk * size - halfscreen + (size * 0.5f);
-		
-		width = height = depth = (1.0f - state) * size * 0.5f;
-		
-		[self drawLine: left : bottom : front - (depth * 0.5f) : left : bottom : front + (depth * 0.5f) : state * 4.0f ];
-		
-	}
-	
-	if (isEven(indexj) && !isEven(indexk))
-	{
-		left = indexi * size - halfscreen + (size * 0.5f);
-		bottom = indexj * size - halfscreen + (size * 0.5f);
-		front = indexk * size - halfscreen + (size * 0.5f);
-		
-		width = height = depth = (1.0 - state) * size * 0.5f;
-		
-		[self drawLine: left - (width * 0.5f) : bottom : front : left + (width * 0.5f) : bottom : front : state * 4.0f ];
-		
-	}
-	
-	if (isEven(indexk) && !isEven(indexi))
-	{
-		left = indexi * size - halfscreen + (size * 0.5f);
-		bottom = indexj * size - halfscreen + (size * 0.5f);
-		front = indexk * size - halfscreen + (size * 0.5f);
-		
-		width = depth = height = state * size * 0.5f;
-		
-		[self drawLine: left : bottom - (height * 0.5f) : front : left : bottom + (height * 0.5f) : front : state * 4.0f ];
-	}
-*/
 
 }
 
 - (void) elastic {
 
-//	NSMutableDictionary * events;
-//	int cindex, direction;
-	float scale;
+	float scalar;
 	float lwid;
 		
 	[self setCommon];
-	left = (float)indexi * size - halfscreen + size - (size * 2.0f * state);
-	bottom = (float)indexj * size - halfscreen + size - (size * 2.0f * state);
-	front = (float)indexk * size - halfscreen + size - (size * 2.0f * state);
-	width = height = depth = size * 4.0f * state;
-//	height = size * ( 1.0f / fabs(8.0f - (float)indexj));
-//	depth = map(state, -5.0f, 5.0f);
-/*
-	events = [[patches objectForKey: @"elastic"] events];
-	if ([events objectForKey: @"index"] == nil)
-	{
-		[events setObject:[NSNumber numberWithInt:8] forKey:@"index"];
-		[events setObject:[NSNumber numberWithInt:-1] forKey:@"direction"];
-		cindex = 8;
-		direction = 1;
-	}
-	else
-	{
-		cindex = [[events objectForKey: @"index"] intValue];
-		direction = [[events objectForKey: @"direction"] intValue];
-	}
-	
-	if (indexk == cindex )
-	{
-		[self strokeRect: 1];
-	}
-	
-	if (cindex == 0) { direction = 1; }
+	scalar = map([[patches objectForKey: @"elastic"] param ], 0.5f, 4.0f);
 
-	if ([[events objectForKey: @"index"] intValue] == worldSize - 1) { direction = -1; }
-		
-	[events setObject:[NSNumber numberWithInt: direction] forKey:@"direction"];
-	[events setObject:[NSNumber numberWithInt: cindex + direction] forKey:@"index"];
-*/	
+	left = (float)indexi * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	bottom = (float)indexj * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	front = (float)indexk * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	width = height = depth = size * scalar * state;
 	lwid = map(state, 0.5f, 2.0f);
-	scale = 1.0f;
 	//if (state > 0.79f) { red = 0.1f; green = 0.2f; blue = 1.0f; }
 	if (indexi == 0) { 
 		//left *= map(state, scale * -1.0f, scale);
@@ -478,12 +472,14 @@
 
 - (void) mesh {
 	
+	float scalar;
 	
 	[self setCommon];
-	left = (float)indexi * size - halfscreen + size - (size * state);
-	bottom = (float)indexj * size - halfscreen + size - (size * state);
-	front = (float)indexk * size - halfscreen + size - (size * state);
-	width = height = depth = size * 2.0f * state;
+	scalar =  map([[patches objectForKey: @"mesh"] param ], 0.5f, 2.0f);
+	left = (float)indexi * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	bottom = (float)indexj * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	front = (float)indexk * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	width = height = depth = size * scalar * state;
 	
 	if (
 		(indexi == 3 && indexj == 3) || 
@@ -506,10 +502,13 @@
 		[self strokeCube];
 	}
 	
-	left = (float)indexi * size - halfscreen + size - (size * 0.5f * state);
-	bottom = (float)indexj * size - halfscreen + size - (size * 0.5f * state);
-	front = (float)indexk * size - halfscreen + size - (size * 0.5f * state);
-	width = height = depth = size * state;
+	scalar =  map([[patches objectForKey: @"mesh"] param ], 0.25f, 1.0f);
+
+	left = (float)indexi * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	bottom = (float)indexj * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	front = (float)indexk * size - halfscreen + size - (size * (scalar / 2.0f) * state);
+	width = height = depth = size * scalar * state;
+	alpha *= 0.5f;
 	
 	if (
 		(indexi == 7 && indexj == 7) || 
@@ -984,7 +983,7 @@
 }
 
 
-- (void) drawCircle: (float) cx: (float) cy: (float) r: (int) num_segments: (bool) fill { 
+- (void) drawCircle: (int) plane: (float) r: (int) num_segments: (bool) fill { 
 	int i;
 	float theta, tangetial_factor, radial_factor, x, y;
 	theta = 2 * pi / num_segments;
@@ -1002,7 +1001,18 @@
 	glColor4f(red, green, blue, alpha);
 	for(i = 0; i < num_segments; i++) 
 	{ 
-		glVertex3f(x + cx, y + cy, front);
+		switch (plane) {
+			case 0:
+				glVertex3f(x + left, y + bottom, front);
+				break;
+			case 1: 
+				glVertex3f(left, x + bottom, y + front);
+				break;
+			case 2:
+				glVertex3f(y + left, bottom, x + front);
+				break;
+		}
+		
         
 		float tx = -y; 
 		float ty = x; 

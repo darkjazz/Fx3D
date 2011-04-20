@@ -1,7 +1,7 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
 {\fonttbl\f0\fnil\fcharset238 Inconsolata;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
-\red0\green115\blue0;\red191\green0\blue0;}
+\red0\green115\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f0\fs24 \cf2 (\
@@ -11,26 +11,59 @@
 \cf4 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf2 .load;\
 )\
 \
+\
 (\
 \
-\cf3 SynthDef\cf2 (\cf5 \\zone5_play\cf2 , \{\cf3 |out, gate, buffer, del, amp, pch1, pch2, pch3, delg, xang, yang, zang|\cf2   \
-	\cf3 var\cf2  sig, env, delay, pitch, w, x, y, z;\
-	env = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr, gate, doneAction: 2);\
-	delay = \cf3 Array\cf2 .geom(4, del, delg);\
-	pitch = [0, pch1, pch2, pch3];\
-	sig = \cf3 PlayBuf\cf2 .ar(1, buffer, loop: 1) * env;\
+\cf3 SynthDef\cf2 (\cf5 \\zone5_play\cf2 , \{\cf3 |out, efx, efrq, eamp, gate, buffer, dur, amp, pch1, pch2, pch3, wsz, dns, xang, yang, zang|\cf2   \
+	\cf3 var\cf2  env, envdel, pitch, times, warps, w, x, y, z;\
+	envdel = \cf3 ArrayControl\cf2 .kr(\cf5 \\envdel\cf2 , 4, 1);\
+	warps = \cf3 ArrayControl\cf2 .kr(\cf5 \\warps\cf2 , 4, 1);\
+	times = \cf3 ArrayControl\cf2 .kr(\cf5 \\times\cf2 , 4, 1);\
+	pitch = [1, pch1, pch2, pch3];\
 	#w, x, y, z = \cf3 A2B\cf2 .ar(\
 		*\cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2 \
-			\cf3 DelayC\cf2 .ar(\cf3 PitchShift\cf2 .ar(sig, 0.2, pitch@i), 0.2, delay@i)\
+			\cf3 DelayN\cf2 .ar(\
+				\cf3 Warp1\cf2 .ar(1, buffer, \cf3 LFSaw\cf2 .kr(warps@i, 1, 0.5, 0.5), pitch@i, wsz, -1, dns) \
+					* \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.1, 0.8, 0.1], \cf5 \\sine\cf2 ), gate, timeScale: times@i), \
+				envdel@i, \
+				envdel@i\
+			)\
+		\})\
+	) * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 ([1, 1, 0], [0.9, 0.1], \cf5 \\sine\cf2 ), gate, timeScale: dur);\
+	\cf3 Out\cf2 .ar(efx, \cf3 RLPF\cf2 .ar(w, efrq) * eamp);\
+	\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang) * amp)\
+\}).add;\
+\
+\cf3 SynthDef\cf2 (\cf5 \\zone5_distort\cf2 , \{\cf3 |out, efx, eamp, buf, amp, dur, wrp, frq, wsz = 0.1, dns = 4, bzf = 12, dep = 0.25, pwsz|\cf2 \
+	\cf3 var\cf2  sig, w, x, y, z, xang, yang, zang, del, pch;\
+	pch = \cf3 ArrayControl\cf2 .kr(\cf5 \\pch\cf2 , 4, 1);\
+	del = \cf3 ArrayControl\cf2 .kr(\cf5 \\del\cf2 , 4, 1);\
+	xang = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr(\cf5 \\xang\cf2 ), timeScale: dur);\
+	yang = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr(\cf5 \\yang\cf2 ), timeScale: dur);\
+	zang = \cf3 EnvGen\cf2 .kr(\cf3 EnvControl\cf2 .kr(\cf5 \\zang\cf2 ), timeScale: dur);\
+	sig = tanh(\cf3 Warp1\cf2 .ar(1, buf, \cf3 LFSaw\cf2 .kr(wrp, 1, 0.5, 0.5), frq, wsz, -1, dns).distort ** 0.5 *\
+		\cf3 XLine\cf2 .kr(0.001, amp, dur, doneAction: 2)) * 0.99;\
+	sig = sig * \cf3 Saw\cf2 .kr(bzf).range(dep, 1);\
+	\cf3 Out\cf2 .ar(efx, sig * eamp);\
+	#w, x, y, z = \cf3 A2B\cf2 .ar(\
+		*\cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2 \
+			\cf3 DelayC\cf2 .ar(\cf3 PitchShift\cf2 .ar(sig, pwsz, pch@i), del@i, del@i)\
 		\})\
 	);\
-	\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang) * amp)\
+	\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang))\
 \}).add;\
 \
 ~bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "reloop"\cf2 ) \});\
 \
+~nimbufs = ~loops.select(\{\cf3 |loop|\cf2  \
+	(loop.path.contains(\cf4 "nimeloop_3.aif"\cf2 )).or\
+	(loop.path.contains(\cf4 "nimeloop_8.aif"\cf2 )).or\
+	(loop.path.contains(\cf4 "nimeloop_17.aif"\cf2 )).or\
+	(loop.path.contains(\cf4 "nimeloop_19.aif"\cf2 ))\
+\});\
+\
 ~map = (\
-	amp: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (0.04, 4.0)),\
+	amp: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (0.001, 0.001)),\
 	pch1: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (35/36, 1.0)),\
 	pch2: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (1.0, 36/35)),\
 	pch3: \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (35/36, 36/35)),\
@@ -54,21 +87,22 @@
 		\
 		3.wait;\
 		\
-\cf6 //		~fx.startFx;\cf2 \
+		~fx.startFx;\
 		\
 		7.wait;\
 		\
 		~fx.visualdict.globals[\cf5 \\alpha\cf2 ] = 1.0;\
-		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.6;\
-		~fx.visualdict.globals[\cf5 \\add\cf2 ] = 0.1;\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.85;\
+		~fx.visualdict.globals[\cf5 \\add\cf2 ] = 0.95;\
 		~fx.visualdict.globals[\cf5 \\transx\cf2 ] = 0.0;\
 		~fx.visualdict.globals[\cf5 \\transy\cf2 ] = 0.0;\
-		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -24.0;\
-		~fx.visualdict.globals[\cf5 \\angle\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -15.0;\
+		~fx.visualdict.globals[\cf5 \\angle\cf2 ] = 0.1;\
 		~fx.visualdict.globals[\cf5 \\rotX\cf2 ] = 0.0;\
 		~fx.visualdict.globals[\cf5 \\rotY\cf2 ] = 0.0;\
 		~fx.visualdict.globals[\cf5 \\rotZ\cf2 ] = 0.0;\
 		~fx.visualdict.globals[\cf5 \\frame\cf2 ] = 4;\
+		~fx.visualdict.globals[\cf5 \\phase\cf2 ] = 120;\
 		\
 		~fx.sendCurrentSettings;\
 		\
@@ -83,30 +117,31 @@
 		~fx.addGlobalsResponder;\
 		~fx.addStatesResponder;\
 		~fx.addTriggerResponder;\
+		~fx.addPhaseResponder;\
 		\
 		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.0;\
 		~fx.sendCurrentSettings;\
 	\
 		0.1.wait;\
 	\
-		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.6;\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.85;\
 		~fx.sendCurrentSettings;\
 				\
 		1.wait;\
 		\
-		~fx.sendPollIndices(~fx.getPollIndices(1));\
+		~fx.sendPollIndices(~fx.getPollIndices(0));\
 		\
 		1.wait;\
 		\
-		~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.symmetry.value);\
+		~fx.sendReset(0, 0, 1, 6, 6, 6, 4, 4, 4, *~fx.weightPresets.symmetry.value);\
 		\
 		1.wait;\
 		\
 		~fx.activatePatch(\cf5 \\radial\cf2 );\
 		\
 		1.wait;\
-		\
-		~fx.sendPatchCmd(\cf5 \\radial\cf2 , \cf5 \\colormap\cf2 , 0, 1, 0);\
+				\
+		~synths = \cf3 Array\cf2 .newClear(8);\
 		\
 		~fx.addStatesFunction(\cf5 \\zone5\cf2 , \{\cf3 |values|\cf2 	\
 			\cf3 var\cf2  states = values.states.clump(8);\
@@ -118,42 +153,421 @@
 				\}\
 			\})\
 		\});		\
-\
-		1.wait;\
 		\
-		~synths = \cf3 Array\cf2 .newClear(8);\
-		\
-		~fx.sendPatchCmd(\cf5 \\radial\cf2 , \cf5 \\alphahi\cf2 , 0, 1, 30);\
+		~fx.sendPatchCmd(\cf5 \\radial\cf2 , \cf5 \\alphahi\cf2 , 0, 1, 60);\
 		\
 		~states = ~fx.invalues.states.clump(8);\
-\
-		8.do(\{\cf3 |i|\cf2 \
-			\cf3 var\cf2  states = \cf3 Pseq\cf2 (~states[i], \cf3 inf\cf2 ).asStream;\
-			~synths.put(i, \cf3 Synth\cf2 .tail(~agrp, \cf5 \\playb\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\gate\cf2 , 1, \cf5 \\dur\cf2 , 1, \
-				\cf5 \\buffer\cf2 , ~bufs[i], \cf5 \\del\cf2 , 0.02 ] ++ \
-					~map.collect(\{\cf3 |spec|\cf2  spec.map(states.next) \}).asKeyValuePairs\
-				).setn(\cf5 \\env\cf2 , \cf3 Env\cf2 ([0.001, 0.001, 1.0, 1.0, 0.001, 0.001], [0.1, 0.1, 0.6, 0.1, 0.1], \cf5 \\sine\cf2 , 4, 1) )\
-			)\
+		\
+		~cycle = ~fx.visualdict.globals[\cf5 \\phase\cf2 ] / 24;\
+				\
+		~synths = \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2 \
+			\cf3 Synth\cf2 .tail(~agrp, \cf5 \\zone5_play\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\efx\cf2 , ~rbus, \cf5 \\efrq\cf2 , 1000, \cf5 \\eamp\cf2 , 0.5, \cf5 \\gate\cf2 , 0, \cf5 \\dur\cf2 , ~cycle, \
+				\cf5 \\buffer\cf2 , ~bufs[i], \cf5 \\amp\cf2 , 0.001, \cf5 \\pch1\cf2 , 35/36, \cf5 \\pch2\cf2 , 36/35, \cf5 \\pch3\cf2 , 2**(1/19), \cf5 \\wsz\cf2 , 1 / 24, \cf5 \\dns\cf2 , 2, \
+				\cf5 \\xang\cf2 , 0, \cf5 \\yang\cf2 , 0, \cf5 \\zang\cf2 , 0 ])\
+				.setn(\cf5 \\envdel\cf2 , [0] ++ \cf3 Array\cf2 .geom(3, 1/24, 2))\
+				.setn(\cf5 \\warps\cf2 , \cf3 Array\cf2 .geom(4, 1, 15/17))\
+				.setn(\cf5 \\times\cf2 , \cf3 Array\cf2 .series(4, ~cycle - (1/24 * i), (1/24).neg));\
 		\});\
 				\
-		60.wait;		\
-		\
-		~synths.do(\{\cf3 |synth|\cf2 \
-			synth.set(\cf5 \\gate\cf2 , -30);\
+		~fx.addPhaseFunction(\cf5 \\zone5\cf2 , \{\cf3 |phase|\cf2 \
+			if ((phase / 3 < ~synths.size).and(phase % 3 == 0))\
+			\{\
+				~synths[phase / 3].set(\cf5 \\gate\cf2 , 1.0);\
+				\cf3 SystemClock\cf2 .sched(1/24, \{ ~synths[phase / 3].set(\cf5 \\gate\cf2 , 0.0); \cf3 nil\cf2  \});\
+			\}\
 		\});\
+						\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  ini, fin, val, time = 60, rate = 0.1, step;\
+			ini = val = [0.001, 0.001];\
+			fin = [0.5, 3.0];\
+			step = fin - ini / (time / rate);\
+			(time / rate).do(\{\cf3 |i|\cf2 \
+				val = val + step;\
+				~map[\cf5 \\amp\cf2 ].spec.minval = val[0];\
+				~map[\cf5 \\amp\cf2 ].spec.maxval = val[1];\
+				rate.wait;\
+			\});\
+		\}).play;\
 		\
-		28.wait;\
+		\cf3 Routine\cf2 (\{\
+			\
+			\cf3 var\cf2  trans, rate = 1/12, time = 10;\
+			trans = (\
+				add: (min: 0.95, max: 0.9),\
+				transz: (min: -15, max: -26), \
+				angle: (min: 0, max: 0.1)\
+			);\
+			\
+			trans.do(\{\cf3 |param|\cf2  param[\cf5 \\val\cf2 ] = param[\cf5 \\min\cf2 ]; param[\cf5 \\step\cf2 ] = param[\cf5 \\max\cf2 ] - param[\cf5 \\min\cf2 ] / (time / rate) \});\
+			\
+			(time / rate).do(\{\
+				trans.keysValuesDo(\{\cf3 |key, val|\cf2 \
+					~fx.setGlobal(key, val[\cf5 \\val\cf2 ] = val[\cf5 \\val\cf2 ] + val[\cf5 \\step\cf2 ] )\
+				\});\
+				~fx.sendCurrentSettings;\
+				rate.wait;\
+			\})\
+			\
+		\}).play;		\
 		\
-		~fx.removeStatesFunction(\cf5 \\zone5\cf2 );\
+		10.wait;\
+		\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  ini, fin, val, time = 30, rate = 0.1, step;\
+			ini = val = (1 / 24 ! 8);\
+			fin = \cf3 Array\cf2 .geom(8, 1 / 48, 8 / 5).round(1/24);\
+			step = fin - ini / (time / rate);\
+			(time / rate).do(\{\cf3 |i|\cf2 \
+				val = val + step;\
+				~synths.do(\{\cf3 |synth, i|\cf2  synth.set(\cf5 \\wsz\cf2 , val[i]) \});\
+				rate.wait;\
+			\});\
+					\
+		\}).play;\
+		\
+		\cf3 Routine\cf2 (\{\
+			\
+			\cf3 var\cf2  trans, rate = 1/12, time = 10;\
+			trans = (\
+				add: (min: 0.9, max: 0.8),\
+				transz: (min: -26, max: -30), \
+				angle: (min: 0.1, max: -0.1)\
+			);\
+			\
+			trans.do(\{\cf3 |param|\cf2  param[\cf5 \\val\cf2 ] = param[\cf5 \\min\cf2 ]; param[\cf5 \\step\cf2 ] = param[\cf5 \\max\cf2 ] - param[\cf5 \\min\cf2 ] / (time / rate) \});\
+			\
+			(time / rate).do(\{\
+				trans.keysValuesDo(\{\cf3 |key, val|\cf2 \
+					~fx.setGlobal(key, val[\cf5 \\val\cf2 ] = val[\cf5 \\val\cf2 ] + val[\cf5 \\step\cf2 ] )\
+				\});\
+				~fx.sendCurrentSettings;\
+				rate.wait;\
+			\})\
+			\
+		\}).play;			\
 		\
 		2.wait;\
-										\
+\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  ini, fin, val, time = 10, rate = 0.1, step;\
+			ini = val = (2 ! 8);\
+			fin = [0.5] ++ (1..7);\
+			step = fin - ini / (time / rate);\
+			(time / rate).do(\{\cf3 |i|\cf2 \
+				val = val + step;\
+				~synths.do(\{\cf3 |synth, i|\cf2  synth.set(\cf5 \\dns\cf2 , val[i]) \});\
+				rate.wait;\
+			\});\
+					\
+		\}).play;		\
+		\
+		10.wait;\
+		\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  ini, fin, val, time = 10, rate = 0.1, step;\
+			ini = val = [0.5] ++ (1..7);\
+			fin = ([0.5] ++ (1..7)).rotate(1);\
+			step = fin - ini / (time / rate);\
+			(time / rate).do(\{\cf3 |i|\cf2 \
+				val = val + step;\
+				~synths.do(\{\cf3 |synth, i|\cf2  synth.set(\cf5 \\dns\cf2 , val[i]) \});\
+				rate.wait;\
+			\});\
+					\
+		\}).play;\
+		\
+		\cf3 Routine\cf2 (\{\
+			\
+			\cf3 var\cf2  trans, rate = 1/12, time = 10;\
+			trans = (\
+				add: (min: 0.8, max: 0.1),\
+				transz: (min: -30, max: -20), \
+				angle: (min: -0.1, max: 0.2),\
+				rotY: (min: 0, max: 1)\
+			);\
+			\
+			trans.do(\{\cf3 |param|\cf2  param[\cf5 \\val\cf2 ] = param[\cf5 \\min\cf2 ]; param[\cf5 \\step\cf2 ] = param[\cf5 \\max\cf2 ] - param[\cf5 \\min\cf2 ] / (time / rate) \});\
+			\
+			(time / rate).do(\{\
+				trans.keysValuesDo(\{\cf3 |key, val|\cf2 \
+					~fx.setGlobal(key, val[\cf5 \\val\cf2 ] = val[\cf5 \\val\cf2 ] + val[\cf5 \\step\cf2 ] )\
+				\});\
+				~fx.sendCurrentSettings;\
+				rate.wait;\
+			\})\
+			\
+		\}).play;				\
+		\
+		\cf3 Routine\cf2 (\{\
+			\
+			(~bufs.size + 1).do(\{\cf3 |i|\cf2 \
+				\cf3 var\cf2  ind = (i..i+8);\
+				~synths.do(\{\cf3 |synth, j|\cf2 \
+					synth.set(\cf5 \\buffer\cf2 , ~bufs.wrapAt(ind[j]))\
+				\});\
+				8.wait;\
+			\})\
+			\
+		\}).play;	\
+\
+		10.wait;\
+		\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  ini, fin, val, time = 10, rate = 0.1, step;\
+			ini = val = [0.5] ++ (1..7);\
+			fin = ([0.5] ++ (1..7)).rotate(2);\
+			step = fin - ini / (time / rate);\
+			(time / rate).do(\{\cf3 |i|\cf2 \
+				val = val + step;\
+				~synths.do(\{\cf3 |synth, i|\cf2  synth.set(\cf5 \\dns\cf2 , val[i]) \});\
+				rate.wait;\
+			\});\
+					\
+		\}).play;\
+		\
+		\cf3 Routine\cf2 (\{\
+			\
+			\cf3 var\cf2  trans, rate = 1/12, time = 10;\
+			trans = (\
+				add: (min: 0.1, max: 0.05),\
+				transz: (min: -20, max: -24), \
+				angle: (min: 0.2, max: -0.3),\
+				rotY: (min: 1, max: 0.5),\
+				rotZ: (min: 0, max: 0.1),\
+				clear: (min: 0.85, max: 0.7)\
+			);\
+			\
+			trans.do(\{\cf3 |param|\cf2  param[\cf5 \\val\cf2 ] = param[\cf5 \\min\cf2 ]; param[\cf5 \\step\cf2 ] = param[\cf5 \\max\cf2 ] - param[\cf5 \\min\cf2 ] / (time / rate) \});\
+			\
+			(time / rate).do(\{\
+				trans.keysValuesDo(\{\cf3 |key, val|\cf2 \
+					~fx.setGlobal(key, val[\cf5 \\val\cf2 ] = val[\cf5 \\val\cf2 ] + val[\cf5 \\step\cf2 ] )\
+				\});\
+				~fx.sendCurrentSettings;\
+				rate.wait;\
+			\})\
+			\
+		\}).play;			\
+		\
+		10.wait;\
+		\
+		~fx.setGlobal(\cf5 \\transz\cf2 , -10);\
+		~fx.sendCurrentSettings;\
+		\
+		2.wait;\
+		\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  ini, fin, val, time = 10, rate = 0.1, step;\
+			ini = val = [0.5] ++ (1..7);\
+			fin = ([0.5] ++ (1..7)).rotate(3);\
+			step = fin - ini / (time / rate);\
+			(time / rate).do(\{\cf3 |i|\cf2 \
+				val = val + step;\
+				~synths.do(\{\cf3 |synth, i|\cf2  synth.set(\cf5 \\dns\cf2 , val[i]) \});\
+				rate.wait;\
+			\});\
+					\
+		\}).play;		\
+		\
+		~fx.setGlobal(\cf5 \\transz\cf2 , -15);\
+		~fx.setGlobal(\cf5 \\rotX\cf2 , 0);\
+		~fx.setGlobal(\cf5 \\rotY\cf2 , 1);\
+		~fx.setGlobal(\cf5 \\torZ\cf2 , 0);\
+		~fx.setGlobal(\cf5 \\add\cf2 , 0.95);\
+		~fx.sendCurrentSettings;\
+		\
+		2.wait;\
+		\
+		~fx.setGlobal(\cf5 \\transx\cf2 , -5);\
+		~fx.sendCurrentSettings;\
+		\
+		1.wait;\
+		\
+		~fx.setGlobal(\cf5 \\transx\cf2 , 0);\
+		~fx.sendCurrentSettings;\
+		\
+		3.wait;\
+		\
+		~fx.setGlobal(\cf5 \\transz\cf2 , -20);\
+		~fx.setGlobal(\cf5 \\rotX\cf2 , 1);\
+		~fx.setGlobal(\cf5 \\rotY\cf2 , 0);\
+		~fx.setGlobal(\cf5 \\torZ\cf2 , 0);\
+		~fx.sendCurrentSettings;\
+		\
+		4.wait;\
+		\
+		~fx.setGlobal(\cf5 \\transz\cf2 , -25);\
+		~fx.setGlobal(\cf5 \\rotX\cf2 , 0);\
+		~fx.setGlobal(\cf5 \\rotY\cf2 , 0);\
+		~fx.setGlobal(\cf5 \\torZ\cf2 , 1);\
+		~fx.setGlobal(\cf5 \\add\cf2 , 0.8);\
+		~fx.sendCurrentSettings;\
+		\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  ini, fin, val, time = 10, rate = 0.1, step;\
+			ini = val = [0.5] ++ (1..7);\
+			fin = ([0.5] ++ (1..7)).rotate(4);\
+			step = fin - ini / (time / rate);\
+			(time / rate).do(\{\cf3 |i|\cf2 \
+				val = val + step;\
+				~synths.do(\{\cf3 |synth, i|\cf2  synth.set(\cf5 \\dns\cf2 , val[i]) \});\
+				rate.wait;\
+			\});\
+					\
+		\}).play;				\
+		\
+		8.wait;				\
+\
+		~fx.setGlobal(\cf5 \\transz\cf2 , -25);\
+		~fx.setGlobal(\cf5 \\rotX\cf2 , 0);\
+		~fx.setGlobal(\cf5 \\rotY\cf2 , 0);\
+		~fx.setGlobal(\cf5 \\torZ\cf2 , 1);\
+		~fx.setGlobal(\cf5 \\add\cf2 , 0.2);\
+		~fx.setGlobal(\cf5 \\clear\cf2 , 0.2);\
+		~fx.sendCurrentSettings;\
+\
+		4.wait;\
+		\
+		~fx.setGlobal(\cf5 \\add\cf2 , 0.85);\
+		~fx.setGlobal(\cf5 \\clear\cf2 , 0.85);\
+		~fx.sendCurrentSettings;\
+		\
+		2.wait;\
+		\
+		~oglmap = (\
+			add: \cf3 CosineWarp\cf2 (\cf3 ControlSpec\cf2 (0.05, 0.95)),\
+			angle: \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (-0.4, 0.4)),\
+			clear: \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.9, 0.6)),\
+			rotX: \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0, 1)),\
+			rotY: \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0, 1)),\
+			rotZ: \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0, 1)),\
+			transx: \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (4, -4)),\
+			transy: \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (4, -4)),\
+			transz: \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (-10, -24))\
+		);\
+		\
+		~oglpat = \cf3 Pwrand\cf2 (~oglmap.keys(\cf3 Array\cf2 ).sort, [5, 5, 1, 3, 3, 3, 1, 1, 5].normalizeSum, \cf3 inf\cf2 ).asStream;\
+		\
+		~fx.addPhaseFunction(\cf5 \\zone5_ogl\cf2 , \{\cf3 |phase|\cf2 \
+			\cf3 var\cf2  key;\
+			if (phase == 0)\
+			\{\
+				key = ~oglpat.next;\
+				~fx.setGlobal(key, ~oglmap[key].map(~fx.invalues.avgstate));\
+				~fx.sendCurrentSettings\
+			\}\
+		\});\
+		\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  ini, fin, val, time = 60, rate = 0.1, step;\
+			ini = val = \cf3 Array\cf2 .geom(8, 1 / 48, 8 / 5).round(1/24);\
+			fin = (1 / 24 ! 8);\
+			step = fin - ini / (time / rate);\
+			(time / rate).do(\{\cf3 |i|\cf2 \
+				val = val + step;\
+				~synths.do(\{\cf3 |synth, i|\cf2  synth.set(\cf5 \\wsz\cf2 , val[i]) \});\
+				rate.wait;\
+			\});\
+					\
+		\}).play;		\
+		\
+		~dstmap = (\
+			eamp: \cf3 ControlSpec\cf2 (0.01, 0.1),\
+			amp: \cf3 ControlSpec\cf2 (5.0, 20.0),\
+			dur: \cf3 ControlSpec\cf2 (3, 6, step: 1),\
+			wrp: \cf3 ControlSpec\cf2 (0.005, 0.1),\
+			frq: \cf3 ControlSpec\cf2 (0.125, 2, step: 0.125),\
+			wsz: \cf3 ControlSpec\cf2 (0.05, 0.2, step: 0.05),\
+			dns: \cf3 ControlSpec\cf2 (2, 8, step: 2),\
+			bzf: \cf3 ControlSpec\cf2 (6, 24, step: 4),\
+			dep: \cf3 ControlSpec\cf2 (0.0, 0.5, step: 0.1),\
+			pwsz: \cf3 ControlSpec\cf2 (0.01, 0.2),\
+			angs: \cf3 ControlSpec\cf2 (-pi, pi),\
+			ange: \cf3 ControlSpec\cf2 (pi, -pi)\
+		);\
+		\
+		~fx.addPhaseFunction(\cf5 \\distort\cf2 , \{\cf3 |phase|\cf2 \
+			if (phase == (~fx.visualdict.globals[\cf5 \\phase\cf2 ] / 2))\
+			\{\
+				\cf3 Synth\cf2 .tail(~agrp, \cf5 \\zone5_distort\cf2 , [\cf5 \\out\cf2 , ~abus, \cf5 \\efx\cf2 , ~rbus, \cf5 \\eamp\cf2 , ~dstmap[\cf5 \\eamp\cf2 ].map(~fx.invalues.avgstate), \
+					\cf5 \\buf\cf2 , ~nimbufs.wchoose([1, 3, 2, 1].normalizeSum), \cf5 \\amp\cf2 , ~dstmap[\cf5 \\amp\cf2 ].map(~fx.invalues.stddev), \
+					\cf5 \\dur\cf2 , ~dstmap[\cf5 \\dur\cf2 ].map(~fx.invalues.avglbf), \cf5 \\wrp\cf2 , ~dstmap[\cf5 \\wrp\cf2 ].map(~fx.invalues.avgrbf), \
+					\cf5 \\frq\cf2 , ~dstmap[\cf5 \\frq\cf2 ].map(~fx.invalues.avgrbb), \cf5 \\wsz\cf2 , ~dstmap[\cf5 \\wsz\cf2 ].map(~fx.invalues.avglbb), \
+					\cf5 \\dns\cf2 , ~dstmap[\cf5 \\dns\cf2 ].map(~fx.invalues.avgltf), \cf5 \\bzf\cf2 , ~dstmap[\cf5 \\bzf\cf2 ].map(~fx.invalues.avgrtf), \
+					\cf5 \\dep\cf2 , ~dstmap[\cf5 \\dep\cf2 ].map(~fx.invalues.avgrtb), \cf5 \\pwsz\cf2 , ~dstmap[\cf5 \\pwsz\cf2 ].map(~fx.invalues.avgltb)\
+				])\
+				.setn(\cf5 \\pch\cf2 , [35/36, 1, 36/35, 1] )\
+				.setn(\cf5 \\del\cf2 , \cf3 Array\cf2 .geom(4, pi/100, 8/5))\
+				.setn(\cf5 \\xang\cf2 , \cf3 Env\cf2 ([~dstmap[\cf5 \\angs\cf2 ].map(~fx.invalues.states[0]), ~dstmap[\cf5 \\ange\cf2 ].map(~fx.invalues.states[63])], \
+					[1], \cf5 \\sine\cf2 ))\
+				.setn(\cf5 \\yang\cf2 , \cf3 Env\cf2 ([~dstmap[\cf5 \\angs\cf2 ].map(~fx.invalues.states[8]), ~dstmap[\cf5 \\ange\cf2 ].map(~fx.invalues.states[55])], \
+					[1], \cf5 \\sine\cf2 ))\
+				.setn(\cf5 \\zang\cf2 , \cf3 Env\cf2 ([~dstmap[\cf5 \\angs\cf2 ].map(~fx.invalues.states[16]), ~dstmap[\cf5 \\ange\cf2 ].map(~fx.invalues.states[47])], \
+					[1], \cf5 \\sine\cf2 ))\
+			\}\
+		\});\
+\
+		90.wait;\
+		\
+		~fx.sendReset(0, 0, 1, 6, 6, 6, 4, 4, 4, *~fx.weightPresets.rand.value);\
+\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  ini, fin, val, time = 60, rate = 0.1, step;\
+			ini = val = (1 / 24 ! 8);\
+			fin = \cf3 Array\cf2 .geom(8, 1 / 72, 5 / 6).round(1/240);\
+			step = fin - ini / (time / rate);\
+			(time / rate).do(\{\cf3 |i|\cf2 \
+				val = val + step;\
+				~synths.do(\{\cf3 |synth, i|\cf2  synth.set(\cf5 \\wsz\cf2 , val[i]) \});\
+				rate.wait;\
+			\});\
+					\
+		\}).play;				\
+		\
+		60.wait;\
+		\
+		~fx.removePhaseFunction(\cf5 \\distort\cf2 );\
+		\
+		~fx.sendReset(0, 0, 1, 6, 6, 6, 4, 4, 4, *~fx.weightPresets.equal.value);\
+		\
+		~fx.removePhaseFunction(\cf5 \\zone5_ogl\cf2 );\
+		\
+		~fx.sendPatchCmd(\cf5 \\radial\cf2 , \cf5 \\alphahi\cf2 , 1, 0, 60);\
+\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  ini, fin, val, time = 60, rate = 0.1, step;\
+			ini = val = [0.5, 3.0];\
+			fin = [0.001, 0.001];\
+			step = fin - ini / (time / rate);\
+			(time / rate).do(\{\cf3 |i|\cf2 \
+				val = val + step;\
+				~map[\cf5 \\amp\cf2 ].spec.minval = val[0];\
+				~map[\cf5 \\amp\cf2 ].spec.maxval = val[1];\
+				rate.wait;\
+			\});\
+		\}).play;\
+\
+		60.wait;\
+		\
+		~fx.removeStatesFunction(\cf5 \\zone5\cf2 );\
+				\
+		~fx.removePhaseFunction(\cf5 \\zone5\cf2 );\
+		\
+		~fx.deactivatePatch(\cf5 \\radial\cf2 , 0);\
+		\
+		~synths.do(\cf3 _\cf2 .free);\
+		\
+		~synths = \cf3 nil\cf2 ;\
+		\
+		20.wait;\
+		\
 		~fx.removeAllStatesFunctions;\
 		~fx.removeAllTriggerFunctions;\
 		~fx.removeAllGlobalsFunctions;\
 		\
 		~fx.deactivatePatch(\cf5 \\ringz\cf2 );\
-						\
+		\
 		\cf4 "MAIN FINISHED!"\cf2 .postln;\
 		(\cf4 "time elapsed: "\cf2  ++ (\cf3 Date\cf2 .getDate.bootSeconds - ~timer).asString).postln;\
 		\
@@ -163,7 +577,7 @@
 		\
 	\}).play\
 	\
-)\
+	)\
 \
 \
 ~fx.invalues.states.size}

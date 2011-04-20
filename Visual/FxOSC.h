@@ -26,6 +26,9 @@ int cell_handler(const char *path, const char *types, lo_arg **argv, int argc,
 int poll_handler(const char *path, const char *types, lo_arg **argv, int argc,
 	void *data, void *user_data);
 
+int freeze_handler(const char *path, const char *types, lo_arg **argv, int argc,
+	void *data, void *user_data);
+
 void error(int num, const char *m, const char *path);
 
 int quit_handler(const char *path, const char *types, lo_arg **argv, int argc, 
@@ -47,6 +50,7 @@ int quit_handler(const char *path, const char *types, lo_arg **argv, int argc,
 - (void) sendMessage: (float*) states: (int) size;
 - (void) sendTrigger: (int) x: (int) y: (int) z: (float) phase;
 - (void) sendRenew;
+- (void) sendPhase: (int) phase;
 - (void) startListener;
 - (void) stopListener;
 - (float) getAlpha;
@@ -77,6 +81,8 @@ int quit_handler(const char *path, const char *types, lo_arg **argv, int argc,
 - (float) getTransZ;
 
 - (int) getFrameRate;
+- (int) getBufferRate;
+- (int) getFreeze;
 
 - (float) add;
 

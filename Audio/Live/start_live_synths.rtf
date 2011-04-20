@@ -27,13 +27,26 @@ if (~stereoOutput)\
 ~decspec = \cf3 ControlSpec\cf2 (0.001, 1.0, \cf4 \\exp\cf2 , default: 1.0 );\
 \
 ~rparams = (\
-	\cf4 \\rtime\cf2 : \cf3 ControlSpec\cf2 (1.0, 20.0, \cf4 \\lin\cf2 , default: 3.0 ),\
-	\cf4 \\early\cf2 : \cf3 ControlSpec\cf2 (0.0, 1.0, \cf4 \\lin\cf2 , default: 0.8 ),\
-	\cf4 \\tail\cf2 : \cf3 ControlSpec\cf2 (0.0, 2.0, \cf4 \\lin\cf2 , default: 1.5 ),\
-	\cf4 \\amp\cf2 : \cf3 ControlSpec\cf2 (0.001, 1.0, \cf4 \\exp\cf2 , default: 0.75 ),\
-	\cf4 \\aamp\cf2 : \cf3 ControlSpec\cf2 (0.001, 1.0, \cf4 \\exp\cf2 , default: 0.5 ),\
-	\cf4 \\fbamp\cf2 : \cf3 ControlSpec\cf2 (0.0, 0.2, \cf4 \\lin\cf2 , default: 0.01)\
+	rtime: \cf3 ControlSpec\cf2 (1.0, 20.0, \cf4 \\lin\cf2 , default: 3.0 ),\
+	early: \cf3 ControlSpec\cf2 (0.0, 1.0, \cf4 \\lin\cf2 , default: 0.8 ),\
+	tail: \cf3 ControlSpec\cf2 (0.0, 2.0, \cf4 \\lin\cf2 , default: 1.5 ),\
+	eamp: \cf3 ControlSpec\cf2 (0.001, 1.0, \cf4 \\exp\cf2 , default: 0.75 ),\
+	aamp: \cf3 ControlSpec\cf2 (0.001, 1.0, \cf4 \\exp\cf2 , default: 0.5 ),\
+	fbamp: \cf3 ControlSpec\cf2 (0.0, 0.2, \cf4 \\lin\cf2 , default: 0.01)\
 );\
+\
+~rparamorder = #[aamp, rtime, fbamp, tail, eamp, early];\
+\
+~oscmap = (\
+	\cf4 'aamp'\cf2 : \cf4 '/fx/1/rev'\cf2 ,\
+	\cf4 'rtime'\cf2 : \cf4 '/fx/1/rtime'\cf2 ,\
+	\cf4 'fbamp'\cf2 : \cf4 '/fx/1/fb'\cf2 ,\
+	\cf4 'tail'\cf2 : \cf4 '/fx/1/tail'\cf2 ,\
+	\cf4 'eamp'\cf2 : \cf4 '/fx/1/efx'\cf2 ,\
+	\cf4 'early'\cf2 : \cf4 '/fx/1/early'\cf2 \
+);\
+\
+~sliders = ();\
 \
 ~gwin = \cf3 Window\cf2 (\cf5 "..||||.."\cf2 , \cf3 Rect\cf2 (40, 700, 320, 230)).alpha_(0.95).front;\
 ~gwin.background = \cf3 Color\cf2 .black;\
@@ -41,17 +54,20 @@ if (~stereoOutput)\
 \
 ~gwin.view.decorator = \cf3 FlowLayout\cf2 (\cf3 Rect\cf2 (100, 700, 320, 200));\
 \
-\cf3 SmoothSlider\cf2 (~gwin, \cf3 Rect\cf2 (width: 40, height: 180))\
+~sliders[\cf4 'main'\cf2 ] = \cf3 SmoothSlider\cf2 (~gwin, \cf3 Rect\cf2 (width: 40, height: 180))\
 	.value_(~decspec.unmap(~decspec.default))\
 	.action_(\{\cf3 |sl|\cf2 \
-		~decode.set(\cf4 \\amp\cf2 , ~decspec.map(sl.value))\
+		~decode.set(\cf4 \\amp\cf2 , ~decspec.map(sl.value));\
+		if (~touchOSC.notNil) \{ ~touchOSC.setControl(\cf4 '/fx/1/main'\cf2 , sl.value ) \};\
 	\});\
 	\
-~rparams.keysValuesDo(\{\cf3 |key, spec, i|\cf2 \
-	\cf3 SmoothSlider\cf2 (~gwin, \cf3 Rect\cf2 (width: 40, height: 180))\
+~rparamorder.do(\{\cf3 |key, i|\cf2 \
+	\cf3 var\cf2  spec = ~rparams[key];\
+	~sliders[key] = \cf3 SmoothSlider\cf2 (~gwin, \cf3 Rect\cf2 (width: 40, height: 180))\
 		.value_(spec.unmap(spec.default))\
 		.action_(\{\cf3 |sl|\cf2 \
-			~rev.set(key, spec.map(sl.value))\
+			~rev.set(key, spec.map(sl.value));\
+			if (~touchOSC.notNil) \{ ~touchOSC.setControl(~oscmap[key], sl.value) \};\
 		\});\
 \});\
 \
@@ -64,13 +80,34 @@ if (~stereoOutput)\
 	.stringColor_(\cf3 Color\cf2 .new255(255, 140, 0))\
 	.string_(\cf5 "main"\cf2 );\
 	\
-~rparams.keysValuesDo(\{\cf3 |key, spec, i|\cf2 \
+~rparamorder.do(\{\cf3 |key, i|\cf2 \
 	\cf3 StaticText\cf2 (~lv, \cf3 Rect\cf2 (width: 40, height: 20))\
 		.font_(~fn)\
 		.align_(\cf4 \\center\cf2 )\
 		.stringColor_(\cf3 Color\cf2 .new255(255, 140, 0))\
 		.string_(key.asString)\
 \});\
+\
+if (~touchOSC.notNil) \{\
+\
+	~touchOSC.addControl(\cf4 '/fx/1/main'\cf2 , \{\cf3 |ti, re, ms|\cf2  \
+		~sliders[\cf4 'main'\cf2 ].value = ms[1];\
+		~sliders[\cf4 'main'\cf2 ].doAction;\
+	\});\
+	\
+	~touchOSC.setControl(\cf4 '/fx/1/main'\cf2 , ~decspec.unmap(~decspec.default));\
+	\
+	~oscmap.keysValuesDo(\{\cf3 |sldName, oscName|\cf2 \
+		\cf3 var\cf2  spec = ~rparams[sldName];\
+		~touchOSC.addControl(oscName, \{\cf3 |ti, re, ms|\cf2   \
+			~sliders[sldName].value = ms[1];\
+			~sliders[sldName].doAction;\
+		\});\
+		\
+		~touchOSC.setControl(oscName, spec.unmap(spec.default));\
+	\});\
+	\
+\}\
 \
 \
 }
