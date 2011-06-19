@@ -163,7 +163,10 @@
 	{
 		Habitat * habitat;
 		NSMutableArray * seed;
+		NSMutableArray * pollInds;
 		int radius;
+		
+		pollInds = (NSMutableArray*)[world pollIndices];
 
 		[world release];
 		
@@ -188,6 +191,7 @@
 		}
 		weights = [oscer getWeights];
 		world = [[[FxWorld new] init: WORLD_SIZE : habitat : seed : [weights retain]] retain];
+		[world setPollIndices: pollInds];
 		[habitat release];
 		[seed release];
 

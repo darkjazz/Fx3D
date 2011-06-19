@@ -124,48 +124,111 @@
 	scale = [[patches objectForKey: @"kanji"] param ];
 	
 	[self setCommon];
+		
+	if (indexk == 0 || indexk == 15)
+	{
+		
+		left = indexi * size -halfscreen + (size * 0.5f) + (size * 0.5f * cosf(state * (2.0f * pi)));
+		bottom = indexj * size - halfscreen + (size * 0.5f) + (size * 0.5f * sinf(state * (2.0f * pi)));
+		front = (float)indexk * size - halfscreen;
+		
+		ex = size * cosf( (1.0 - state) * (2.0 * pi));
+		ey = size * sinf( (1.0 - state) * (2.0 * pi));
+		
+		[self drawLine:left : bottom : front : left + ex : bottom + ey : front : state * 5.0f];		
+	}
 	
-	left = (float)indexi * size - halfscreen;
-	bottom = (float)indexj * size - halfscreen;
-	front = (float)indexk * size - halfscreen;
-	width = height = depth = state * size * scale;
-	stx = randfloat(left + (0.25f * width), left + (width * 0.75f));
-	sty = randfloat(bottom + (0.25f * height), bottom + (height * 0.75f)); 
-	stz = randfloat(front + (0.25f * depth), front + (0.75f * depth));
-/*		ex = randfloat(left, left + width);
-	ey = randfloat(bottom, bottom + height);
-	ez = randfloat(front, front + depth); */
-	ex = stx + randfloat(-1.0f, 1.0f) * width;
-	ey = sty + randfloat(-1.0f, 1.0f) * height;
-	ez = stz + randfloat(-1.0f, 1.0f) * depth;
-	[self drawLine: stx: sty: stz: ex: ey: ez: lineWidth];
+	if (indexi == 0 || indexi == 15)
+	{
+		left = (float)indexi * size - halfscreen;
+		bottom = indexj * size - halfscreen + (size * 0.5f) + (size * 0.5f * cosf(state * (2.0f * pi)));
+		front = indexk * size - halfscreen + (size * 0.5f) + (size * 0.5f * sinf(state * (2.0f * pi)));
+		
+		ex = size * cosf( (1.0 - state) * (2.0 * pi));
+		ey = size * sinf( (1.0 - state) * (2.0 * pi));
+		
+		[self drawLine:left : bottom : front : left : bottom + ex : front + ey : state * 5.0f];				
+	}
+	
+	if (indexj == 0 || indexj == 15)
+	{
+		bottom = (float)indexj * size - halfscreen;
+		front = indexk * size - halfscreen + (size * 0.5f) + (size * 0.5f * cosf(state * (2.0f * pi)));
+		left = indexi * size - halfscreen + (size * 0.5f) + (size * 0.5f * sinf(state * (2.0f * pi)));
+		
+		ex = size * cosf( (1.0 - state) * (2.0 * pi));
+		ey = size * sinf( (1.0 - state) * (2.0 * pi));
+		
+		[self drawLine:left : bottom : front : left + ey : bottom : front + ex : state * 5.0f];				
+	}
+	
+	
+//	left = (float)indexi * size - halfscreen;
+//	bottom = (float)indexj * size - halfscreen;
+//	front = (float)indexk * size - halfscreen;
+//	width = height = depth = state * size * scale;
+//	stx = randfloat(left + (0.25f * width), left + (width * 0.75f));
+//	sty = randfloat(bottom + (0.25f * height), bottom + (height * 0.75f)); 
+//	stz = randfloat(front + (0.25f * depth), front + (0.75f * depth));
+///*		ex = randfloat(left, left + width);
+//	ey = randfloat(bottom, bottom + height);
+//	ez = randfloat(front, front + depth); */
+//	ex = stx + randfloat(-1.0f, 1.0f) * width;
+//	ey = sty + randfloat(-1.0f, 1.0f) * height;
+//	ez = stz + randfloat(-1.0f, 1.0f) * depth;
+//	[self drawLine: stx: sty: stz: ex: ey: ez: lineWidth];
 }
 
 - (void) ringz {
 
 	float prm;
+	bool draw;
+	
+	draw = false;
 	
 	[self setCommon];
-	
-	left = (float)indexi * size - halfscreen + size - (size * 2.0f * state);
-	bottom = (float)indexj * size - halfscreen + size - (size * 2.0f * state);
-	front = (float)indexk * size - halfscreen + size - (size * 2.0f * state);
-	
-	width = height = depth = size * 4.0f * state;
-	
-	prm = [[patches objectForKey: @"ringz"] param ];
-	
-	if (prm != 0)
-	{
-		left *= map(state, -1.0f - prm, 1.0f + prm); 
-		bottom *= map(state, -1.0f - prm, 1.0f + prm);
-		front *= map(state, -1.0f - prm, 1.0f + prm);
-	}
 		
-	if (state > 0.25f) [self strokeCube];
-	else [self fillCube];
+	prm = map([[patches objectForKey: @"ringz"] param ], 0.5f, 4.0f);
 	
+	left = (float)indexi * size - halfscreen + size - (size * (prm / 2.0f) * state);
+	bottom = (float)indexj * size - halfscreen + size - (size * (prm / 2.0f) * state);
+	front = (float)indexk * size - halfscreen + size - (size * (prm / 2.0f) * state);
+	
+	width = height = depth = size * prm * state;
+	width *= 1.3f;
+	
+//	prm = [[patches objectForKey: @"ringz"] param ];
+//		
+//	if (prm != 0)
+//	{
+//		left *= map(state, -1.0f - prm, 1.0f + prm); 
+//		bottom *= map(state, -1.0f - prm, 1.0f + prm);
+//		front *= map(state, -1.0f - prm, 1.0f + prm);
+//	}
+	
+	if (
+		((indexi < 8 && indexj < 8) || (indexi >= 8 && indexj >= 8)) && 
+		((!isEven(indexi) || isEven(indexj)) && (isEven(indexi) || !isEven(indexj)))
+	)
+	{
+		draw = true;
+	}
+	
+	if (
+		((indexi >= 8 && indexj < 8) || (indexi < 8 && indexj >= 8)) && 
+		((isEven(indexi) || isEven(indexj)) && (!isEven(indexi) || !isEven(indexj)))
+	)
+	{
+		draw = true;
+	}
+	if (indexj > 5 && indexj < 10 && indexi > 5 && indexi < 10) { draw = false; }
+	if (draw)
+	{
+		if (state > 0.25f) [self strokeCube];
+		else [self fillCube];
+	}
 }
+
 - (void) wobble {
 	
 	float w, n, lineWidth, prm, scale;
@@ -268,7 +331,7 @@
 	
 	resize = [[patches objectForKey: @"grid"] param ];
 
-	if (!isEven(indexi) && isEven(indexj))
+	if (indexk == worldSize / 2)
 	{
 
 		x = (resize * size) * cos((state + (indexj + 1 / 40)) * (2 * pi));
@@ -283,7 +346,7 @@
 		[self drawPoint: left : bottom : front : 2.0f];	
 	}
 
-	if (!isEven(indexj) && isEven(indexk))
+	if (indexi == worldSize / 2)
 	{
 		
 		x = (resize * size) * cos((state + (indexj + 1 / 40)) * (2 * pi));
@@ -298,7 +361,7 @@
 		[self drawPoint: left : bottom : front : 2.0f];	
 	}
 
-	if (!isEven(indexk) && isEven(indexi))
+	if (indexj == worldSize / 2)
 	{
 		
 		x = (resize * size) * cos((state + (indexj + 1 / 40)) * (2 * pi));

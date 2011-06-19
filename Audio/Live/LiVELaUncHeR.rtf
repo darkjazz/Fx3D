@@ -1,39 +1,41 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
 {\fonttbl\f0\fnil\fcharset238 Inconsolata;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
-\red191\green0\blue0;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red96\green96\blue96;\red191\green0\blue0;
+}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs24 \cf2 (\
-~loadAts = \cf3 true\cf2 ;\
-~localDecoder = \cf3 true\cf2 ;\
-~stereoOutput = \cf3 false\cf2 ;\
-~livepath = \cf4 "/Users/alo/Development/Fx3D/Audio/Live/"\cf2 ;\
-\cf5 //~touchOSC = TouchOSC(NetAddr("192.168.0.101", 9000));\cf2 \
-~touchOSC = \cf3 TouchOSC\cf2 (\cf3 NetAddr\cf2 (\cf4 "169.254.59.110"\cf2 , 9000));\
-(~livepath ++ \cf4 "initiate_live.rtf"\cf2 ).load;\
+\f0\fs24 \cf0 (\
+~dEBUG = \cf2 true\cf0 ;\
+\
+~loadAts = \cf2 true\cf0 ;\
+~localDecoder = \cf2 true\cf0 ;\
+~stereoOutput = \cf2 true\cf0 ;\
+~livepath = \cf3 "/Users/alo/Development/Fx3D/Audio/Live/"\cf0 ;\
+\cf4 //~touchOSC = TouchOSC(NetAddr("192.168.0.101", 9000));\cf0 \
+~touchOSC = \cf2 TouchOSC\cf0 (\cf2 NetAddr\cf0 (\cf3 "169.254.59.110"\cf0 , 9000));\
+(~livepath ++ \cf3 "initiate_live.rtf"\cf0 ).load;\
 )\
 \
 \
 (\
-\cf3 Routine\cf2 (\{	\
+\cf2 Routine\cf0 (\{	\
 		\
 	~numZones = 6;\
 	\
-	~fx.startFx(\cf3 true\cf2 );\
+	~fx.startFx(~dEBUG);\
 	\
-	~faderwarp = \cf3 DbFaderWarp\cf2 ();\
+	~faderwarp = \cf2 DbFaderWarp\cf0 ();\
 	\
-	(~livepath ++ \cf4 "synthdefs.rtf"\cf2 ).load;\
+	(~livepath ++ \cf3 "synthdefs.rtf"\cf0 ).load;\
 		\
 	0.5.wait;\
 	\
-	~nano = \cf3 NanoKONTROL\cf2 ();\
+	~nano = \cf2 NanoKONTROL\cf0 ();\
 	\
 	~resetNano = \{\
-		~nano.knobs[0].do(\cf3 _\cf2 .action_(\{\}));\
-		~nano.buttons[0].do(\cf3 _\cf2 .action_(\{\}));\
-		~nano.sliders[0].do(\cf3 _\cf2 .action_(\{\}));\
+		~nano.knobs[0].do(\cf2 _\cf0 .action_(\{\}));\
+		~nano.buttons[0].do(\cf2 _\cf0 .action_(\{\}));\
+		~nano.sliders[0].do(\cf2 _\cf0 .action_(\{\}));\
 	\};\
 	\
 	0.25.wait;\
@@ -45,54 +47,66 @@
 	~fx.addTriggerResponder;\
 	~fx.addPhaseResponder;\
 	\
-	~fx.perfGui.post(\cf4 "performance gui intialized"\cf2 );\
+	~fx.perfGui.post(\cf3 "performance gui intialized"\cf0 );\
 	\
 	0.25.wait;\
 	\
-	~fx.perfGui.assignPanel(0, (~livepath ++ \cf4 "panels/zone0.rtf"\cf2 ).load);\
+	~fx.perfGui.assignPanel(0, (~livepath ++ \cf3 "panels/zone0.rtf"\cf0 ).load);\
 	\
-	~fx.perfGui.post(\cf4 "zone 0 initialized"\cf2 );\
+	~fx.perfGui.post(\cf3 "zone 0 initialized"\cf0 );\
 	\
 	0.25.wait;\
 	\
-	~fx.perfGui.assignPanel(1, (~livepath ++ \cf4 "panels/zone1.rtf"\cf2 ).load);\
+	~fx.perfGui.assignPanel(1, (~livepath ++ \cf3 "panels/zone1.rtf"\cf0 ).load);\
 \
-	~fx.perfGui.post(\cf4 "zone 1 initialized"\cf2 );\
+	~fx.perfGui.post(\cf3 "zone 1 initialized"\cf0 );\
 	\
 	0.25.wait;\
 	\
-	~fx.perfGui.assignPanel(2, (~livepath ++ \cf4 "panels/zone2.rtf"\cf2 ).load);\
+	~fx.perfGui.assignPanel(2, (~livepath ++ \cf3 "panels/zone2.rtf"\cf0 ).load);\
 \
-	~fx.perfGui.post(\cf4 "zone 2 initialized"\cf2 );\
+	~fx.perfGui.post(\cf3 "zone 2 initialized"\cf0 );\
 		\
 	0.25.wait;\
 \
-	~fx.perfGui.assignPanel(5, (~livepath ++ \cf4 "panels/zone5.rtf"\cf2 ).load);\
+	~fx.perfGui.assignPanel(3, (~livepath ++ \cf3 "panels/zone3.rtf"\cf0 ).load);\
 \
-	~fx.perfGui.post(\cf4 "zone 5 initialized"\cf2 );\
+	~fx.perfGui.post(\cf3 "zone 3 initialized"\cf0 );\
+		\
+	0.25.wait;\
+\
+	~fx.perfGui.assignPanel(4, (~livepath ++ \cf3 "panels/zone4.rtf"\cf0 ).load);\
+\
+	~fx.perfGui.post(\cf3 "zone 4 initialized"\cf0 );\
+		\
+	0.25.wait;\
+\
+	~fx.perfGui.assignPanel(5, (~livepath ++ \cf3 "panels/zone5.rtf"\cf0 ).load);\
+\
+	~fx.perfGui.post(\cf3 "zone 5 initialized"\cf0 );\
 		\
 	0.25.wait;\
 		\
-	~numZones.do(\{\cf3 |i|\cf2 \
-		~touchOSC.addControl((\cf4 "/fx/2/zone"\cf2  ++ i.asString).asSymbol, \{\cf3 |ti, re, ms|\cf2 \
+	~numZones.do(\{\cf2 |i|\cf0 \
+		~touchOSC.addControl((\cf3 "/fx/2/zone"\cf0  ++ i.asString).asSymbol, \{\cf2 |ti, re, ms|\cf0 \
 			\{\
 				~fx.perfGui.zPanel.children[i].value = ms[1];\
 				~fx.perfGui.zPanel.children[i].doAction;\
 			\}.defer;\
 			if (ms[1] == 1)\
 			\{\
-				~numZones.do(\{\cf3 |other|\cf2 \
+				~numZones.do(\{\cf2 |other|\cf0 \
 					if (other != i) \{ \
-						~touchOSC.setControl((\cf4 "/fx/2/zone"\cf2  ++ other.asString).asSymbol, 0) \
+						~touchOSC.setControl((\cf3 "/fx/2/zone"\cf0  ++ other.asString).asSymbol, 0) \
 					\}\
 				\})\
 			\}\
 		\})\
 	\});\
 		\
-	\cf3 SystemClock\cf2 .sched(2, \{ ~fx.perfGui.queryServer(~serv); 1 \});\
+	\cf2 SystemClock\cf0 .sched(2, \{ ~fx.perfGui.queryServer(~serv); 1 \});\
 		\
-\}).play(\cf3 AppClock\cf2 )\
+\}).play(\cf2 AppClock\cf0 )\
 \
 )\
 \
