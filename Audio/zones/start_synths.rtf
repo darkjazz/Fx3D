@@ -4,27 +4,12 @@
 }
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs24 \cf2 ~abus = \cf3 Bus\cf2 .audio(~serv, 4);\
-~rbus = \cf3 Bus\cf2 .audio(~serv);\
+\f0\fs24 \cf2 ~rbus = \cf3 Bus\cf2 .audio(~serv);\
 ~rout = \cf3 Bus\cf2 .audio(~serv, 4);\
 \
 ~agrp = \cf3 Group\cf2 ();\
 ~egrp = \cf3 Group\cf2 .after(~agrp);\
 \
 ~rev = \cf3 Synth\cf2 .tail(~egrp, \cf4 \\verb\cf2 , [\cf4 \\out\cf2 , ~rout, \cf4 \\in\cf2 , ~rbus, \cf4 \\rtime\cf2 , 4, \cf4 \\damp\cf2 , 0.5, \
-	\cf4 \\inbw\cf2 , 0.5, \cf4 \\spr\cf2 , 20, \cf4 \\dry\cf2 , 0.0, \cf4 \\early\cf2 , 0.8, \cf4 \\tail\cf2 , 1.5, \cf4 \\amp\cf2 , 0.75, \cf4 \\gamp\cf2 , 0.2]);	\
-if (~stereoOutput)\
-\{\
-	~decode = \cf3 Synth\cf2 .after(~rev, \cf4 \\btoUHJ\cf2 , [\cf4 \\bus\cf2 , ~abus, \cf4 \\amp\cf2 , 1.0]);\
-	\
-\}\
-\{\
-	if (~localDecoder)\
-	\{\
-		~decode = \cf3 Synth\cf2 .after(~rev, \cf4 \\bf2decode\cf2 , [\cf4 \\bus\cf2 , ~abus, \cf4 \\amp\cf2 , 1.0])\
-	\}\
-	\{\
-		~decode = \cf3 Synth\cf2 .after(~rev, \cf4 \\bfcollect\cf2 , [\cf4 \\bus\cf2 , ~abus, \cf4 \\amp\cf2 , 1.0])\
-	\}\
-\};\
-}
+	\cf4 \\inbw\cf2 , 0.5, \cf4 \\spr\cf2 , 20, \cf4 \\dry\cf2 , 0.0, \cf4 \\early\cf2 , 0.8, \cf4 \\tail\cf2 , 1.5, \cf4 \\amp\cf2 , 0, \cf4 \\gamp\cf2 , 0]);	\
+~decoder.start(~egrp, \cf4 \\addToTail\cf2 );}

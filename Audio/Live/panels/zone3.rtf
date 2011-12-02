@@ -1,0 +1,618 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+\red96\green96\blue96;\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf2 \{\cf3 |panel, gui|\cf2 \
+	\cf3 var\cf2  colors, fonts, mainbuttons, button, px, py, nanosliders, slideractions, knobactions; \
+	\cf3 var\cf2  buttonactions, buttonactions2, ampctrselect;\
+	\cf3 var\cf2  nanobuttons, nanomap, nanobuttons2;\
+	colors = (\
+		\cf4 \\blue\cf2 : \cf3 Color\cf2 .new255(28, 134, 238),\
+		\cf4 \\orange\cf2 : \cf3 Color\cf2 .new255(184, 134, 11),\
+		\cf4 \\steel\cf2 : \cf3 Color\cf2 .new255(4, 50, 89)\
+	);\
+	fonts = (\
+		\cf4 \\lucida9\cf2 : \cf3 Font\cf2 (\cf5 "Lucida Grande"\cf2 , 9),\
+		\cf4 \\lucida11\cf2 : \cf3 Font\cf2 (\cf5 "Lucida Grande"\cf2 , 11),\
+		\cf4 \\skia\cf2 : \cf3 Font\cf2 (\cf5 "Skia"\cf2 , 9) \
+	);\
+\
+	px = 5;\
+	py = 30;\
+	button = \cf3 Rect\cf2 (px, py, 75, 25);\
+\
+	mainbuttons = \cf3 Array\cf2 .newClear(6);\
+	nanosliders = \cf3 Array\cf2 .newClear(9);\
+	nanobuttons = \cf3 Array\cf2 .newClear(9);\
+	nanobuttons2 = \cf3 Array\cf2 .newClear(9);\
+	\
+	mainbuttons.put(0, \
+		\cf3 RoundButton\cf2 (panel, button) \cf6 // nano: <<\cf2 \
+			.states_([[\cf5 "init gl"\cf2 , colors.orange, colors.steel]])\
+			.font_(fonts.lucida9)\
+			.action_(\{\cf3 |btn|\cf2 \
+				\cf3 Routine\cf2 (\{\
+					\
+					1.wait;\
+					\
+					~fx.visualdict.globals[\cf4 \\alpha\cf2 ] = 1.0;\
+					~fx.visualdict.globals[\cf4 \\clear\cf2 ] = 0.05;\
+					~fx.visualdict.globals[\cf4 \\add\cf2 ] = 0.96;\
+					~fx.visualdict.globals[\cf4 \\transx\cf2 ] = 0.0;\
+					~fx.visualdict.globals[\cf4 \\transy\cf2 ] = 0.0;\
+					~fx.visualdict.globals[\cf4 \\transz\cf2 ] = -20.0;\
+					~fx.visualdict.globals[\cf4 \\angle\cf2 ] = -0.25;\
+					~fx.visualdict.globals[\cf4 \\rotX\cf2 ] = 0.0;\
+					~fx.visualdict.globals[\cf4 \\rotY\cf2 ] = 1.0;\
+					~fx.visualdict.globals[\cf4 \\rotZ\cf2 ] = 0.0;\
+					~fx.visualdict.globals[\cf4 \\frame\cf2 ] = 4;\
+					\
+					~fx.sendCurrentSettings;\
+\
+					~fx.wait(2);\
+					~fx.sendPollIndices(~fx.getPollIndices(0));\
+					~fx.wait(2);\
+					~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.equal);\
+					~fx.wait(2);\
+					~fx.sendPatchCmd(\cf4 \\blinds\cf2 , \cf4 \\param\cf2 , 0, 0.25, 0);\
+					~fx.wait(2);\
+					~fx.activatePatch(\cf4 \\grid\cf2 , 0);\
+					\
+					gui.post(\cf5 "visual parameters initialized"\cf2 );\
+					\
+				\}).play;\
+			\})\
+	);\
+\
+	mainbuttons.put(1,\
+		\cf3 RoundButton\cf2 (panel, button.copy.left_(px=px+85)) \
+			.states_([[\cf5 "synths OFF"\cf2 , colors.orange, colors.steel], \
+				[\cf5 "synths ON"\cf2 , colors.steel, colors.orange]])\
+			.font_(fonts.lucida9)\
+			.action_(\{\cf3 |btn|\cf2 \
+				if (btn.value == 1) \
+				\{\
+					~zone3synths = \cf3 Array\cf2 .newClear(8);\
+					~zone3tbus = \cf3 Array\cf2 .fill(8, \{ \cf3 Bus\cf2 .control \});\
+					8.do(\{\cf3 |i|\cf2 \
+						\cf3 var\cf2  args, states;\
+						states = \cf3 Pseq\cf2 (~fx.invalues.states.clump(8)[i], 2).asStream;\
+						args = ~zone3map.collect(\cf3 _\cf2 .map(states.next));\
+						args.frq = args.frq * ~zone3frq[i];\
+						args.dns = args.dns * ~zone3dns[i];\
+						args.wsz = args.wsz * ~zone3wsz[i];\
+						~zone3synths.put(i, \
+							\cf3 Synth\cf2 .tail(~agrp, \cf4 \\zone3fxwarp\cf2 , [\
+								\cf4 \\out\cf2 , ~abus, \cf4 \\efx\cf2 , ~rbus, \cf4 \\buf\cf2 , ~zone3loops[i], \cf4 \\aamp\cf2 , 0, \cf4 \\gate\cf2 , 1,\
+								\cf4 \\ratio\cf2 , [0.0, 0.005].asSpec.map(states.next), \cf4 \\trg\cf2 , ~zone3tbus[i],\
+								\cf4 \\tdur\cf2 , ~zone3tdur[i], \cf4 \\rate\cf2 , ~zone3rates[i]\
+								] ++ args.asKeyValuePairs\
+							).setn(\cf4 \\env\cf2 , \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.0, 1.0, 0.0], \cf4 \\sine\cf2 , 2, 1).asArray)\
+						);\
+					\});\
+					gui.post(\cf5 "zone 3 synths running"\cf2 );\
+				\}\
+				\{\
+					~zone3synths.do(\{\cf3 |synth|\cf2  synth.set(\cf4 \\gate\cf2 , -30.0) \});\
+					\cf3 SystemClock\cf2 .sched(30, \{ \
+						~zone3synths.do(\cf3 _\cf2 .free);\
+						~zone3tbus.do(\cf3 _\cf2 .free);\
+						~zone3synths = \cf3 nil\cf2 ; \
+						~zone3tbus = \cf3 nil\cf2 ;\
+						\cf3 nil\cf2  \});\
+					gui.post(\cf5 "zone 3 synths will free in 30 seconds"\cf2 );\
+				\}\
+			\})\
+	);	\
+\
+	mainbuttons.put(2,	\
+		\cf3 RoundButton\cf2 (panel, button.copy.left_(px=px+85))\
+			.states_([[\cf5 "states OFF"\cf2 , colors.orange, colors.steel ], \
+				[\cf5 "states ON"\cf2 , colors.steel, colors.orange ]])\
+			.font_(fonts.lucida9)\
+			.action_(\{\cf3 |bt|\cf2 \
+				if (bt.value == 1)\
+				\{\
+					~fx.addStatesFunction(\cf4 \\zone3\cf2 , ~zone3mapParams);\
+					gui.post(\cf5 "added states function"\cf2 );\
+				\}\
+				\{\
+					~fx.removeStatesFunction(\cf4 \\zone3\cf2 );\
+					gui.post(\cf5 "removed states function"\cf2 );\
+				\}\
+			\});\
+	);\
+	\
+	px = 5;\
+	py = 60;\
+	\
+	button = \cf3 Rect\cf2 (px, py, 75, 25);\
+	\
+	mainbuttons.put(3,		\
+		\cf3 RoundButton\cf2 (panel, button)\
+			.states_([[\cf5 "det OFF"\cf2 , colors.orange, colors.steel ], \
+				[\cf5 "det ON"\cf2 , colors.steel, colors.orange ]])\
+			.font_(fonts.lucida9)\
+			.action_(\{\cf3 |bt|\cf2 \
+				if (bt.value == 1)\
+				\{					\
+					~zone3detsynths = \cf3 Array\cf2 .newClear(8);\
+					8.do(\{\cf3 |i|\cf2 \
+						\cf3 var\cf2  args, states;\
+						states = \cf3 Pseq\cf2 (~fx.invalues.states.clump(8)[i], 2).asStream;\
+						args = ~zone3detmap.collect(\cf3 _\cf2 .map(states.next));\
+						~zone3detsynths.put(i, \
+							\cf3 Synth\cf2 .tail(~agrp, \cf4 \\zone3loop\cf2 , [\
+								\cf4 \\out\cf2 , ~abus, \cf4 \\buf\cf2 , ~zone3detloops[i], \cf4 \\amp\cf2 , 0, \cf4 \\aamp\cf2 , 0, \cf4 \\gate\cf2 , 1,\
+								\cf4 \\rate\cf2 , 0.25/0.333, \cf4 \\start\cf2 , 0\
+								] ++ args.asKeyValuePairs\
+							).setn(\cf4 \\env\cf2 , \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.0, 1.0, 0.0], \cf4 \\sine\cf2 , 2, 1).asArray)\
+						);\
+					\});\
+					~fx.addStatesFunction(\cf4 \\zone3d\cf2 , ~zone3mapDet);\
+					gui.post(\cf5 "zone 3 synths running"\cf2 );\
+				\}\
+				\{\
+					~zone3synths.do(\{\cf3 |synth|\cf2  synth.set(\cf4 \\gate\cf2 , -20) \});\
+					\cf3 SystemClock\cf2 .sched(20, \{\
+						~fx.removeStatesFunction(\cf4 \\zone3d\cf2 );\
+						~zone3synths = \cf3 nil\cf2 ;\
+						gui.post(\cf5 "zone 3 det synths freed"\cf2 );\
+						\cf3 nil\cf2 	\
+					\})\
+				\}\
+			\})\
+	);\
+\
+	mainbuttons.put(4,	\
+		\cf3 RoundButton\cf2 (panel, button.copy.left_(px=px+85))\
+			.states_([[\cf5 "WSZ <"\cf2 , colors.orange, colors.steel ], \
+				[\cf5 "WSZ >"\cf2 , colors.steel, colors.orange ]])\
+			.font_(fonts.lucida9)\
+			.action_(\{\cf3 |bt|\cf2 \
+				if (bt.value == 1)\
+				\{\
+					~zone3wsz = \cf3 Array\cf2 .geom(8, 0.020625, 2**(1/6));\
+				\}\
+				\{		\
+					~zone3wsz = \cf3 Array\cf2 .geom(8, 0.0825, 2**(1/6));\
+				\}\
+			\})\
+	);\
+	\
+	mainbuttons.put(5,\
+		\
+		\cf3 RoundButton\cf2 (panel, button.copy.left_(px=px+85))\
+			.states_([[\cf5 "PAT03 >>"\cf2 , colors.orange, colors.steel]])\
+			.font_(fonts.lucida9)\
+			.action_(\{\cf3 |bt|\cf2 \
+				\cf3 var\cf2  args;\
+				if (~pat03synth.notNil) \{\
+					args = ~pat03paramseq.collect(\cf3 _\cf2 .next).asKeyValuePairs;\
+					~pat03synth.set(*args)\
+				\}\
+			\})\
+\pard\pardeftab720\ql\qnatural
+\cf2 \
+	);\
+		\
+	knobactions = [\
+		\{\cf3 |knob|\cf2  ~fx.sendPatchCmd(\cf4 \\grid\cf2 , \cf4 \\alphahi\cf2 , 0, knob.value, 0) \},\
+		\{\cf3 |knob|\cf2  ~fx.sendPatchCmd(\cf4 \\blinds\cf2 , \cf4 \\alphahi\cf2 , 0, knob.value, 0) \},\
+		\{\cf3 |knob|\cf2  \
+			~fx.visualdict.globals[\cf4 \\add\cf2 ] = ~fx.visualdict.glSpecs[\cf4 \\add\cf2 ].map(knob.value); \
+			~fx.sendCurrentSettings \
+		\},\
+		\{\cf3 |knob|\cf2  \
+			~fx.visualdict.globals[\cf4 \\transz\cf2 ] = ~fx.visualdict.glSpecs[\cf4 \\transz\cf2 ].map(knob.value); \
+			~fx.sendCurrentSettings \
+		\},\
+		\{\cf3 |knob|\cf2  \
+			~fx.visualdict.globals[\cf4 \\angle\cf2 ] = ~fx.visualdict.glSpecs[\cf4 \\angle\cf2 ].map(knob.value); \
+			~fx.sendCurrentSettings \
+		\},\
+		\{\cf3 |knob|\cf2  \
+			~fx.visualdict.globals[\cf4 \\rotX\cf2 ] = knob.value; \
+			~fx.sendCurrentSettings \
+		\},\
+		\{\cf3 |knob|\cf2  \
+			~fx.visualdict.globals[\cf4 \\rotY\cf2 ] = knob.value; \
+			~fx.sendCurrentSettings \
+		\},\
+		\{\cf3 |knob|\cf2  \
+			~fx.visualdict.globals[\cf4 \\rotZ\cf2 ] = knob.value; \
+			~fx.sendCurrentSettings \
+		\},\
+		\{\cf3 |knob|\cf2  \
+			~fx.visualdict.globals[\cf4 \\frame\cf2 ] = ~fx.visualdict.glSpecs[\cf4 \\frame\cf2 ].map(knob.value); \
+			~fx.sendCurrentSettings \
+		\}\
+	];\
+	\
+	buttonactions = [\
+		\{\cf3 |btn|\cf2  \
+			if (btn.value == 1) \{ \
+				~fx.activatePatch(\cf4 \\grid\cf2 , 0); \
+				gui.post(\cf5 "grid activated"\cf2 );\
+			\}\
+			\{ \
+				~fx.deactivatePatch(\cf4 \\grid\cf2 , 0); \
+				gui.post(\cf5 "grid deactivated"\cf2 );\
+			\}\
+		\},\
+		\{\cf3 |btn|\cf2  \
+			if (btn.value == 1) \{ \
+				~fx.activatePatch(\cf4 \\blinds\cf2 , 0); \
+				gui.post(\cf5 "blinds activated"\cf2 );\
+				\
+			\}\
+			\{ \
+				~fx.deactivatePatch(\cf4 \\blinds\cf2 , 0); \
+				gui.post(\cf5 "blinds deactivated"\cf2 );\
+			\}\
+		\},\
+		\{\cf3 |btn|\cf2 \
+			if (btn.value == 1)\
+			\{\
+				~fx.sendPatchCmd(\cf4 \\grid\cf2 , \cf4 \\colormap\cf2 , 0, 1, 0)\
+			\}\
+			\{\
+				~fx.sendPatchCmd(\cf4 \\grid\cf2 , \cf4 \\colormap\cf2 , 1, 0, 0)			\
+			\}\
+		\},\
+		\{\cf3 |btn|\cf2 \
+			if (btn.value == 1)\
+			\{\
+				~fx.sendPatchCmd(\cf4 \\grid\cf2 , \cf4 \\alphamap\cf2 , 0, 1, 0)\
+			\}\
+			\{\
+				~fx.sendPatchCmd(\cf4 \\grid\cf2 , \cf4 \\alphamap\cf2 , 1, 0, 0)			\
+			\}			\
+		\},\
+		\{\cf3 |btn|\cf2 \
+			if (btn.value == 1)\
+			\{\
+				~fx.sendPatchCmd(\cf4 \\blinds\cf2 , \cf4 \\colormap\cf2 , 0, 1, 0)\
+			\}\
+			\{\
+				~fx.sendPatchCmd(\cf4 \\blinds\cf2 , \cf4 \\colormap\cf2 , 1, 0, 0)			\
+			\}\
+			\
+		\},\
+		\{\cf3 |btn|\cf2 \
+			if (btn.value == 1)\
+			\{\
+				~fx.sendPatchCmd(\cf4 \\blinds\cf2 , \cf4 \\alphamap\cf2 , 0, 1, 0)\
+			\}\
+			\{\
+				~fx.sendPatchCmd(\cf4 \\blinds\cf2 , \cf4 \\alphamap\cf2 , 1, 0, 0)			\
+			\}			\
+		\},\
+		\{\cf3 |btn|\cf2 \
+			if (btn.value == 1)\
+			\{\
+				~fx.activatePatch(\cf4 \\radial\cf2 , 0)\
+			\}\
+			\{\
+				~fx.deactivatePatch(\cf4 \\radial\cf2 , 0)			\
+			\}			\
+		\},\
+		\{\cf3 |btn|\cf2 \
+			if (btn.value == 1)\
+			\{\
+				~fx.sendReset(0, 0, 1, 4, 4, 4, 6, 6, 6, \
+					*~fx.weightPresets[~reset.items[~reset.value]].value\
+				);\
+				\cf3 AppClock\cf2 .sched(0.5, \{ btn.value = 0; \cf3 nil\cf2  \})\
+			\}\
+		\}\
+		\
+		\
+	] ++ [\{\}];\
+	\
+	ampctrselect = (0 ! 8);\
+	\
+	buttonactions2 = \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2 \
+		\{\cf3 |btn|\cf2 \
+			ampctrselect[i] = btn.value\
+		\}\
+	\});\
+	\
+	slideractions = \cf3 Array\cf2 .fill(8, \{\cf3 |i|\cf2 \
+		\{\cf3 |slider|\cf2 \
+			if (ampctrselect[i] == 0)\
+			\{\
+				~zone3synths[i].set(\cf4 \\aamp\cf2 , ~faderwarp.map(slider.value))\
+			\}\
+			\{\
+				~zone3detsynths[i].set(\cf4 \\aamp\cf2 , ~faderwarp.map(slider.value))\
+			\}\
+		\}\
+	\}) ++ [\
+		\{\cf3 |slider|\cf2 \
+			~fx.sendPatchCmd(\cf4 \\blinds\cf2 , \cf4 \\param\cf2 , slider.value, slider.value, 0)\
+		\}\
+	];\
+	\
+	9.do(\{\cf3 |i|\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 		\cf3 Knob\cf2 (panel, \cf3 Rect\cf2 (i * 65 + 10, 90, 25, 25)).value_(0.0).centered_(\cf3 false\cf2 )\
+			.action_(knobactions[i]);\
+			\
+\pard\pardeftab720\ql\qnatural
+\cf2 		\cf3 StaticText\cf2 (panel, \cf3 Rect\cf2 (i * 65 + 35, 90, 25, 25))\
+			.font_(fonts.lucida11)\
+			.stringColor_(\cf3 Color\cf2 .grey(0.8))\
+			.string_((i+1).asString);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 			\
+		nanobuttons.put(i, \cf3 Button\cf2 (panel, \cf3 Rect\cf2 (i * 65 + 3, 140, 35, 25))\
+			.font_(fonts.lucida9)\
+			.states_([[i.asString, colors.orange, colors.steel], [i.asString, colors.steel, colors.orange]])\
+			.action_(buttonactions[i])\
+		);\
+\
+		nanobuttons2.put(i, \cf3 Button\cf2 (panel, \cf3 Rect\cf2 (i * 65 + 3, 210, 35, 25))\
+			.font_(fonts.lucida9)\
+			.states_([[(i+10).asString, colors.orange, colors.steel], [(i+10).asString, colors.steel, colors.orange]])\
+			.action_(buttonactions2[i])\
+		);\
+			\
+		nanosliders.put(i, \
+			\cf3 SmoothSlider\cf2 (panel, \cf3 Rect\cf2 (i * 65 + 42, 125, 20, 150))\
+				.action_(slideractions[i])\
+		)\
+	 \});	\
+\
+	[ \cf5 "grid"\cf2 , \cf5 "blinds"\cf2 , \cf5 "add"\cf2 , \cf5 "transz"\cf2 , \cf5 "angle"\cf2 , \cf5 "rotX"\cf2 , \cf5 "rotY"\cf2 , \cf5 "rotZ"\cf2 , \cf5 "frame"\cf2  ].do(\{\cf3 |txt, i|\cf2 \
+		\cf3 SCStaticText\cf2 (panel, \cf3 Rect\cf2 (i * 65 + 8, 105, 30, 29))\
+			.font_(fonts.skia)\
+			.stringColor_(colors.orange)\
+			.align_(\cf4 \\center\cf2 )\
+			.string_(txt)\
+	\});	\
+\
+	[\cf5 "grid"\cf2 , \cf5 "blinds"\cf2 ].do(\{\cf3 |str, i|\cf2 \
+	\
+		\cf3 StaticText\cf2 (panel, \cf3 Rect\cf2 (i * 65 + 3, 165, 35, 15))\
+			    .align_(\cf4 \\center\cf2 )\
+\pard\pardeftab720\ql\qnatural
+\cf2 			.font_(fonts.lucida9)\
+			.stringColor_(\cf3 Color\cf2 .grey(0.7))\
+			.string_(str);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 	\
+	\});\
+	\
+	[\cf5 "g cmap"\cf2 , \cf5 "g amap"\cf2 , \cf5 "b cmap"\cf2 , \cf5 "b amap"\cf2 , \cf5 "radial"\cf2 , \cf5 "reset"\cf2 ].do(\{\cf3 |str, i|\cf2 \
+			\cf3 StaticText\cf2 (panel, \cf3 Rect\cf2 (i * 65 + 3, 235, 35, 15))\
+				.align_(\cf4 \\center\cf2 )\
+				.font_(fonts.lucida9)\
+				.stringColor_(\cf3 Color\cf2 .grey(0.7))\
+				.string_(str)\
+	\
+	\});			\
+\
+	~z3items = (\
+		\cf4 \\fx_0_7\cf2 : \{  \
+			~zone3loops = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf5 "fxloop_"\cf2 ) \});\
+			~zone3synths.do(\{\cf3 |syn, i|\cf2 \
+				if (syn.notNil)\
+				\{\
+					syn.set(\cf4 \\buf\cf2 , ~zone3loops[i]);\
+				\}\
+			\});\
+			gui.post(\cf5 "zone 3 loops change complete"\cf2 );\
+		\},\
+		\cf4 \\fx_8_15\cf2 : \{  \
+			~zone3loops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf5 "fxloop_"\cf2 ) \});\
+			~zone3synths.do(\{\cf3 |syn, i|\cf2 \
+				if (syn.notNil)\
+				\{\
+					syn.set(\cf4 \\buf\cf2 , ~zone3loops[i + 8]);\
+				\}\
+			\});\
+			gui.post(\cf5 "zone 3 loops change complete"\cf2 );\
+		\},\
+		\cf4 \\fx_16_23\cf2 : \{  \
+			~zone3loops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf5 "fxloop_"\cf2 ) \});\
+			~zone3synths.do(\{\cf3 |syn, i|\cf2 \
+				if (syn.notNil)\
+				\{\
+					syn.set(\cf4 \\buf\cf2 , ~zone3loops[i + 16]);\
+				\}\
+			\});\
+			gui.post(\cf5 "zone 3 loops change complete"\cf2 );\
+		\},\
+		\cf4 \\fx_29_22\cf2 : \{  \
+			~zone3loops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf5 "fxloop_"\cf2 ) \}).reverse;\
+			~zone3synths.do(\{\cf3 |syn, i|\cf2 \
+				if (syn.notNil)\
+				\{\
+					syn.set(\cf4 \\buf\cf2 , ~zone3loops[i]);\
+				\}\
+			\});	\
+			gui.post(\cf5 "zone 3 loops change complete"\cf2 );\
+			\
+		\},\
+		\cf4 \\fx_21_14\cf2 : \{\
+			~zone3loops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf5 "fxloop_"\cf2 ) \}).reverse;\
+			~zone3synths.do(\{\cf3 |syn, i|\cf2 \
+				if (syn.notNil)\
+				\{\
+					syn.set(\cf4 \\buf\cf2 , ~zone3loops[i + 8]);\
+				\}\
+			\});\
+			gui.post(\cf5 "zone 3 loops change complete"\cf2 );\
+		\},\
+		\cf4 \\fx_13_6\cf2 : \{\
+			~zone3loops = ~loops.select(\{\cf3 |it|\cf2  it.path.contains(\cf5 "fxloop_"\cf2 ) \}).reverse;\
+			~zone3synths.do(\{\cf3 |syn, i|\cf2 \
+				if (syn.notNil)\
+				\{\
+					syn.set(\cf4 \\buf\cf2 , ~zone3loops[i + 16]);\
+				\}\
+			\});\
+			gui.post(\cf5 "zone 3 loops change complete"\cf2 );\
+		\}\
+	);\
+		\
+	~z3pm = \cf3 SCPopUpMenu\cf2 (panel, \cf3 Rect\cf2 (5, 305, panel.bounds.width / 4 - 5, 25))\
+		.background_(colors.steel)\
+		.font_(fonts.lucida9)			\
+		.stringColor_(colors.orange)\
+		.items_(~z3items.keys(\cf3 Array\cf2 ).sort);\
+	\
+	\cf3 RoundButton\cf2 (panel, \cf3 Rect\cf2 (panel.bounds.width / 4 + 5, 305, panel.bounds.width / 6 - 10, 25))\
+		.font_(fonts.lucida9)\
+		.states_([[\cf5 "send"\cf2 , colors.orange, colors.steel]])\
+		.action_(\{\
+			~z3items[~z3pm.items[~z3pm.value].asSymbol].value\
+		\});\
+\
+	~reset = \cf3 PopUpMenu\cf2 (panel, \cf3 Rect\cf2 (panel.bounds.width / 4 + 5 * 2 + 15, 305, panel.bounds.width / 4 - 5, 25))\
+		.background_(colors.steel)\
+		.font_(fonts.lucida9)\
+		.stringColor_(colors.orange)\
+		.items_(~fx.weightPresets.keys(\cf3 Array\cf2 ).sort);\
+\
+	nanomap = \{\
+		\
+		panel.children.select(\{\cf3 |ctr|\cf2  ctr.isKindOf(\cf3 SCKnob\cf2 ) \}).do(\{\cf3 |knob, i|\cf2 \
+			~nano.knobs[0][i].action_(\{\cf3 |slider|\cf2 \
+				knob.value = slider.value;\
+				knob.doAction;\
+			\})\
+		\});\
+				\
+		~nano.buttons[0][18].action_(\{\cf3 |btn|\cf2 \
+			mainbuttons[0].value = btn.value;\
+			if (btn.value == 1) \{\
+				mainbuttons[0].doAction\
+			\}\
+		\});\
+		\
+		mainbuttons.drop(1).do(\{\cf3 |btn, i|\cf2 \
+			~nano.buttons[0][i + 19].action_(\{\cf3 |nbtn|\cf2 \
+				btn.value = nbtn.value;\
+				btn.doAction;\
+			\})\
+		\});\
+				\
+		nanobuttons.do(\{\cf3 |btn, i|\cf2 \
+			~nano.buttons[0][i].action_(\{\cf3 |nbtn|\cf2 \
+				if (nbtn.value == 1) \{ btn.value = (btn.value + 1).wrap(0, 1); btn.doAction \}\
+			\})\
+		\});\
+\
+		nanobuttons2.do(\{\cf3 |btn, i|\cf2 \
+			~nano.buttons[0][i + 9].action_(\{\cf3 |nbtn|\cf2 \
+				btn.value = nbtn.value;\
+				btn.doAction;\
+			\})\
+		\});\
+		\
+		nanosliders.do(\{\cf3 |slider, i|\cf2 \
+			~nano.sliders[0][i].action_(\{\cf3 |nslider|\cf2 \
+				slider.value = nslider.value;\
+				slider.doAction;\
+			\})\
+		\});\
+		\
+		gui.post(\cf5 "nano kontrol for zone 3 mapped"\cf2 );		\
+	\};\
+	\
+	~zone3map = (\
+		\cf4 \\ptr\cf2 : \cf3 ControlSpec\cf2 (0.499, 0.501),\
+		\cf4 \\amp\cf2 : \cf3 ControlSpec\cf2 (0.2, 2.0),\
+		\cf4 \\frq\cf2 : \cf3 ControlSpec\cf2 ((35/36)**3, (36/35)**3),\
+		\cf4 \\wsz\cf2 : \cf3 ControlSpec\cf2 (0.9, 1.1),\
+		\cf4 \\dns\cf2 : \cf3 ControlSpec\cf2 (0.9, 1.1),\
+		\cf4 \\azm\cf2 : \cf3 ControlSpec\cf2 (-pi, pi),\
+		\cf4 \\rev\cf2 : \cf3 ControlSpec\cf2 (0.01, 0.1),\
+		\cf4 \\rtime\cf2 : \cf3 ControlSpec\cf2 (3, 15),\
+		\cf4 \\eamp\cf2 : \cf3 ControlSpec\cf2 (1.0, 0.5),\
+		\cf4 \\pulse\cf2 : \cf3 ControlSpec\cf2 (0.8, 0.1),\
+		\cf4 \\xang\cf2 : \cf3 ControlSpec\cf2 (-pi, pi),\
+		\cf4 \\yang\cf2 : \cf3 ControlSpec\cf2 (0.5pi, -1.5pi),\
+		\cf4 \\zang\cf2 : \cf3 ControlSpec\cf2 (0, 2pi)\
+	);\
+	\
+	~zone3detmap = (\
+		\cf4 \\amp\cf2 : \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (0.1, 2.0)),\
+		\cf4 \\xang\cf2 : \cf3 ControlSpec\cf2 (-pi, pi),\
+		\cf4 \\yang\cf2 : \cf3 ControlSpec\cf2 (-pi, pi),\
+		\cf4 \\zang\cf2 : \cf3 ControlSpec\cf2 (-pi, pi),\
+		\cf4 \\xpush\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-0.25pi, 0.25pi)),\
+		\cf4 \\ypush\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (0.25pi, -0.25pi)),\
+		\cf4 \\zpush\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-0.25pi, 0.25pi))\
+	);\
+\
+	~zone3frq = \cf3 Array\cf2 .geom(4, 0.0625, 2) ++ \cf3 Array\cf2 .geom(4, 2, 2);\
+	\
+	~zone3dns = \cf3 Array\cf2 .geom(8, 0.5, 2**(1/4));\
+	\
+	~zone3wsz = \cf3 Array\cf2 .geom(8, 0.1, 2**(1/5));	\
+	\
+	~zone3tdur = \cf3 Array\cf2 .geom(8, 0.165, 2**(1/6)).reverse;\
+	\
+	~zone3rates = [3, 6, 12, 24].dup.flat;\
+	\
+	~zone3mapDet = \{\cf3 |values|\cf2 \
+		\cf3 var\cf2  states, args;\
+		if (~zone3detsynths.notNil) \{\
+			states = values.states.clump(8);\
+			~zone3detsynths.do(\{\cf3 |synth, i|\cf2 \
+				\cf3 var\cf2  vals = \cf3 Pseq\cf2 (states[i], 1).asStream;\
+				args = ~zone3detmap.collect(\cf3 _\cf2 .map(vals.next));\
+				synth.set(*args.asKeyValuePairs)\
+			\})\
+		\}\
+	\};\
+		\
+	~zone3mapParams = \{\cf3 |values|\cf2 \
+		\
+		\cf3 var\cf2  states;\
+			\
+		if (~zone3synths.notNil)\
+		\{\
+			states = values.states.clump(8);\
+			~zone3synths.do(\{\cf3 |synth, i|\cf2 \
+				\cf3 var\cf2  args, vals = \cf3 Pseq\cf2 (states[i], 2).asStream;\
+				args = ~zone3map.collect(\cf3 _\cf2 .map(vals.next));\
+				args.frq = args.frq * ~zone3frq[i];\
+				args.dns = args.dns * ~zone3dns[i];\
+				args.wsz = args.wsz * ~zone3wsz[i];\
+				synth.set(*args.asKeyValuePairs)\
+			\});\
+			~zone3trigs.do(\{\cf3 |trg|\cf2 \
+				if (trg.next == 1) \{\
+					~zone3tbus[i].set(1.0)\
+				\}\
+			\})\
+		\}\
+		\
+	\};	\
+\
+	~zone3trigs = [\
+		\cf3 Pseq\cf2 ([[0], [0, 0, 0, 1]].lace(8), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0, 1, 0, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0, 0, 1, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [1, 0, 0, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [1, 0, 0, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0, 0, 1, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0, 1, 0, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0, 0, 0, 1]].lace(8), \cf3 inf\cf2 ).asStream\
+	];\
+	\
+	~zone3loops = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf5 "fxloop_"\cf2 ) \});\
+	\
+	~zone3detloops = [8, 9, 10, 11, 12, 14, 15, 17].collect(\{\cf3 |ind|\cf2 \
+		~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf5 "detloop_"\cf2  ++ ind.asString ++ \cf5 ".aif"\cf2 ) \}).first\
+	\});\
+			\
+	nanomap				\
+\
+\}}

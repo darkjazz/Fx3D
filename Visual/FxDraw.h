@@ -72,6 +72,7 @@
 	(float) endx: (float) endy: (float) endz: (float) lineWidth;
 - (void) drawCircle: (int) plane: (float) r: (int) num_segments: (bool) fill;
 - (void) drawCube;
+- (void) stippleCube;
 - (void) strokeCube;
 - (void) fillCube;
 - (void) stroke3Dvertex;

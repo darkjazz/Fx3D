@@ -4,22 +4,22 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
+	<key>CFBundleDisplayName</key>
+	<string>f(x)</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
 	<string>fxv2.icns</string>
-	<key>CFBundleShortVersionString</key>
-	<string></string>
-	<key>CFBundleDisplayName</key>
-	<string>f(x)</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.yourcompany.Fx</string>
+	<string>net.tehis.Fx</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>

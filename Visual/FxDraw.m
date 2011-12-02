@@ -117,66 +117,95 @@
 }
 
 - (void) kanji {
-	float stx, sty, stz, ex, ey, ez, lineWidth, scale;
+//	float stx, sty, stz, 
+	float ex, ey, ez, lineWidth, scale;
+	float mappedState;
 	
-	lineWidth = 1.0f + [[patches objectForKey: @"kanji"] param ];
+	lineWidth = map([[patches objectForKey: @"kanji"] param ], 1.0, 4.0);
 	
 	scale = [[patches objectForKey: @"kanji"] param ];
 	
 	[self setCommon];
-		
-	if (indexk == 0 || indexk == 15)
-	{
-		
-		left = indexi * size -halfscreen + (size * 0.5f) + (size * 0.5f * cosf(state * (2.0f * pi)));
-		bottom = indexj * size - halfscreen + (size * 0.5f) + (size * 0.5f * sinf(state * (2.0f * pi)));
-		front = (float)indexk * size - halfscreen;
-		
-		ex = size * cosf( (1.0 - state) * (2.0 * pi));
-		ey = size * sinf( (1.0 - state) * (2.0 * pi));
-		
-		[self drawLine:left : bottom : front : left + ex : bottom + ey : front : state * 5.0f];		
-	}
 	
-	if (indexi == 0 || indexi == 15)
-	{
-		left = (float)indexi * size - halfscreen;
-		bottom = indexj * size - halfscreen + (size * 0.5f) + (size * 0.5f * cosf(state * (2.0f * pi)));
-		front = indexk * size - halfscreen + (size * 0.5f) + (size * 0.5f * sinf(state * (2.0f * pi)));
-		
-		ex = size * cosf( (1.0 - state) * (2.0 * pi));
-		ey = size * sinf( (1.0 - state) * (2.0 * pi));
-		
-		[self drawLine:left : bottom : front : left : bottom + ex : front + ey : state * 5.0f];				
-	}
+	left = left = indexi * size - halfscreen + (size * 0.5f);
+	bottom = indexj * size - halfscreen + (size * 0.5f);
+	front = (float)indexk * size - halfscreen + (size * 0.5f);
+
+	mappedState = map(state, -1.0, 1.0);
 	
-	if (indexj == 0 || indexj == 15)
-	{
-		bottom = (float)indexj * size - halfscreen;
-		front = indexk * size - halfscreen + (size * 0.5f) + (size * 0.5f * cosf(state * (2.0f * pi)));
-		left = indexi * size - halfscreen + (size * 0.5f) + (size * 0.5f * sinf(state * (2.0f * pi)));
-		
-		ex = size * cosf( (1.0 - state) * (2.0 * pi));
-		ey = size * sinf( (1.0 - state) * (2.0 * pi));
-		
-		[self drawLine:left : bottom : front : left + ey : bottom : front + ex : state * 5.0f];				
-	}
+	ex = left + (size * cosf( (state * 2.0f - 1.0f) * 2.0f * pi));
+	ey = bottom + (size * sinf( (state * 2.0f - 1.0f ) * 2.0f * pi));
+	ez = front;
+	
+	[self drawLine: left : bottom : front : ex : ey : ez : 1.0f ];
+	
+	ex = left;
+	ey = bottom + (size * cosf( (state * 2.0f - 1.0f) * 2.0f * pi));
+	ez = front + (size * sinf( (state * 2.0f - 1.0f ) * 2.0f * pi));
+
+	[self drawLine: left : bottom : front : ex : ey : ez : 1.0f ];
+	
+	ex = left + (size * sinf( (state * 2.0f - 1.0f) * 2.0f * pi));;
+	ey = bottom;
+	ez = front + (size * cosf( (state * 2.0f - 1.0f ) * 2.0f * pi));
+	
+	[self drawLine: left : bottom : front : ex : ey : ez : lineWidth ];	
+	
+	//	[self drawLine: left : bottom : front : ex : ey : ez : lineWidth ];
+
+	//	if (indexk == 0 || indexk == 15)
+	//	{
+	//		
+	//		left = indexi * size -halfscreen + (size * 0.5f) + (size * 0.5f * cosf(state * (2.0f * pi)));
+	//		bottom = indexj * size - halfscreen + (size * 0.5f) + (size * 0.5f * sinf(state * (2.0f * pi)));
+	//		front = (float)indexk * size - halfscreen;
+	//		
+	//		ex = size * cosf( (1.0 - state) * (2.0 * pi));
+	//		ey = size * sinf( (1.0 - state) * (2.0 * pi));
+	//		
+	//		[self drawLine:left : bottom : front : left + ex : bottom + ey : front : state * 5.0f];		
+	//	}
+	//	
+	//	if (indexi == 0 || indexi == 15)
+	//	{
+	//		left = (float)indexi * size - halfscreen;
+	//		bottom = indexj * size - halfscreen + (size * 0.5f) + (size * 0.5f * cosf(state * (2.0f * pi)));
+	//		front = indexk * size - halfscreen + (size * 0.5f) + (size * 0.5f * sinf(state * (2.0f * pi)));
+	//		
+	//		ex = size * cosf( (1.0 - state) * (2.0 * pi));
+	//		ey = size * sinf( (1.0 - state) * (2.0 * pi));
+	//		
+	//		[self drawLine:left : bottom : front : left : bottom + ex : front + ey : state * 5.0f];				
+	//	}
+	//	
+	//	if (indexj == 0 || indexj == 15)
+	//	{
+	//		bottom = (float)indexj * size - halfscreen;
+	//		front = indexk * size - halfscreen + (size * 0.5f) + (size * 0.5f * cosf(state * (2.0f * pi)));
+	//		left = indexi * size - halfscreen + (size * 0.5f) + (size * 0.5f * sinf(state * (2.0f * pi)));
+	//		
+	//		ex = size * cosf( (1.0 - state) * (2.0 * pi));
+	//		ey = size * sinf( (1.0 - state) * (2.0 * pi));
+	//		
+	//		[self drawLine:left : bottom : front : left + ey : bottom : front + ex : state * 5.0f];				
+	//	}
 	
 	
-//	left = (float)indexi * size - halfscreen;
-//	bottom = (float)indexj * size - halfscreen;
-//	front = (float)indexk * size - halfscreen;
-//	width = height = depth = state * size * scale;
-//	stx = randfloat(left + (0.25f * width), left + (width * 0.75f));
-//	sty = randfloat(bottom + (0.25f * height), bottom + (height * 0.75f)); 
-//	stz = randfloat(front + (0.25f * depth), front + (0.75f * depth));
-///*		ex = randfloat(left, left + width);
-//	ey = randfloat(bottom, bottom + height);
-//	ez = randfloat(front, front + depth); */
-//	ex = stx + randfloat(-1.0f, 1.0f) * width;
-//	ey = sty + randfloat(-1.0f, 1.0f) * height;
-//	ez = stz + randfloat(-1.0f, 1.0f) * depth;
-//	[self drawLine: stx: sty: stz: ex: ey: ez: lineWidth];
+	//	left = (float)indexi * size - halfscreen;
+	//	bottom = (float)indexj * size - halfscreen;
+	//	front = (float)indexk * size - halfscreen;
+	//	width = height = depth = state * size * scale;
+	//	stx = randfloat(left + (0.25f * width), left + (width * 0.75f));
+	//	sty = randfloat(bottom + (0.25f * height), bottom + (height * 0.75f)); 
+	//	stz = randfloat(front + (0.25f * depth), front + (0.75f * depth));
+	///*		ex = randfloat(left, left + width);
+	//	ey = randfloat(bottom, bottom + height);
+	//	ez = randfloat(front, front + depth); */
+	//	ex = stx + randfloat(-1.0f, 1.0f) * width;
+	//	ey = sty + randfloat(-1.0f, 1.0f) * height;
+	//	ez = stz + randfloat(-1.0f, 1.0f) * depth;
+	//	[self drawLine: stx: sty: stz: ex: ey: ez: lineWidth];
+	
 }
 
 - (void) ringz {
@@ -188,27 +217,28 @@
 	
 	[self setCommon];
 		
-	prm = map([[patches objectForKey: @"ringz"] param ], 0.5f, 4.0f);
+//	prm = map([[patches objectForKey: @"ringz"] param ], 0.5f, 4.0f);
 	
-	left = (float)indexi * size - halfscreen + size - (size * (prm / 2.0f) * state);
-	bottom = (float)indexj * size - halfscreen + size - (size * (prm / 2.0f) * state);
-	front = (float)indexk * size - halfscreen + size - (size * (prm / 2.0f) * state);
+	left = (float)indexi * size - halfscreen + size - (size * 9.2f * state);
+	bottom = (float)indexj * size - halfscreen + size - (size * 2.0f * state);
+	front = (float)indexk * size - halfscreen + size - (size * 2.0f * state);
 	
-	width = height = depth = size * prm * state;
-	width *= 1.3f;
+	width = height = depth = size * 4.0f * state;
+	width *= 4.6f;
 	
-//	prm = [[patches objectForKey: @"ringz"] param ];
-//		
+	prm = [[patches objectForKey: @"ringz"] param ];
+		
 //	if (prm != 0)
 //	{
-//		left *= map(state, -1.0f - prm, 1.0f + prm); 
-//		bottom *= map(state, -1.0f - prm, 1.0f + prm);
-//		front *= map(state, -1.0f - prm, 1.0f + prm);
+//		left *= map(state, -0.1f - prm, 0.1f + prm); 
+//		bottom *= map(state, -0.1f - prm, 0.1f + prm);
+//		front *= map(state, -0.1f - prm, 0.1f + prm);
 //	}
 	
 	if (
 		((indexi < 8 && indexj < 8) || (indexi >= 8 && indexj >= 8)) && 
-		((!isEven(indexi) || isEven(indexj)) && (isEven(indexi) || !isEven(indexj)))
+		((!isEven(indexi) || isEven(indexj)) && (isEven(indexi) || !isEven(indexj))) &&
+		isEven(indexk)
 	)
 	{
 		draw = true;
@@ -216,7 +246,8 @@
 	
 	if (
 		((indexi >= 8 && indexj < 8) || (indexi < 8 && indexj >= 8)) && 
-		((isEven(indexi) || isEven(indexj)) && (!isEven(indexi) || !isEven(indexj)))
+		((isEven(indexi) || isEven(indexj)) && (!isEven(indexi) || !isEven(indexj))) &&
+		isEven(indexk)
 	)
 	{
 		draw = true;
@@ -224,8 +255,21 @@
 	if (indexj > 5 && indexj < 10 && indexi > 5 && indexi < 10) { draw = false; }
 	if (draw)
 	{
-		if (state > 0.25f) [self strokeCube];
+		if (state > 0.33f) [self strokeCube];
 		else [self fillCube];
+		
+//		[self strokeCube];
+		
+		if (prm > 0)
+		{
+			if (indexi < 8 || indexj > 7)
+			{
+				glRotatef(prm * map(state, 0.0f, 0.33f), prm * state, prm * state, prm * state);
+			}
+			{
+				glRotatef(prm * map(1.0 - state, 0.0, 0.33f), prm * (1.0 - state), prm * (1.0 - state), prm * (1.0 - state));
+			}
+		}
 	}
 }
 
@@ -331,7 +375,8 @@
 	
 	resize = [[patches objectForKey: @"grid"] param ];
 
-	if (indexk == worldSize / 2)
+//	if (indexk == worldSize / 2)
+	if (indexk == 4 || indexk == 11)
 	{
 
 		x = (resize * size) * cos((state + (indexj + 1 / 40)) * (2 * pi));
@@ -346,7 +391,8 @@
 		[self drawPoint: left : bottom : front : 2.0f];	
 	}
 
-	if (indexi == worldSize / 2)
+//	if (indexi == worldSize / 2)
+	if (indexi == 4 || indexi == 11)
 	{
 		
 		x = (resize * size) * cos((state + (indexj + 1 / 40)) * (2 * pi));
@@ -361,7 +407,8 @@
 		[self drawPoint: left : bottom : front : 2.0f];	
 	}
 
-	if (indexj == worldSize / 2)
+//	if (indexj == worldSize / 2)
+	if (indexj == 4 || indexj == 11)
 	{
 		
 		x = (resize * size) * cos((state + (indexj + 1 / 40)) * (2 * pi));
@@ -395,19 +442,63 @@
 }
 - (void) blinds {
 
+//	float scalar;
+//	
+//	if (isEven(indexk) && !isEven(indexi))
+//	{
+//		[self setCommon];
+//		scalar = [[patches objectForKey: @"blinds"] param ];
+//		
+//		left = (float)indexi * size - halfscreen;
+//		bottom = (float)indexj * size - halfscreen + (size / 2.0f);
+//		front = (float)indexk * size - halfscreen + (size / 2.0f);
+//		height = size * scalar;
+//		[self drawLine: left: bottom: front: left: bottom + height: front: map(1.0f - state, 1.0f, 2.0f)];
+//	}
+
+	int i;
 	float scalar;
 	
-	if (isEven(indexk) && !isEven(indexi))
+	if (
+		(indexi != 0 && indexj != 0 && indexk != 0 && 
+		 indexi != 15 && indexj != 15 && indexk != 15) && 
+		(
+		 indexi == 4 || indexi == 11 ||
+		 indexk == 4 || indexk == 11
+		 )
+		)
 	{
 		[self setCommon];
 		scalar = [[patches objectForKey: @"blinds"] param ];
-		
-		left = (float)indexi * size - halfscreen;
-		bottom = (float)indexj * size - halfscreen + (size / 2.0f);
-		front = (float)indexk * size - halfscreen + (size / 2.0f);
-		height = size * scalar;
-		[self drawLine: left: bottom: front: left: bottom + height: front: map(1.0f - state, 1.0f, 2.0f)];
+			
+		left = (float)indexi * size - halfscreen + (size * 0.5);
+		bottom = (float)indexj * size - halfscreen + (size * 0.5);
+		front = (float)indexk * size - halfscreen + (size * 0.5);
+				
+		for (i = 0; i < 26; i++) {
+			
+			if (([[[currentCell habitat] objectAtIndex: i] phase] + state) / 2 > map(scalar, 0.3, 0.7)  ) {
+				float ex, ey, ez;
+				
+				ex = [[[currentCell habitat] objectAtIndex: i] coordX] * size - halfscreen + (size * 0.5);
+				ey = [[[currentCell habitat] objectAtIndex: i] coordY] * size - halfscreen + (size * 0.5);
+				ez = [[[currentCell habitat] objectAtIndex: i] coordZ] * size - halfscreen + (size * 0.5);
+				
+//				red = 0.0;
+//				green = 0.5;
+//				blue = 1.0 - map([[[currentCell habitat] objectAtIndex: i] phase] * state / 2, 0.0, 0.7);
+//				alpha = 1.0 - map([[[currentCell habitat] objectAtIndex: i] phase] * state / 2, 0.2, 0.8);
+//				alpha *= 0.8f;
+				
+				[self drawLine:left :bottom :front : ex : ey : ez : 1.0];
+				
+			}
+			
+			
+		}		
+			
 	}
+	
 
 }
 
@@ -825,6 +916,56 @@
 
 	glEnd();
 	glDisable(GL_LINE_SMOOTH);
+}
+
+- (void) stippleCube {
+	glColor4f(red, green, blue, alpha);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_LINE_STIPPLE);
+	glLineStipple(1, 0x3F07);
+	glLineWidth((1.0f - state) * 2.0f);
+	glBegin(GL_LINES);
+	
+	glVertex3f (left, bottom, front);
+	glVertex3f (left + width, bottom, front);
+	
+	glVertex3f (left + width, bottom, front);
+	glVertex3f (left + width, bottom + height, front);
+	
+	glVertex3f (left + width, bottom + height, front);
+	glVertex3f (left, bottom + height, front);
+	
+	glVertex3f (left, bottom + height, front);
+	glVertex3f (left, bottom, front);	
+	
+	glVertex3f (left, bottom, front);
+	glVertex3f (left, bottom, front + depth);
+	
+	glVertex3f (left, bottom, front + depth);
+	glVertex3f (left + width, bottom, front + depth);
+	
+	glVertex3f (left + width, bottom, front + depth);
+	glVertex3f (left + width, bottom, front);
+	
+	glVertex3f (left, bottom + height, front);
+	glVertex3f (left, bottom + height, front + depth);
+	
+	glVertex3f (left, bottom + height, front + depth);
+	glVertex3f (left + width, bottom + height, front + depth);
+	
+	glVertex3f (left + width, bottom + height, front + depth);
+	glVertex3f (left + width, bottom + height, front);
+	
+	glVertex3f (left, bottom, front + depth);
+	glVertex3f (left, bottom + height, front + depth);
+	
+	glVertex3f (left + width, bottom, front + depth);
+	glVertex3f (left + width, bottom + height, front + depth);
+	
+	glEnd();
+	glDisable(GL_LINE_SMOOTH);
+	glDisable(GL_LINE_STIPPLE);
+	
 }
 
 - (void) strokeCube {

@@ -33,6 +33,8 @@
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	
+	glMatrixMode(GL_MODELVIEW);
 
 }
 
@@ -68,9 +70,8 @@
 			bufferPhase += 1;
 		}
 		[oscer sendPhase: bufferPhase];
-		glAccum(GL_ACCUM, 0.5);
+//		glAccum(GL_RETURN, 0.0);
 		[self drawCells];
-		glAccum(GL_RETURN, 0.5);		
 	}
 	else
 	{
@@ -217,7 +218,7 @@
 	Cell * cell;
 	Cell * max;
 	float *pollValues;
-	
+		
 	if (rAng < 360.0f) { rAng += [oscer getAngle]; } else { rAng = 0.0f; }
 	
 	glTranslatef([oscer getTransX], [oscer getTransY], [oscer getTransZ]);

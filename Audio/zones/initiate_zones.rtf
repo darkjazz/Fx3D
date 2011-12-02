@@ -85,23 +85,8 @@
 		\
 		\cf6 // DECODERS\cf3 \
 		\
-		\cf2 SynthDef\cf3 (\cf5 \\bf2decode\cf3 , \{\cf2 |bus, amp = 1|\cf3 \
-			\cf2 var\cf3  w, x, y, z;\
-			#w, x, y, z = \cf2 In\cf3 .ar(bus, 4);\
-			\cf2 Out\cf3 .ar( 0, \cf2 BFDecode1\cf3 .ar(w, x, y, z, \cf2 IbiSpeakers\cf3 .quad.azimuth, (0 ! 4) ) * amp )\
-		\}).add;\
-		\
-		\cf2 SynthDef\cf3 (\cf5 \\bfcollect\cf3 , \{\cf2 |bus, amp = 1|\cf3 \
-			\cf2 Out\cf3 .ar(0, \cf2 In\cf3 .ar(bus, 4) * amp)\
-		\}).add;\
-\
-		\cf2 SynthDef\cf3 (\cf5 \\btoUHJ\cf3 , \{\cf2 |bus, amp = 1|\cf3 \
-			\cf2 var\cf3  w, x, y, z;\
-			#w, x, y, z = \cf2 Limiter\cf3 .ar(\cf2 In\cf3 .ar(bus, 4), 0.95);\
-			#w, x, y, z = \cf2 Compander\cf3 .ar([w, x, y, z], 0.9, 1, 0.5, 0.01, 0.01);\
-			\cf2 Out\cf3 .ar(0, \cf2 B2UHJ\cf3 .ar(w, x, y) * amp)\
-		\}).add;\
-		\
+		~decoder = \cf2 Decoder\cf3 (~localDecoder ? \cf2 true\cf3 , ~stereoOutput ? \cf2 false\cf3 );\
+				\
 		~serv.sync;\
 		\
 		(~zonepath ++ \cf4 "start_synths.rtf"\cf3 ).load;\

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		59625BA91167DEE9008246F3 /* fx.icns in Resources */ = {isa = PBXBuildFile; fileRef = 59625BA81167DEE9008246F3 /* fx.icns */; };
 		59625E83116CBDB5008246F3 /* fxv2.icns in Resources */ = {isa = PBXBuildFile; fileRef = 59625E82116CBDB5008246F3 /* fxv2.icns */; };
+		59FA156713AF7D8900AA708F /* burnt.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 59FA156613AF7D8900AA708F /* burnt.jpg */; };
 		5A9E94110F7E9C4600AC6D09 /* Patch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A9E94100F7E9C4600AC6D09 /* Patch.m */; };
 		5AEBE0460F6FC36700AD3D65 /* Cell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AEBE0370F6FC36700AD3D65 /* Cell.m */; };
 		5AEBE0470F6FC36700AD3D65 /* FxDraw.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AEBE0390F6FC36700AD3D65 /* FxDraw.m */; };
@@ -47,6 +48,7 @@
 		32CA4F630368D1EE00C91783 /* Fx_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fx_Prefix.pch; sourceTree = "<group>"; };
 		59625BA81167DEE9008246F3 /* fx.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = fx.icns; sourceTree = "<group>"; };
 		59625E82116CBDB5008246F3 /* fxv2.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = fxv2.icns; sourceTree = "<group>"; };
+		59FA156613AF7D8900AA708F /* burnt.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = burnt.jpg; sourceTree = "<group>"; };
 		5A9E940F0F7E9C4600AC6D09 /* Patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Patch.h; sourceTree = "<group>"; };
 		5A9E94100F7E9C4600AC6D09 /* Patch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Patch.m; sourceTree = "<group>"; };
 		5AEBE0360F6FC36700AD3D65 /* Cell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Cell.h; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				59FA156613AF7D8900AA708F /* burnt.jpg */,
 				5AEBE04E0F6FC37E00AD3D65 /* address.c */,
 				5AEBE04F0F6FC37E00AD3D65 /* blob.c */,
 				5AEBE0500F6FC37E00AD3D65 /* bundle.c */,
@@ -267,6 +270,7 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				59625BA91167DEE9008246F3 /* fx.icns in Resources */,
 				59625E83116CBDB5008246F3 /* fxv2.icns in Resources */,
+				59FA156713AF7D8900AA708F /* burnt.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

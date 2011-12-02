@@ -1,101 +1,300 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
 {\fonttbl\f0\fnil\fcharset238 Inconsolata;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red96\green96\blue96;\red0\green115\blue0;
-\red191\green0\blue0;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;\red191\green0\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs24 \cf0 (\
-~loadAts = \cf2 false\cf0 ;\
-~localDecoder = \cf2 true\cf0 ;\
-~stereoOutput = \cf2 true\cf0 ;\
-\cf3 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf0 .load;\
+\f0\fs24 \cf2 (\
+~loadAts = \cf3 false\cf2 ;\
+~localDecoder = \cf3 true\cf2 ;\
+~stereoOutput = \cf3 true\cf2 ;\
+\cf4 "/Users/alo/Development/Fx3D/Audio/zones/initiate_zones.rtf"\cf2 .load;\
 )\
 \
+\
 (\
-\cf2 SynthDef\cf0 (\cf4 \\zone4_waveTerrain\cf0 , \{\cf2 |out, efx, buffer, aa, ab, ac, ad,\
-		pxa, pya, pxb, pyb, pxc, pyc, pxd, pyd, xang, yang, zang|\cf0 \
-	\cf2 var\cf0  a, b, c, d, w, x, y, z, raL, raR, rcL, rcR;\
-	a = \cf2 WaveTerrain\cf0 .ar(buffer, \cf2 LFSaw\cf0 .ar(pxa).range(0.0, 1.0), \cf2 LFSaw\cf0 .ar(pya).range(0.0, 1.0), 16, 16);\
-	b = \cf2 WaveTerrain\cf0 .ar(buffer, \cf2 LFSaw\cf0 .ar(pxb).range(0.0, 1.0), \cf2 LFSaw\cf0 .ar(pyb).range(0.0, 1.0), 16, 16);\
-	c = \cf2 WaveTerrain\cf0 .ar(buffer, \cf2 LFSaw\cf0 .ar(pxc).range(0.0, 1.0), \cf2 LFSaw\cf0 .ar(pyc).range(0.0, 1.0), 16, 16);\
-	d = \cf2 WaveTerrain\cf0 .ar(buffer, \cf2 LFSaw\cf0 .ar(pxd).range(0.0, 1.0), \cf2 LFSaw\cf0 .ar(pyd).range(0.0, 1.0), 16, 16);\
-	\cf2 Out\cf0 .ar(efx, [a, b, c, d]);\
-	#raL, raR = \cf2 PitchShift\cf0 .ar(\cf2 GVerb\cf0 .ar(a+\cf2 Dust2\cf0 .ar(ab.linlin(0, 1, 10, 80)), 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, 0.5);\
-	#rcL, rcR = \cf2 PitchShift\cf0 .ar(\cf2 GVerb\cf0 .ar(c+\cf2 Dust2\cf0 .ar(ad.linlin(0, 1, 10, 80)), 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, 2.0);\
-	a = \cf2 Compander\cf0 .ar(a**0.5, a**0.5, 0.95, 0.1, 0.1) * aa;\
-	b = \cf2 Compander\cf0 .ar(b**0.5, b**0.5, 0.95, 0.1, 0.1) * ab;\
-	c = \cf2 Compander\cf0 .ar(c**0.5, c**0.5, 0.95, 0.1, 0.1) * ac;\
-	d = \cf2 Compander\cf0 .ar(d**0.5, d**0.5, 0.95, 0.1, 0.1) * ad;\
-	#a, b, c, d = [a, b, c, d] + [raL, raR, rcL, rcR];\
-	#w, x, y, z = \cf2 A2B\cf0 .ar(a, b, c, d);\
-	\cf2 Out\cf0 .ar(out, \cf2 AtkRotateXYZ\cf0 .ar(w, x, y, z, xang, yang, zang))\
+\cf3 SynthDef\cf2 (\cf5 \\zone4_waveTerrain\cf2 , \{\cf3 |out, efx, buffer, aa, ab, ac, ad,\
+		pxa, pya, pxb, pyb, pxc, pyc, pxd, pyd, shL, shR, xang, yang, zang, aamp|\cf2 \
+	\cf3 var\cf2  a, b, c, d, w, x, y, z, raL, raR, rcL, rcR, pulse;\
+	pulse = \cf3 ArrayControl\cf2 .kr(\cf5 \\pulse\cf2 , 4, 1);\
+	a = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxa).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pya).range(0.0, 1.0), 16, 16);\
+	b = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxb).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyb).range(0.0, 1.0), 16, 16);\
+	c = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxc).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyc).range(0.0, 1.0), 16, 16);\
+	d = \cf3 WaveTerrain\cf2 .ar(buffer, \cf3 LFSaw\cf2 .ar(pxd).range(0.0, 1.0), \cf3 LFSaw\cf2 .ar(pyd).range(0.0, 1.0), 16, 16);\
+	#raL, raR = \cf3 PitchShift\cf2 .ar(\cf3 GVerb\cf2 .ar(a+\cf3 Dust2\cf2 .ar(ab.linlin(0, 1, 10, 80)), 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, shL);\
+	#rcL, rcR = \cf3 PitchShift\cf2 .ar(\cf3 GVerb\cf2 .ar(c+\cf3 Dust2\cf2 .ar(ad.linlin(0, 1, 10, 80)), 10, 15, 0.5, 0.5, 15, 0, 0.06, 0.1), 0.1, shR);\
+	a = \cf3 Compander\cf2 .ar(a**0.5, a**0.5, 0.95, 0.1, 0.1) * aa;\
+	b = \cf3 Compander\cf2 .ar(b**0.5, b**0.5, 0.95, 0.1, 0.1) * ab;\
+	c = \cf3 Compander\cf2 .ar(c**0.5, c**0.5, 0.95, 0.1, 0.1) * ac;\
+	d = \cf3 Compander\cf2 .ar(d**0.5, d**0.5, 0.95, 0.1, 0.1) * ad;\
+	\cf3 Out\cf2 .ar(efx, [a, b, c, d]);\
+	#a, b, c, d = [a, b, c, d] + [raL, raR, rcL, rcR] * \cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2  \cf3 LFPulse\cf2 .kr(pulse[i], 0, 0.1).range(0, 1) \});\
+	#w, x, y, z = \cf3 LeakDC\cf2 .ar(\cf3 A2B\cf2 .ar(a, b, c, d));\
+	\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, \
+		\cf3 LFNoise2\cf2 .kr(xang).range(-0.9pi, 0.9pi), \
+		\cf3 LFNoise2\cf2 .kr(yang).range(-0.9pi, 0.9pi), \
+		\cf3 LFNoise2\cf2 .kr(zang).range(-0.9pi, 0.9pi)) * aamp)\
+\}).add;\
+\pard\pardeftab720\ql\qnatural
+\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 SynthDef\cf2 (\cf5 \\zone04play\cf2 , \{\cf3 |out, efx, gate, buffer, ptr, genv, wrnd, dur, eamp, aamp, xang, yang, zang, amp|\cf2 \
+	\cf3 var\cf2  env, pch, del, wsz, dns, a, b, c, d;\
+	env = \cf3 EnvControl\cf2 .kr;\
+	pch = \cf3 ArrayControl\cf2 .kr(\cf5 \\pch\cf2 , 4, 1);\
+	wsz = \cf3 ArrayControl\cf2 .kr(\cf5 \\wsz\cf2 , 4, 1);\
+	dns = \cf3 ArrayControl\cf2 .kr(\cf5 \\dns\cf2 , 4, 1);\
+	del = \cf3 ArrayControl\cf2 .kr(\cf5 \\del\cf2 , 4, 1);\
+	#a, b, c, d = \cf3 Array\cf2 .fill(4, \{\cf3 |i|\cf2 \
+		\cf3 DelayN\cf2 .ar(\cf3 Warp1\cf2 .ar(1, buffer, ptr, pch[i], wsz[i], genv, dns[i], wrnd), 0.1, del[i])\
+	\}) * \cf3 EnvGen\cf2 .kr(env, gate, timeScale: dur, doneAction: 2) * amp;\
+	#w, x, y, z = \cf3 A2B\cf2 .ar(a, b, c, d);\
+	\cf3 Out\cf2 .ar(efx, w * eamp);\
+	\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang) * aamp)\
 \}).add;\
 \
-\cf2 SynthDef\cf0 (\cf4 \\line\cf0 , \{\cf2 |out, in, gate = 1.0, i_wrp = 0.1, frq, wsz, dns, rnd, amp|\cf0 \
-	\cf2 var\cf0  bufs, recs, ptrs, phases, deltimes, output, trigs, input;\
+\cf3 SynthDef\cf2 (\cf5 \\zone04cycles\cf2 , \{\cf3 |out, in, gate = 1.0, i_wrp = 0.1, frq, wsz, dns, rnd, amp, \
+		aa, ab, ac, ad, xang, yang, zang|\cf2 \
+	\cf3 var\cf2  bufs, recs, ptrs, phases, deltimes, output, trigs, input, w, x, y, z;\
 	deltimes = [0, 1 / i_wrp * 0.5, 1 / i_wrp];\
-	bufs = \cf2 Array\cf0 .fill(3, \{ \cf2 LocalBuf\cf0 (\cf2 SampleRate\cf0 .ir * 2) \});\
-	ptrs = \cf2 Array\cf0 .fill(3, \{\cf2 |i|\cf0  \cf2 LFSaw\cf0 .kr(i_wrp, 0, 0.5, 0.5) \});\
-	trigs = \cf2 Array\cf0 .fill(3, \{\cf2 |i|\cf0  \cf2 DelayN\cf0 .kr(\cf2 Impulse\cf0 .kr(i_wrp * (2 / 3)), deltimes@i, deltimes@i) \});\
-	input = \cf2 In\cf0 .ar(in, 4);\
-	recs = \cf2 Mix\cf0 .fill(3, \{\cf2 |i|\cf0 \
-		\cf2 RecordBuf\cf0 .ar(input@i, bufs@i, loop:0.0, trigger: trigs@i);\
+	bufs = \cf3 Array\cf2 .fill(3, \{ \cf3 LocalBuf\cf2 (\cf3 SampleRate\cf2 .ir * 2) \});\
+	ptrs = \cf3 Array\cf2 .fill(3, \{\cf3 |i|\cf2  \cf3 LFSaw\cf2 .kr(i_wrp, 0, 0.5, 0.5) \});\
+	trigs = \cf3 Array\cf2 .fill(3, \{\cf3 |i|\cf2  \cf3 DelayN\cf2 .kr(\cf3 Impulse\cf2 .kr(i_wrp * (2 / 3)), deltimes@i, deltimes@i) \});\
+	input = \cf3 In\cf2 .ar(in, 4);\
+	recs = \cf3 Mix\cf2 .fill(3, \{\cf3 |i|\cf2 \
+		\cf3 RecordBuf\cf2 .ar(input@i, bufs@i, loop:0.0, trigger: trigs@i);\
 	\});\
-	output = \cf2 Mix\cf0 .fill(3, \{\cf2 |i|\cf0 \
-		\cf2 Warp1\cf0 .ar(1, bufs@i, ptrs@i, frq, wsz, -1, dns, rnd)\
-			* \cf2 EnvGen\cf0 .kr(\
-				\cf2 Env\cf0 ([0.0,1.0,1.0,0.0],[0.3,0.4,0.3],\cf4 \\sine\cf0 , 0, 3),\
+	output = \cf3 Mix\cf2 .fill(3, \{\cf3 |i|\cf2 \
+		\cf3 Warp1\cf2 .ar(1, bufs@i, ptrs@i, frq, wsz, -1, dns, rnd)\
+			* \cf3 EnvGen\cf2 .kr(\
+				\cf3 Env\cf2 ([0.0,1.0,1.0,0.0],[0.3,0.4,0.3],\cf5 \\sine\cf2 , 0, 3),\
 				trigs.rotate(-1)@i, timeScale: 1.0 / i_wrp\
 			)\
-	\}) * \cf2 EnvGen\cf0 .kr(\cf2 Env\cf0 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf4 \\sine\cf0 , 2), gate, doneAction: 2);\
-	\cf2 Out\cf0 .ar(out, \
-		\cf2 A2B\cf0 .ar(\
-			output,\
-			\cf2 DelayN\cf0 .ar(output, 0.01, 0.01),\
-			\cf2 DelayN\cf0 .ar(output, 0.02, 0.02),\
-			\cf2 DelayN\cf0 .ar(output, 0.03, 0.03)\
-		) * amp\
-	)\
+	\}) * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf5 \\sine\cf2 , 2, 1), gate, doneAction: 2);\
+	#w, x, y, z = \cf3 A2B\cf2 .ar(\
+		output * aa,\
+		\cf3 DelayN\cf2 .ar(output, 0.01, 0.01) * ab,\
+		\cf3 DelayN\cf2 .ar(output, 0.02, 0.02) * ac,\
+		\cf3 DelayN\cf2 .ar(output, 0.03, 0.03) * ad\
+	);\
+	\cf3 Out\cf2 .ar(out, \cf3 AtkRotateXYZ\cf2 .ar(w, x, y, z, xang, yang, zang) * amp)\
 \}).add;\
 \
-~glmap = (\
-	aa: \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 0.0)),\
-	ab: \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 0.0)),\
-	ac: \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 0.0)),\
-	ad: \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (0.0, 0.0)),\
-	xang: \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi)),\
-	yang: \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi)),\
-	zang: \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi))\
+~z4bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "fxloop"\cf2 ) \});\
+\
+~z4genvs = (\
+	\cf5 \\gauss\cf2 : \cf3 Env\cf2 .sine,\
+	\cf5 \\quasi_gauss\cf2 : \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf5 \\sine\cf2 ),\
+	\cf5 \\perc\cf2 : \cf3 Env\cf2 .perc,\
+	\cf5 \\reversed\cf2 : \cf3 Env\cf2 ([0.001, 1.0, 0.001], [0.95, 0.05], \cf5 \\sine\cf2 ),\
+	\cf5 \\triangle\cf2 : \cf3 Env\cf2 .triangle,\
+	\cf5 \\linear\cf2 : \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3]),\
+	\cf5 \\sine\cf2 : \cf3 InterplPairs\cf2 ([[0.0, 0.0], [0.2, 0.1], [0.25, -0.1], [0.5, 1.0], [0.75, -0.1], \
+		[0.8, 0.1], [1.0, 0.0]], \cf5 \\sin\cf2 ).asEnv\
+).collect(\{\cf3 |env|\cf2 \
+	\cf3 Buffer\cf2 .sendCollection(s, env.discretize)\
+\});\
+\
+~z4envnums = ~z4genvs.asArray.collect(\cf3 _\cf2 .bufnum).sort;\
+	\
+~z4map = (\
+	ptr: \cf3 ControlSpec\cf2 (0.0, 1.0),\
+	genv: \cf3 ControlSpec\cf2 (~z4envnums.first, ~z4envnums.last, step: 1),\
+	wrnd: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (0.001, 0.05)),\
+	eamp: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (1.0, 0.001)),\
+	aamp: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (4.0, 0.2)),\
+	xang: \cf3 ControlSpec\cf2 (-pi, pi),\
+	yang: \cf3 ControlSpec\cf2 (-pi, pi),\
+	zang: \cf3 ControlSpec\cf2 (-pi, pi)\
 );\
+\
+~z4arrmap = (\
+	pch: (start: \cf3 ControlSpec\cf2 (35/36**6, 35/36), grow: \cf3 ControlSpec\cf2 (36/35, 36/35)),\
+	wsz: (start: \cf3 ControlSpec\cf2 (0.005, 0.05), grow: \cf3 ControlSpec\cf2 (1.618, 1.2)),\
+	dns: (start: \cf3 ControlSpec\cf2 (0.25, 2, step: 0.25), grow: \cf3 ControlSpec\cf2 (1.5, 1.1)),\
+	del: (start: \cf3 ControlSpec\cf2 (0.001, 0.01), grow: \cf3 ControlSpec\cf2 (1.618, 1.05))\
+);\
+	\
+~glmap = (\
+	aa: \cf3 ControlSpec\cf2 (0.001, 2.0, \cf5 \\exp\cf2 ),\
+	ab: \cf3 ControlSpec\cf2 (2.0, 0.001, \cf5 \\exp\cf2 ),\
+	ac: \cf3 ControlSpec\cf2 (0.001, 2.0, \cf5 \\exp\cf2 ),\
+	ad: \cf3 ControlSpec\cf2 (2.0, 0.001, \cf5 \\exp\cf2 ),\
+	shL: \cf3 ControlSpec\cf2 (0.5*35/36, 0.5*36/35),\
+	shR: \cf3 ControlSpec\cf2 (1.5*35/36, 1.5*36/35),\
+	xang: \cf3 ControlSpec\cf2 (-pi, pi),\
+	yang: \cf3 ControlSpec\cf2 (-pi, pi),\
+	zang: \cf3 ControlSpec\cf2 (-pi, pi)\
+);\
+\
+~z4cyclemap = (\
+	aa: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (0.2, 1.0)),\
+	ab: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (1.0, 0.2)),\
+	ac: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (0.2, 1.0)),\
+	ad: \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (1.0, 0.2)),\
+	xang: \cf3 ControlSpec\cf2 (-pi, pi),\
+	yang: \cf3 ControlSpec\cf2 (-pi, pi),\
+	zang: \cf3 ControlSpec\cf2 (-pi, pi)\
+);\
+\
+~z4buffer = \cf3 Buffer\cf2 .sendCollection(s, \cf3 Array\cf2 .rand(256, -1.0, 1.0), 1);\
+\
+~z4efx = \cf3 Bus\cf2 .audio(s, 4);\
+\
+~z4funcs = [	\
+	 \{\cf3 |btn|\cf2 \
+\pard\pardeftab720\ql\qnatural
+\cf2 		~z4bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "detloop"\cf2 ) \});\
+		~z4synths.do(\cf3 _\cf2 .set(\cf5 \\buffer\cf2 , ~z4bufs.choose));\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.8;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -30;\
+		~fx.sendCurrentSettings;\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\alphamap\cf2 , 0, 1, 0);			\
+	\},\
+\
+	\{\cf3 |btn|\cf2 \
+		~z4bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "fxloop"\cf2 ) \});\
+		~z4synths.do(\cf3 _\cf2 .set(\cf5 \\buffer\cf2 , ~z4bufs.choose));\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.3;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -20;\
+		~fx.sendCurrentSettings;\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\colormap\cf2 , 0, 1, 0);\
+	\},\
+\
+	\{\cf3 |btn|\cf2 \
+		~z4bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "memorloop"\cf2 ) \});\
+		~z4synths.do(\cf3 _\cf2 .set(\cf5 \\buffer\cf2 , ~z4bufs.choose));\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.4;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -35;\
+		~fx.sendCurrentSettings;\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\alphamap\cf2 , 0, 1, 0);			\
+	\},\
+\
+	\{\cf3 |btn|\cf2 \
+		~z4bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "monooop"\cf2 ) \});\
+		~z4synths.do(\cf3 _\cf2 .set(\cf5 \\buffer\cf2 , ~z4bufs.choose));\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.6;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -25;\
+		~fx.visualdict.globals[\cf5 \\angle\cf2 ] = 0.1;\
+		~fx.visualdict.globals[\cf5 \\rotY\cf2 ] = 0.1;\
+		~fx.sendCurrentSettings;\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\param\cf2 , 0, 1.0, 0);\
+	\},\
+\
+	\{\cf3 |btn|\cf2 \
+		~z4bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "nimeloop"\cf2 ) \});\
+		~z4synths.do(\cf3 _\cf2 .set(\cf5 \\buffer\cf2 , ~z4bufs.choose));\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.6;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -25;\
+		~fx.visualdict.globals[\cf5 \\angle\cf2 ] = 0.2;\
+		~fx.visualdict.globals[\cf5 \\rotY\cf2 ] = 0;\
+		~fx.sendCurrentSettings;			\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\param\cf2 , 0, 0, 0);\
+	\},\
+\
+	\{\cf3 |btn|\cf2 \
+		~z4bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "reloop"\cf2 ) \});\
+		~z4synths.do(\cf3 _\cf2 .set(\cf5 \\buffer\cf2 , ~z4bufs.choose));\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.8;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -25;\
+		~fx.visualdict.globals[\cf5 \\angle\cf2 ] = 0.1;\
+		~fx.visualdict.globals[\cf5 \\rotY\cf2 ] = 0.1;\
+		~fx.sendCurrentSettings;			\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\param\cf2 , 0, 0.3, 0);\
+	\},\
+\
+	\{\cf3 |btn|\cf2 \
+		~z4bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "sumeloop"\cf2 ) \});\
+		~z4synths.do(\cf3 _\cf2 .set(\cf5 \\buffer\cf2 , ~z4bufs.choose));\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.3;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -35;\
+		~fx.visualdict.globals[\cf5 \\angle\cf2 ] = -0.2;\
+		~fx.visualdict.globals[\cf5 \\rotY\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\rotX\cf2 ] = 0.5;\
+		~fx.sendCurrentSettings;			\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\param\cf2 , 0, 0, 0);\
+	\},\
+\
+	\{\cf3 |btn|\cf2 \
+		~z4bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "tehisloop"\cf2 ) \});\
+		~z4synths.do(\cf3 _\cf2 .set(\cf5 \\buffer\cf2 , ~z4bufs.choose));\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.1;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -30;\
+		~fx.visualdict.globals[\cf5 \\angle\cf2 ] = 0;\
+		~fx.visualdict.globals[\cf5 \\rotZ\cf2 ] = 0.5;\
+		~fx.visualdict.globals[\cf5 \\rotX\cf2 ] = 0.0;\
+		~fx.sendCurrentSettings;	\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\param\cf2 , 0, 0.2, 0);				\
+	\},\
+\
+	\{\cf3 |btn|\cf2 \
+		~z4bufs = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf4 "caloop"\cf2 ) \});\
+		~z4synths.do(\cf3 _\cf2 .set(\cf5 \\buffer\cf2 , ~z4bufs.choose));\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.9;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -20;\
+		~fx.visualdict.globals[\cf5 \\angle\cf2 ] = 0.5;\
+		~fx.visualdict.globals[\cf5 \\rotZ\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\rotX\cf2 ] = 0.5;\
+		~fx.sendCurrentSettings;			\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\param\cf2 , 0, 0, 0);\
+	\}		\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 ];\
+\
+~z4arr = \cf3 Array\cf2 ();\
+\
+\cf3 DjembeLib\cf2 .patterns.do(\{\cf3 |dpat|\cf2 \
+	dpat.do(\{\cf3 |seq|\cf2 \
+		if (seq.first.isKindOf(\cf3 Number\cf2 )) \{ ~z4arr = ~z4arr.add(\cf3 Pseq\cf2 (([seq] ++ (0 ! seq.size / 2)).lace(seq.size * 8), \cf3 inf\cf2 ).asStream) \}\
+	\})\
+\});\
+\
+~z4onoff = (0 ! 16);\
+~z4pats = ~z4arr.keep(4);\
+\
+~rates = \cf3 Array\cf2 .geom(8, exp(pi), 2**(1/5)) ++ \cf3 Array\cf2 .geom(2, exp(pi)**exp(1), 2**(1/5));\
+\
+~ratepoints = (\
+	\cf5 \\pxa\cf2 : (rates: \cf3 Array\cf2 .geom(3, ~rates[0], 36/35 ), gates: [0.4, 0.6]),\
+	\cf5 \\pya\cf2 : (rates: \cf3 Array\cf2 .geom(2, ~rates[7], 36/35 ), gates: [0.5]),\
+	\cf5 \\pxb\cf2 : (rates: \cf3 Array\cf2 .geom(3, ~rates[1], 36/35 ), gates: [0.33, 0.66]),\
+	\cf5 \\pyb\cf2 : (rates: \cf3 Array\cf2 .geom(4, ~rates[6], 36/35 ), gates: [0.25, 0.5, 0.75]),\
+	\cf5 \\pxc\cf2 : (rates: \cf3 Array\cf2 .geom(4, ~rates[2], 36/35 ), gates: [0.6, 0.7, 0.8]),\
+	\cf5 \\pyc\cf2 : (rates: \cf3 Array\cf2 .geom(3, ~rates[5], 36/35 ), gates: [0.33, 0.66]),\
+	\cf5 \\pxd\cf2 : (rates: \cf3 Array\cf2 .geom(2, ~rates[3], 36/35 ), gates: [0.5]),\
+	\cf5 \\pyd\cf2 : (rates: \cf3 Array\cf2 .geom(3, ~rates[4], 36/35 ), gates: [0.5, 0.75])\
+)\
 \
 )\
 \
+\
 (\
 \
-	~recordActive = \cf2 false\cf0 ;\
-	~recordPath = \cf3 "/Users/alo/sounds/fx/zone_4_"\cf0  ++ \cf2 Date\cf0 .getDate.stamp ++ \cf3 ".aif"\cf0 ;\
+	~recordActive = \cf3 false\cf2 ;\
+	~recordPath = \cf4 "/Users/alo/sounds/fx/zone_4_"\cf2  ++ \cf3 Date\cf2 .getDate.stamp ++ \cf4 ".aif"\cf2 ;\
 \
-	~rout = \cf2 Routine\cf0 (\{\
+	~rout = \cf3 Routine\cf2 (\{\
 		\
 		3.wait;\
 		\
-		~fx.startFx;\
+		~fx.startFx(\cf3 true\cf2 );\
 		\
 		7.wait;\
-		\
-		~fx.visualdict.globals[\cf4 \\alpha\cf0 ] = 1.0;\
-		~fx.visualdict.globals[\cf4 \\clear\cf0 ] = 0.4;\
-		~fx.visualdict.globals[\cf4 \\add\cf0 ] = 0.96;\
-		~fx.visualdict.globals[\cf4 \\transx\cf0 ] = 0.0;\
-		~fx.visualdict.globals[\cf4 \\transy\cf0 ] = 0.0;\
-		~fx.visualdict.globals[\cf4 \\transz\cf0 ] = -50.0;\
-		~fx.visualdict.globals[\cf4 \\angle\cf0 ] = 0.0;\
-		~fx.visualdict.globals[\cf4 \\rotX\cf0 ] = 0.0;\
-		~fx.visualdict.globals[\cf4 \\rotY\cf0 ] = 0.0;\
-		~fx.visualdict.globals[\cf4 \\rotZ\cf0 ] = 0.0;\
-		~fx.visualdict.globals[\cf4 \\frame\cf0 ] = 4;\
+						\
+		~fx.visualdict.globals[\cf5 \\alpha\cf2 ] = 1.0;\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.4;\
+		~fx.visualdict.globals[\cf5 \\add\cf2 ] = 0.96;\
+		~fx.visualdict.globals[\cf5 \\transx\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\transy\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\transz\cf2 ] = -20.0;\
+		~fx.visualdict.globals[\cf5 \\angle\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\rotX\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\rotY\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\rotZ\cf2 ] = 0.0;\
+		~fx.visualdict.globals[\cf5 \\frame\cf2 ] = 4;\
 		\
 		~fx.sendCurrentSettings;\
+\
 		\
 		if (~recordActive) \{ ~serv.prepareForRecord(~recordPath) \};\
 		\
@@ -103,120 +302,273 @@
 		\
 		if (~recordActive) \{ ~serv.record \};\
 \
-		~timer = \cf2 Date\cf0 .getDate.bootSeconds;\
+		~timer = \cf3 Date\cf2 .getDate.bootSeconds;\
 		\
 		~fx.addGlobalsResponder;\
 		~fx.addStatesResponder;\
 		~fx.addTriggerResponder;\
 		\
-		~fx.visualdict.globals[\cf4 \\clear\cf0 ] = 1.0;\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 1.0;\
 		~fx.sendCurrentSettings;\
 	\
 		0.1.wait;\
 	\
-		~fx.visualdict.globals[\cf4 \\clear\cf0 ] = 0.4;\
+		~fx.visualdict.globals[\cf5 \\clear\cf2 ] = 0.4;\
 		~fx.sendCurrentSettings;\
+\
+		1.wait;\
+\
+		~fx.activatePatch(\cf5 \\ringz\cf2 , 0);\
+		~fx.wait(2);\
+		~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.equal);\
+		~fx.wait(2);\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\alphamap\cf2 , 0, 1, 0);\
+		~fx.wait(2);\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\param\cf2 , 1, 0, 0);\
+\
+		1.wait;\
+				\
+		~fx.sendPollIndices(~fx.getPollIndices(1));\
 				\
 		1.wait;\
 		\
-		~fx.sendPollIndices(~fx.getPollIndices(4));\
-		\
-		1.wait;\
-		\
-		~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.equal.value);\
-		\
-		1.wait;\
-		\
-		~fx.activatePatch(\cf4 \\ringz\cf0 );\
-		\
-		1.wait;\
-		\
-		~fx.sendPatchCmd(\cf4 \\ringz\cf0 , \cf4 \\alphamap\cf0 , 0, 1, 0);\
-		\
-		~fx.addGlobalsFunction(\cf4 \\f1\cf0 , \{\cf2 |invalues|\cf0 \
-			if (~waves.notNil) \{\
-				~waves.set(\
-					\cf4 \\aa\cf0 , ~glmap[\cf4 \\aa\cf0 ].map(invalues.avglbf),\
-					\cf4 \\ab\cf0 , ~glmap[\cf4 \\ab\cf0 ].map(invalues.avgrbf),\
-					\cf4 \\ac\cf0 , ~glmap[\cf4 \\ac\cf0 ].map(invalues.avgrbb), \
-					\cf4 \\ad\cf0 , ~glmap[\cf4 \\ad\cf0 ].map(invalues.avglbb),\
-					\cf4 \\xang\cf0 , ~glmap[\cf4 \\xang\cf0 ].map(invalues.avgltf),\
-					\cf4 \\yang\cf0 , ~glmap[\cf4 \\yang\cf0 ].map(invalues.avgrtf),\
-					\cf4 \\zang\cf0 , ~glmap[\cf4 \\zang\cf0 ].map(invalues.avgrtb)\
+		~fx.addGlobalsFunction(\cf5 \\zone4globals\cf2 , \{\cf3 |invalues|\cf2 \
+			if (~z4waves.notNil) \{\
+				~z4waves.set(\
+					\cf5 \\aa\cf2 , ~glmap[\cf5 \\aa\cf2 ].map(invalues.avglbf),\
+					\cf5 \\ab\cf2 , ~glmap[\cf5 \\ab\cf2 ].map(invalues.avgrbf),\
+					\cf5 \\ac\cf2 , ~glmap[\cf5 \\ac\cf2 ].map(invalues.avgrbb), \
+					\cf5 \\ad\cf2 , ~glmap[\cf5 \\ad\cf2 ].map(invalues.avglbb),\
+					\cf5 \\shL\cf2 , ~glmap[\cf5 \\shL\cf2 ].map(invalues.avgstate),\
+					\cf5 \\shR\cf2 , ~glmap[\cf5 \\shR\cf2 ].map(invalues.stddev),\
+					\cf5 \\xang\cf2 , ~glmap[\cf5 \\xang\cf2 ].map(invalues.avgltf),\
+					\cf5 \\yang\cf2 , ~glmap[\cf5 \\yang\cf2 ].map(invalues.avgrtf),\
+					\cf5 \\zang\cf2 , ~glmap[\cf5 \\zang\cf2 ].map(invalues.avgrtb)\
 				)\
 			\}\
 		\});\
 		\
-		~fx.addStatesFunction(\cf4 \\f1\cf0 , \{\cf2 |values|\cf0  \
-			if (~buffer.isNil) \{ ~buffer = \cf2 Buffer\cf0 .sendCollection(s, values.states * 2 - 1, 1) \}\
-			\{ ~buffer.sendCollection(values.states * 2 - 1) \};\
+		~setRates = \cf3 false\cf2 ;\
+\
+		~fx.addStatesFunction(\cf5 \\zone4states\cf2 , \{\cf3 |values|\cf2  \
+			\cf3 var\cf2  args, states = \cf3 Pseq\cf2 (values.states[29..36], \cf3 inf\cf2 ).asStream;\
+			if ((~setRates).and(~z4waves.notNil)) \{\
+				~z4waves.set(\
+					*~ratepoints.collect(\{\cf3 |ev|\cf2 \
+						\cf3 var\cf2  state = states.next;\
+						ev.rates[ev.gates.copy.add(state).sort.indexOf(state)];\
+					\}).asKeyValuePairs\
+				);\
+			\};\
+			if (~z4buffer.isNil) \{ ~z4buffer = \cf3 Buffer\cf2 .sendCollection(s, values.states.dup(4).flat * 2 - 1, 1) \}\
+			\{ ~z4buffer.sendCollection(values.states.dup(4).flat * 2 - 1) \};\
 		\});\
+				\
+		1.wait;\
+		\
+		~z4waves = \cf3 Synth\cf2 .tail(~agrp, \cf5 \\zone4_waveTerrain\cf2 , [\cf5 \\out\cf2 , ~decoder.bus, \cf5 \\efx\cf2 , ~z4efx, \cf5 \\buffer\cf2 , ~z4buffer, \
+			\cf5 \\aa\cf2 , 1.0, \cf5 \\ab\cf2 , 1.0, \cf5 \\ac\cf2 , 1.0, \cf5 \\ad\cf2 , 1.0, \cf5 \\pxa\cf2 , ~rates[0], \cf5 \\pya\cf2 , ~rates[1], \cf5 \\pxb\cf2 , 17, \cf5 \\pyb\cf2 , 2, \cf5 \\pxc\cf2 , 41, \cf5 \\pyc\cf2 , 39, \
+			\cf5 \\pxd\cf2 , 30, \cf5 \\pyd\cf2 , 31, \cf5 \\aamp\cf2 , 0 ]).setn(\cf5 \\pulse\cf2 , [1/3, 4/3, 6/3, 9/3]);\
+\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  dur = 20, step = 0.01, amp = 0, nsteps;\
+			nsteps = dur/step;\
+			nsteps.do(\{\
+				amp = amp + (nsteps.reciprocal * 0.5);\
+				~z4waves.set(\cf5 \\aamp\cf2 , amp);\
+				step.wait;\
+			\})\
+			\
+		\}).play;\
 		\
 		1.wait;\
 		\
-		~fx.sendPatchCmd(\cf4 \\ringz\cf0 , \cf4 \\alphahi\cf0 , 0, 1, 60);\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\alphahi\cf2 , 0, 0.5, 15);\
+\
+		10.wait;\
 		\
-		~efx = \cf2 Bus\cf0 .audio(~serv, 4);\
+		~z4cycle = \cf3 Synth\cf2 .after(~z4waves, \cf5 \\zone04cycles\cf2 , [\cf5 \\out\cf2 , ~decoder.bus, \cf5 \\in\cf2 , ~z4efx, \cf5 \\i_wrp\cf2 , 0.25, \cf5 \\frq\cf2 , 0.5, \
+			\cf5 \\wsz\cf2 , 0.01, \cf5 \\dns\cf2 , 4, \cf5 \\rnd\cf2 , 0, \cf5 \\amp\cf2 , 1]);\
 		\
-		~waves = \cf2 Synth\cf0 (\cf4 \\zone4_waveTerrain\cf0 , [\cf4 \\out\cf0 , ~abus, \cf4 \\efx\cf0 , ~efx, \cf4 \\buffer\cf0 , ~buffer, \cf4 \\pxa\cf0 , 10, \cf4 \\pya\cf0 , 200, \cf4 \\pxb\cf0 , 17, \cf4 \\pyb\cf0 , 2, \cf4 \\pxc\cf0 , 41,\
-			\cf4 \\pyc\cf0 , 39, \cf4 \\pxd\cf0 , 300, \cf4 \\pyd\cf0 , 31 ]);\
-		\
-		~cycle = \cf2 Synth\cf0 .after(~waves, \cf4 \\line\cf0 , [\cf4 \\out\cf0 , ~abus, \cf4 \\in\cf0 , ~efx, \cf4 \\i_wrp\cf0 , 0.25, \cf4 \\frq\cf0 , 0.5, \cf4 \\wsz\cf0 , 0.01, \cf4 \\dns\cf0 , 4, \cf4 \\rnd\cf0 , 0, \cf4 \\amp\cf0 , 1]);\
-		\
-		\cf2 Routine\cf0 (\{\
-			\cf2 var\cf0  xamp, xstart, xend, namp, nstart, nend, dur = 500;\
+		~fx.addGlobalsFunction(\cf5 \\z4cycles\cf2 , \{\cf3 |values|\cf2 \
+			\cf3 var\cf2  argstr = \cf3 Pseq\cf2 ([values.avglbf, values.avgrbf, values.avgrbb, values.avglbb, \
+				values.avgltf, values.avgrtf, values.avgrtb, values.avgltb], 1).asStream;\
+			~z4cycle.set(*~z4cyclemap.collect(\cf3 _\cf2 .map(argstr.next)).asKeyValuePairs);\
+		\});\
+\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  xamp, xstart, xend, namp, nstart, nend, dur = 500;\
 			nstart = 0.0; nend = 8.0; namp = 0.0;\
 			xstart = 0.0; xend = 0.5; xamp = 0.0;\
 			dur.do(\{\
 				namp = namp + (nend - nstart / dur);\
 				xamp = xamp + (xend - xstart / dur);\
-				#[aa, ab, ac, ad].do(\{\cf2 |argname|\cf0  ~glmap[argname].spec.minval_(namp) \});\
-				#[aa, ab, ac, ad].do(\{\cf2 |argname|\cf0  ~glmap[argname].spec.maxval_(xamp) \});\
+				#[aa, ab, ac, ad].do(\{\cf3 |argname|\cf2  ~glmap[argname].spec.minval_(namp) \});\
+				#[aa, ab, ac, ad].do(\{\cf3 |argname|\cf2  ~glmap[argname].spec.maxval_(xamp) \});\
 				0.06.wait;\
 			\});\
 		\}).play;\
 		\
-		240.wait;\
+		5.wait;\
+			\
+		~z4synths = \cf3 Array\cf2 .fill(16, \{\cf3 |i|\cf2 \
+			\cf3 var\cf2  argstr, synth;\
+			argstr = \cf3 Pseq\cf2 (~fx.invalues.states.clump(8).wrapAt(i), \cf3 inf\cf2 ).asStream;\
+			synth = \cf3 Synth\cf2 .tail(~agrp, \cf5 \\zone04play\cf2 , [\cf5 \\out\cf2 , ~decoder.bus, \cf5 \\efx\cf2 , 99, \
+				\cf5 \\buffer\cf2 , ~z4bufs[i], \cf5 \\gate\cf2 , 1.0, \cf5 \\amp\cf2 , 0] ++ \
+				~z4map.collect(\{\cf3 |spec|\cf2  spec.map(argstr.next) \}).asKeyValuePairs )\
+				.setn(\cf5 \\env\cf2 , \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.3, 0.4, 0.3], \cf5 \\sine\cf2 , 2, 1));\
+			~z4arrmap.collect(\{\cf3 |arr|\cf2  \cf3 Array\cf2 .geom(4, arr[\cf5 'start'\cf2 ].map(argstr.next), arr[\cf5 'grow'\cf2 ].map(argstr.next) ) \})\
+			.keysValuesDo(\{\cf3 |argname, array|\cf2 \
+					synth.setn(argname, array)\
+			\});\
+			synth\
+		\});\
+	\
+		~fx.addStatesFunction(\cf5 \\z4\cf2 , \{\cf3 |values|\cf2 \
+			\cf3 var\cf2  states = values.states.clump(8);\
+			if (~z4synths.notNil)\
+			\{\
+				~z4synths.do(\{\cf3 |synth, i|\cf2 \
+					\cf3 var\cf2  args = \cf3 Pseq\cf2 (states.wrapAt(i), \cf3 inf\cf2 ).asStream;\
+					if (synth.notNil)\
+					\{\
+						synth.set(*\
+							~z4map.collect(\cf3 _\cf2 .map(args.next)).asKeyValuePairs\
+						);\
+						~z4arrmap.collect(\{\cf3 |arr|\cf2  \
+							\cf3 Array\cf2 .geom(4, arr[\cf5 'start'\cf2 ].map(args.next), arr[\cf5 'grow'\cf2 ].map(args.next) ) \
+						\})\
+						.keysValuesDo(\{\cf3 |argname, array|\cf2 \
+								synth.setn(argname, array)\
+						\})\
+					\};\
+				\})\
+			\}\
+		\});\
+				\
+		~fx.addTriggerFunction(\cf5 \\z4synths\cf2 , \{\cf3 |values|\cf2 \
+			~z4pats.do(\{\cf3 |strm, i|\cf2 \
+				if (strm.next == 1) \{\
+					if (~z4onoff[i] == 0) \{\
+						~z4onoff[i] = 1;\
+						~z4synths[i].set(\cf5 \\amp\cf2 , 1);\
+					\}\
+					\{\
+						~z4onoff[i] = 0;\
+						~z4synths[i].set(\cf5 \\amp\cf2 , 0)\
+					\}				\
+				\}\
+			\})\
+		\});\
 		\
-		\cf2 Routine\cf0 (\{\
-			\cf2 var\cf0  amp, start, end, dur = 500;\
+		~setRates = \cf3 true\cf2 ;\
+		\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\alphahi\cf2 , 0, 1.0, 0);	\
+		\
+		20.wait;\
+		\
+		\cf3 Routine\cf2 (\{\
+			[(0..8), (1..5)].allTuples.scramble.do(\{\cf3 |thing|\cf2 \
+				~z4funcs[thing.first].value;\
+				if (~z4pats.size < 16) \{\
+					~z4pats = ~z4pats.add(~z4arr[~z4pats.size]);\
+				\};\
+				thing.last.wait;\
+			\})\
+		\}).play;\
+		\
+		\cf3 Routine\cf2 (\{\
+			27.do(\{\
+				~fx.sendReset(0, 0, 1, 4, 4, 4, 8, 8, 8, *([~fx.weightPresets.symmetry.value, ~fx.weightPresets.equal].choose));\
+				5.wait\
+			\})\
+		\});\
+\
+		135.wait;\
+		\
+		~fx.sendReset(0, 0, 1, 4, 4, 4, 8, 8, 8, *~fx.weightPresets.equal);\
+		\
+		1.wait;\
+		\
+		~frmstrm = \cf3 Pwrand\cf2 ((4,6..12), (1..5).normalizeSum, 16).asStream;\
+		\
+		~addstrm = \cf3 Pxrand\cf2 ([0.6, 0.2, 0.8, 0.4], 16 ).asStream;\
+\
+		\cf3 Routine\cf2 (\{\
+			~z4synths.do(\{\cf3 |synth, i|\cf2 \
+				synth.set(\cf5 \\gate\cf2 , -30.0);\
+				~z4synths[i] = \cf3 nil\cf2 ;\
+				~fx.sendReset(0, 0, 1, 4, 4, 4, 8, 8, 8, *~fx.weightPresets.equal);\
+				~fx.wait(2);\
+				~fx.visualdict.globals[\cf5 \\frame\cf2 ] = ~frmstrm.next;\
+				~fx.visualdict.globals[\cf5 \\add\cf2 ] = ~addstrm.next;\
+				~fx.sendCurrentSettings;\
+				4.wait;\
+			\});			\
+		\}).play;\
+		\
+		[ 6,10,  0,4,  6,10,  2,10,  8,1,  2,5,  6,10,  8,2,  6,3,  2,0 ].pairsDo(\{\cf3 |funcind, dur|\cf2 \
+			~z4funcs[funcind].value;\
+			dur.wait;\
+		\});\
+				\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  amp, start, end, dur = 500;\
 			start = 8.0; end = 0.0; amp = 8.0;\
 			dur.do(\{\
 				amp = amp + (end - start / dur);\
-				#[aa, ab, ac, ad].do(\{\cf2 |argname|\cf0  ~glmap[argname].spec.minval_(amp) \});\
+				#[aa, ab, ac, ad].do(\{\cf3 |argname|\cf2  ~glmap[argname].spec.minval_(amp) \});\
 				0.06.wait;\
 			\});\
 		\}).play;\
 		\
-		~cycle.set(\cf4 \\gate\cf0 , -40);		\
+		~z4cycle.set(\cf5 \\gate\cf2 , -40);		\
 \
-		~fx.sendPatchCmd(\cf4 \\ringz\cf0 , \cf4 \\alphahi\cf0 , 1, 0, 30);\
+		~fx.sendPatchCmd(\cf5 \\ringz\cf2 , \cf5 \\alphahi\cf2 , 1, 0, 60);\
 		\
-		\cf2 Routine\cf0 (\{\
-			\cf2 var\cf0  xamp, xstart, xend, namp, nstart, nend, dur = 500;\
+		~fx.visualdict.globals[\cf5 \\frame\cf2 ] = 12;\
+		~fx.visualdict.globals[\cf5 \\add\cf2 ] = 0.6;\
+		~fx.sendCurrentSettings;		\
+		\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  xamp, xstart, xend, namp, nstart, nend, dur = 500;\
 			nstart = 8.0; nend = 0.0; namp = 8.0;\
 			xstart = 0.5; xend = 0.0; xamp = 0.5;\
 			dur.do(\{\
 				namp = namp + (nend - nstart / dur);\
 				xamp = xamp + (xend - xstart / dur);\
-				#[aa, ab, ac, ad].do(\{\cf2 |argname|\cf0  ~glmap[argname].spec.minval_(namp) \});\
-				#[aa, ab, ac, ad].do(\{\cf2 |argname|\cf0  ~glmap[argname].spec.maxval_(xamp) \});\
+				#[aa, ab, ac, ad].do(\{\cf3 |argname|\cf2  ~glmap[argname].spec.minval_(namp) \});\
+				#[aa, ab, ac, ad].do(\{\cf3 |argname|\cf2  ~glmap[argname].spec.maxval_(xamp) \});\
 				0.06.wait;\
 			\});\
 		\}).play;\
 		\
-		30.wait;		\
-										\
+		30.wait;	\
+							\
+		\cf3 Routine\cf2 (\{\
+			\cf3 var\cf2  dur = 30, step = 0.05, amp = 0.5, nsteps;\
+			nsteps = dur/step;\
+			nsteps.do(\{\
+				amp = amp - (nsteps.reciprocal * 0.5);\
+				~z4waves.set(\cf5 \\aamp\cf2 , amp);\
+				step.wait;\
+			\})\
+			\
+		\}).play;\
+		\
+		30.wait;\
+		\
 		~fx.removeAllStatesFunctions;\
 		~fx.removeAllTriggerFunctions;\
-		~fx.removeAllGlobalsFunctions;\
+		~fx.removeAllGlobalsFunctions;		\
 		\
-		~waves.free;\
-\
-		~fx.deactivatePatch(\cf4 \\ringz\cf0 );\
+		~z4waves.free;\
+		\
+		~fx.deactivatePatch(\cf5 \\ringz\cf2 );\
 						\
-		\cf3 "MAIN FINISHED!"\cf0 .postln;\
-		(\cf3 "time elapsed: "\cf0  ++ (\cf2 Date\cf0 .getDate.bootSeconds - ~timer).asString).postln;\
+		\cf4 "MAIN FINISHED!"\cf2 .postln;\
+		(\cf4 "time elapsed: "\cf2  ++ (\cf3 Date\cf2 .getDate.bootSeconds - ~timer).asString).postln;\
 		\
 		if (~recordActive) \{ ~serv.stopRecording \};\
 		\
@@ -225,52 +577,52 @@
 	\}).play\
 )\
 \
+~fx.invalues.states.size\
 \
-\cf5 //~fx.addRenewResponder;\cf0 \
+\cf6 //~fx.addRenewResponder;\cf2 \
 (\
 ~fx.addGlobalsResponder;\
 \
 ~fx.addStatesResponder;\
 \
-\cf5 //~fx.addRenewFunction(\\f1, \{ Synth(\\rough, [0.25, 0.5, 1.0].wchoose([0.5, 0.3, 0.2])) \})\cf0 \
+\cf6 //~fx.addRenewFunction(\\f1, \{ Synth(\\rough, [0.25, 0.5, 1.0].wchoose([0.5, 0.3, 0.2])) \})\cf2 \
 \
 )\
 \
 if (~waves.notNil) \{\
 	~waves.set(\
-		\cf4 \\pxa\cf0 , 10,\
-		\cf4 \\pya\cf0 , 200,\
-		\cf4 \\pxb\cf0 , 17,\
-		\cf4 \\pyb\cf0 , 2,\
-		\cf4 \\pxc\cf0 , 41,\
-		\cf4 \\pyc\cf0 , 39,\
-		\cf4 \\pxd\cf0 , 300,\
-		\cf4 \\pyd\cf0 , 31\
+		\cf5 \\pxa\cf2 , 10,\
+		\cf5 \\pya\cf2 , 200,\
+		\cf5 \\pxb\cf2 , 17,\
+		\cf5 \\pyb\cf2 , 2,\
+		\cf5 \\pxc\cf2 , 41,\
+		\cf5 \\pyc\cf2 , 39,\
+		\cf5 \\pxd\cf2 , 300,\
+		\cf5 \\pyd\cf2 , 31\
 	)\
 \}\
 \
 if (~waves.notNil) \{\
 	~waves.set(\
-		\cf4 \\pxa\cf0 , 10,\
-		\cf4 \\pya\cf0 , 200,\
-		\cf4 \\pxb\cf0 , 170,\
-		\cf4 \\pyb\cf0 , 200,\
-		\cf4 \\pxc\cf0 , 41,\
-		\cf4 \\pyc\cf0 , 39,\
-		\cf4 \\pxd\cf0 , 30,\
-		\cf4 \\pyd\cf0 , 31\
+		\cf5 \\pxa\cf2 , 10,\
+		\cf5 \\pya\cf2 , 200,\
+		\cf5 \\pxb\cf2 , 170,\
+		\cf5 \\pyb\cf2 , 200,\
+		\cf5 \\pxc\cf2 , 41,\
+		\cf5 \\pyc\cf2 , 39,\
+		\cf5 \\pxd\cf2 , 30,\
+		\cf5 \\pyd\cf2 , 31\
 	)\
 \}\
 \
 \
-\
 ~waves.free;\
-~waves = \cf2 nil\cf0 \
+~waves = \cf3 nil\cf2 \
 \
-~fx.removeStatesFunction(\cf4 \\f1\cf0 );\
+~fx.removeStatesFunction(\cf5 \\f1\cf2 );\
 \
-~fx.removeRenewFunction(\cf4 \\f1\cf0 );\
+~fx.removeRenewFunction(\cf5 \\f1\cf2 );\
 \
 275/60\
-~fx.invalues.states.size\
+~fx.invalues\
 }

@@ -53,7 +53,7 @@ if (~serv.serverRunning.not)\
 	\cf3 Out\cf2 .ar(efx, sig * eamp);\
 	bf = \cf3 BFEncode1\cf2 .ar(sig, azm, elv, rho);\
 	\cf3 Out\cf2 .ar(out, bf * aamp)\
-\}).memStore;\
+\}).add;\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
 \cf2 \
 \pard\pardeftab720\ql\qnatural
@@ -67,7 +67,7 @@ if (~serv.serverRunning.not)\
 	\cf3 Out\cf2 .ar(efx, sig * eamp);\
 	bf = \cf3 BFEncode1\cf2 .ar(sig, azm, elv, rho);\
 	\cf3 Out\cf2 .ar(out, bf * aamp)\
-\}).memStore;\
+\}).add;\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 \
 \cf3 SynthDef\cf2 (\cf6 \\verb\cf2 , \{\cf3 |in, rtime, damp, inbw, spr, dry, early, tail, amp|\cf2 \
@@ -80,17 +80,17 @@ if (~serv.serverRunning.not)\
 	\cf3 LocalOut\cf2 .ar(\cf3 Mix\cf2 (sig) * 0.01);\
 	sig = sig + \cf3 PitchShift\cf2 .ar(sig, 0.1, [0.5, 0.25], mul: 0.1);\
 	\cf3 Out\cf2 .ar(0, (sig ++ sig) * amp)\
-\}).memStore;\
+\}).add;\
 \
 \cf3 SynthDef\cf2 (\cf6 \\bf2decode\cf2 , \{\cf3 |bus, amp = 1|\cf2 \
 	\cf3 var\cf2  w, x, y, z;\
 	#w, x, y, z = \cf3 In\cf2 .ar(bus, 4);\
 	\cf3 Out\cf2 .ar( 0, \cf3 BFDecode1\cf2 .ar(w, x, y, z, \cf3 IbiSpeakers\cf2 .quad.azimuth, (0 ! 4) ) * amp )\
-\}).memStore;\
+\}).add;\
 \
 \cf3 SynthDef\cf2 (\cf6 \\bfcollect\cf2 , \{\cf3 |bus, amp = 1|\cf2 \
 	\cf3 Out\cf2 .ar(0, \cf3 In\cf2 .ar(bus, 4) * amp)\
-\}).memStore\
+\}).add\
 \
 )\
 \
@@ -111,7 +111,7 @@ if (~serv.serverRunning.not)\
 )\
 \
 ~decode.set(\cf6 \\amp\cf2 , 0.2)\
-~rev.set(\cf6 \\amp\cf2 , 0.8)\
+~rev.set(\cf6 \\amp\cf2 , 0.0)\
 \
 ~rev.free\
 ~decode.free\
@@ -297,7 +297,7 @@ if (~serv.serverRunning.not)\
 \
 )\
 \
-\cf5 ~fx = FxLive().gui\cf2 \
+~fx = \cf3 FxLive\cf2 ().gui\
 \
 ~invalues.postln\
 \

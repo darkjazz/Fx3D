@@ -1,0 +1,914 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset238 Inconsolata;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red0\green115\blue0;\red96\green96\blue96;
+\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 \{\cf2 |panel, gui|\cf0 \
+	\cf2 var\cf0  colors, fonts, px, button, knobactions, buttonactions, slideractions;\
+	\cf2 var\cf0  nanosliders, nanobuttons, mainbuttons, nanomap;\
+	colors = (\
+		\cf3 \\blue\cf0 : \cf2 Color\cf0 .new255(28, 134, 238),\
+		\cf3 \\orange\cf0 : \cf2 Color\cf0 .new255(184, 134, 11),\
+		\cf3 \\steel\cf0 : \cf2 Color\cf0 .new255(4, 50, 89)\
+	);\
+	fonts = (\
+		\cf3 \\lucida9\cf0 : \cf2 Font\cf0 (\cf4 "Lucida Grande"\cf0 , 9),\
+		\cf3 \\lucida11\cf0 : \cf2 Font\cf0 (\cf4 "Lucida Grande"\cf0 , 11),\
+		\cf3 \\skia\cf0 : \cf2 Font\cf0 (\cf4 "Skia"\cf0 , 9) \
+	);\
+\
+	px = 5;\
+	button = \cf2 Rect\cf0 (px, 30, 75, 25);\
+	\
+	mainbuttons = \cf2 Array\cf0 .newClear(6);\
+	nanosliders = \cf2 Array\cf0 .newClear(9);\
+	nanobuttons = \cf2 Array\cf0 .newClear(9);\
+\
+	mainbuttons.put(0, \
+		\cf2 RoundButton\cf0 (panel, button) \cf5 // nano: <<\cf0 \
+			.states_([[\cf4 "init gl"\cf0 , colors.orange, colors.steel]])\
+			.font_(fonts.lucida9)\
+			.action_(\{\cf2 |btn|\cf0 \
+				\
+				\cf2 Routine\cf0 (\{\
+					\
+					1.wait;\
+					\
+					~fx.visualdict.globals[\cf3 \\alpha\cf0 ] = 1.0;\
+					~fx.visualdict.globals[\cf3 \\clear\cf0 ] = 0.05;\
+					~fx.visualdict.globals[\cf3 \\add\cf0 ] = 0.96;\
+					~fx.visualdict.globals[\cf3 \\transx\cf0 ] = 0.0;\
+					~fx.visualdict.globals[\cf3 \\transy\cf0 ] = 0.0;\
+					~fx.visualdict.globals[\cf3 \\transz\cf0 ] = -32.0;\
+					~fx.visualdict.globals[\cf3 \\angle\cf0 ] = -0.2;\
+					~fx.visualdict.globals[\cf3 \\rotX\cf0 ] = 0.0;\
+					~fx.visualdict.globals[\cf3 \\rotY\cf0 ] = 0.0;\
+					~fx.visualdict.globals[\cf3 \\rotZ\cf0 ] = 0.0;\
+					~fx.visualdict.globals[\cf3 \\frame\cf0 ] = 4;\
+					\
+					~fx.sendCurrentSettings;\
+					\
+					~fx.wait(2);\
+					~fx.sendPollIndices(~fx.getPollIndices(2));\
+					~fx.wait(2);\
+					~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.equal.value);\
+					~fx.wait(2);\
+					~fx.sendPatchCmd(\cf3 \\horizons\cf0 , \cf3 \\color\cf0 , 0, 1, 0);\
+					~fx.wait(2);\
+					~fx.sendPatchCmd(\cf3 \\mesh\cf0 , \cf3 \\alphamap\cf0 , 0, 1, 0);\
+					~fx.wait(2);				\
+					~fx.sendPatchCmd(\cf3 \\mesh\cf0 , \cf3 \\color\cf0 , 0, 2, 0);\
+					~fx.wait(2);				\
+					~fx.sendPatchCmd(\cf3 \\wobble\cf0 , \cf3 \\color\cf0 , 0, 2, 0);\
+					\
+					gui.post(\cf4 "visual parameters initialized"\cf0 );\
+										\
+				\}).play;\
+			\})\
+	);\
+		\
+	mainbuttons.put(1,\
+		\cf2 RoundButton\cf0 (panel, button.copy.left_(px=px+85)) \
+			.states_([[\cf4 "drone OFF"\cf0 , colors.orange, colors.steel], \
+				[\cf4 "drone ON"\cf0 , colors.steel, colors.orange]])\
+			.font_(fonts.lucida9)\
+			.action_(\{\cf2 |btn|\cf0 \
+				if (btn.value == 1) \{ \
+					~switchToDrone.value;\
+					gui.post(\cf4 "switched to zone 3 drone"\cf0 );\
+				\}\
+			\})\
+	);\
+	\
+	mainbuttons.put(2,	\
+		\cf2 RoundButton\cf0 (panel, button.copy.left_(px=px+85))\
+			.states_([[\cf4 "beats OFF"\cf0 , colors.orange, colors.steel ], \
+				[\cf4 "beats ON"\cf0 , colors.steel, colors.orange ]])\
+			.font_(fonts.lucida9)\
+			.action_(\{\cf2 |bt|\cf0 \
+				if (bt.value == 1)\
+				\{\
+					~switchToBeats.value;\
+					gui.post(\cf4 "switched to zone 2 beats"\cf0 );\
+				\}\
+			\});\
+	);\
+	\
+	knobactions = [\
+		\{\cf2 |knob|\cf0  ~fx.sendPatchCmd(\cf3 \\mesh\cf0 , \cf3 \\alphahi\cf0 , 0.0, knob.value, 0) \},\
+		\{\cf2 |knob|\cf0  ~fx.sendPatchCmd(\cf3 \\horizons\cf0 , \cf3 \\alphahi\cf0 , 0.0, knob.value, 0) \},\
+		\{\cf2 |knob|\cf0  ~fx.sendPatchCmd(\cf3 \\wobble\cf0 , \cf3 \\alphahi\cf0 , 0.0, knob.value, 0) \},\
+\pard\pardeftab720\ql\qnatural
+\cf0 		\{\cf2 |knob|\cf0  \
+			~fx.visualdict.globals[\cf3 \\add\cf0 ] = ~fx.visualdict.glSpecs[\cf3 \\add\cf0 ].map(knob.value); \
+			~fx.sendCurrentSettings \
+		\},\
+		\{\cf2 |knob|\cf0  \
+			~fx.visualdict.globals[\cf3 \\transz\cf0 ] = ~fx.visualdict.glSpecs[\cf3 \\transz\cf0 ].map(knob.value); \
+			~fx.sendCurrentSettings \
+		\},\
+		\{\cf2 |knob|\cf0  \
+			~fx.visualdict.globals[\cf3 \\angle\cf0 ] = ~fx.visualdict.glSpecs[\cf3 \\angle\cf0 ].map(knob.value); \
+			~fx.sendCurrentSettings \
+		\},\
+		\{\cf2 |knob|\cf0  \
+			~fx.visualdict.globals[\cf3 \\rotX\cf0 ] = knob.value; \
+			~fx.sendCurrentSettings \
+		\},\
+		\{\cf2 |knob|\cf0  \
+			~fx.visualdict.globals[\cf3 \\rotY\cf0 ] = knob.value; \
+			~fx.sendCurrentSettings \
+		\},\
+		\{\cf2 |knob|\cf0  \
+			~fx.visualdict.globals[\cf3 \\rotZ\cf0 ] = knob.value; \
+			~fx.sendCurrentSettings \
+		\}\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 	];\
+	\
+	slideractions = [\
+		\{\cf2 |slider|\cf0 \
+			~eamp = slider.value\
+		\},\
+		\{\cf2 |slider|\cf0 \
+			~sdur = [0.05, 0.7].asSpec.map(slider.value)\
+		\}\
+		] ++ (\{\} ! 7);\
+	\
+	buttonactions = [\
+		\{\cf2 |btn|\cf0   \
+			if (btn.value == 1) 	\
+			\{ \
+				~fx.activatePatch(\cf3 \\mesh\cf0 , 0);\
+				gui.post(\cf4 "mesh activated"\cf0 ); \
+			\
+			\}\
+			\{ \
+				~fx.deactivatePatch(\cf3 \\mesh\cf0 , 0); \
+				gui.post(\cf4 "mesh deactivated"\cf0 ); \
+			\}\
+		\},\
+		\{\cf2 |btn|\cf0   \
+			if (btn.value == 1) 	\
+			\{ \
+				~fx.activatePatch(\cf3 \\horizons\cf0 , 0);\
+				gui.post(\cf4 "horizons activated"\cf0 ); \
+			\}\
+			\{ \
+				~fx.deactivatePatch(\cf3 \\horizons\cf0 , 0);\
+				gui.post(\cf4 "horizons deactivated"\cf0 ); \
+			\}\
+		\},\
+		\{\cf2 |btn|\cf0   \
+			if (btn.value == 1) 	\
+			\{ \
+				~fx.activatePatch(\cf3 \\wobble\cf0 , 0);\
+				gui.post(\cf4 "wobble activated"\cf0 ); \
+			\}\
+			\{ \
+				~fx.deactivatePatch(\cf3 \\wobble\cf0 , 0);\
+				gui.post(\cf4 "wobble deactivated"\cf0 ); \
+			\}\
+		\},\
+		\{\cf2 |btn|\cf0   \
+			if (btn.value == 1) 	\
+			\{ \
+				~beatsActive = \cf2 true\cf0 ;\
+				gui.post(\cf4 "beats activated"\cf0 ); \
+			\}\
+			\{ \
+				~beatsActive = \cf2 false\cf0 ;\
+				gui.post(\cf4 "beats deactivated"\cf0 ); \
+			\}\
+		\},\
+		\{\cf2 |btn|\cf0   \
+			if (btn.value == 1) 	\
+			\{ \
+				~synthsActive = \cf2 true\cf0 ;\
+				gui.post(\cf4 "synths activated"\cf0 ); \
+			\}\
+			\{ \
+				~synthsActive = \cf2 false\cf0 ;\
+				gui.post(\cf4 "synths deactivated"\cf0 ); \
+			\}\
+		\}\
+	] ++ (\{\} ! 4);\
+\
+\pard\pardeftab720\ql\qnatural
+\cf0 	9.do(\{\cf2 |i|\cf0 \
+		\cf2 Knob\cf0 (panel, \cf2 Rect\cf0 (i * 65 + 10, 60, 25, 25)).value_(0.0).centered_(\cf2 false\cf0 )\
+			.action_(knobactions[i]);\
+			\
+		\cf2 StaticText\cf0 (panel, \cf2 Rect\cf0 (i * 65 + 35, 60, 25, 25))\
+			.font_(fonts.lucida11)\
+			.stringColor_(\cf2 Color\cf0 .grey(0.8))\
+			.string_((i+1).asString);\
+		\
+		nanobuttons.put(i, \cf2 Button\cf0 (panel, \cf2 Rect\cf0 (i * 65 + 3, 110, 35, 25))\
+			.font_(fonts.lucida9)\
+			.states_([[i.asString, colors.orange, colors.steel], \
+				[i.asString, colors.steel, colors.orange]])\
+			.action_(buttonactions[i])\
+		);\
+		nanosliders.put(i, \
+			\cf2 SmoothSlider\cf0 (panel, \cf2 Rect\cf0 (i * 65 + 42, 95, 20, 150))\
+				.action_(slideractions[i])\
+			)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf0 	 \});	\
+	 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 	[ \cf4 "mesh"\cf0 , \cf4 "horiz"\cf0 , \cf4 "wobble"\cf0 , \cf4 "add"\cf0 , \cf4 "transz"\cf0 , \cf4 "angle"\cf0 , \cf4 "rotX"\cf0 , \cf4 "rotY"\cf0 , \cf4 "rotZ"\cf0  ].do(\{\cf2 |txt, i|\cf0 \
+		\cf2 SCStaticText\cf0 (panel, \cf2 Rect\cf0 (i * 65 + 8, 75, 25, 29))\
+			.font_(fonts.skia)\
+			.stringColor_(colors.orange)\
+			.align_(\cf3 \\center\cf0 )\
+			.string_(txt)\
+	\});\
+	\
+	[\cf4 "eamp"\cf0 , \cf4 "sdur"\cf0 ].do(\{\cf2 |txt, i|\cf0 \
+		\cf2 SCStaticText\cf0 (panel, \cf2 Rect\cf0 (i * 65 + 32, 135, 40, 250))\
+			.font_(fonts.skia)\
+			.stringColor_(colors.orange)\
+			.align_(\cf3 \\center\cf0 )\
+			.string_(txt)\
+	\});				 \
+\
+	~z3items = (\
+		\cf3 \\det_0_7\cf0 : \{  \
+			\cf2 Routine\cf0 (\{				\
+				(0..7).do(\{\cf2 |ind, i|\cf0 \
+					~loopind[i] = ind;\
+					4.wait;\
+				\});\
+				gui.post(\cf4 "loop index change completed"\cf0 );\
+			\}).play\
+		\},\
+		\cf3 \\det_8_15\cf0 : \{  \
+			\cf2 Routine\cf0 (\{\
+				(8..15).do(\{\cf2 |ind, i|\cf0 \
+					~loopind[i] = ind;\
+					4.wait;\
+				\});\
+				gui.post(\cf4 "loop index change completed"\cf0 );\
+			\}).play\
+		\},\
+		\cf3 \\fx_0_7\cf0 : \{  \
+			\cf2 Routine\cf0 (\{\
+				(21..28).do(\{\cf2 |ind, i|\cf0 \
+					~loopind[i] = ind;\
+					4.wait;\
+				\});\
+				gui.post(\cf4 "loop index change completed"\cf0 );\
+			\}).play\
+		\},\
+		\cf3 \\mem_last\cf0 : \{  \
+			\cf2 Routine\cf0 (\{\
+				(68..75).do(\{\cf2 |ind, i|\cf0 \
+					~loopind[i] = ind;\
+					4.wait;\
+				\});\
+				gui.post(\cf4 "loop index change completed"\cf0 );\
+			\}).play\
+		\},\
+		\cf3 \\misc_0_4\cf0 : \{  \
+			\cf2 Routine\cf0 (\{\
+				(76..79).do(\{\cf2 |ind, i|\cf0 \
+					~loopind[i] = ind;\
+					4.wait;\
+				\});\
+				gui.post(\cf4 "loop index change completed"\cf0 );\
+			\}).play\
+		\},\
+		\cf3 \\oop\cf0 : \{  \
+			\cf2 Routine\cf0 (\{\
+				(104..111).do(\{\cf2 |ind, i|\cf0 \
+					~loopind[i] = ind;\
+					4.wait;\
+				\});\
+				gui.post(\cf4 "loop index change completed"\cf0 );\
+			\}).play\
+		\},\
+		\cf3 \\nim\cf0 : \{\
+			\cf2 Routine\cf0 (\{\
+				(150..157).do(\{\cf2 |ind, i|\cf0 \
+					~loopind[i] = ind;\
+					4.wait;\
+				\});\
+				gui.post(\cf4 "loop index change completed"\cf0 );\
+			\}).play			\
+		\},\
+		\cf3 \\sum\cf0 : \{\
+			\cf2 Routine\cf0 (\{\
+				(188..195).do(\{\cf2 |ind, i|\cf0 \
+					~loopind[i] = ind;\
+					4.wait;\
+				\});\
+				gui.post(\cf4 "loop index change completed"\cf0 );\
+			\}).play			\
+		\},\
+		\cf3 \\teh\cf0 : \{\
+			\cf2 Routine\cf0 (\{\
+				(230..237).do(\{\cf2 |ind, i|\cf0 \
+					~loopind[i] = ind;\
+					4.wait;\
+				\});\
+				gui.post(\cf4 "loop index change completed"\cf0 );\
+			\}).play			\
+		\}\
+		\
+	);\
+		\
+	~z3pm = \cf2 SCPopUpMenu\cf0 (panel, \cf2 Rect\cf0 (5, 275, panel.bounds.width / 4 - 5, 25))\
+		.background_(colors.steel)\
+		.font_(fonts.lucida9)			\
+		.stringColor_(colors.orange)\
+		.items_(~z3items.keys(\cf2 Array\cf0 ).sort);\
+		\
+	\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (panel.bounds.width / 4 + 5, 275, panel.bounds.width / 6 - 10, 25))\
+		.font_(fonts.lucida9)\
+		.states_([[\cf4 "send"\cf0 , colors.orange, colors.steel]])\
+		.action_(\{\
+			~z3items[~z3pm.items[~z3pm.value].asSymbol].value\
+		\});	\
+\
+\
+	\cf2 SCPopUpMenu\cf0 (panel, \cf2 Rect\cf0 (300, 275, panel.bounds.width / 4 - 5, 25))\
+		.background_(colors.steel)\
+		.font_(fonts.lucida9)\
+		.stringColor_(colors.orange)\
+		.items_([\cf4 "equal"\cf0 , \cf4 "cross"\cf0 , \cf4 "rand"\cf0 , \cf4 "symmetry"\cf0 ])\
+		.action_(\{\cf2 |menu|\cf0 \
+			menu.value.switch(\
+				0, \{ ~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.equal.value); \},\
+				1, \{ ~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.cross.value); \},\
+				2, \{ ~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.rand.value); \},\
+				3, \{ ~fx.sendReset(0, 0, 1, 4, 4, 7, 8, 8, 1, *~fx.weightPresets.symmetry.value); \}\
+			)\
+		\});\
+\
+	\cf2 SCPopUpMenu\cf0 (panel, \cf2 Rect\cf0 (5, 305, panel.bounds.width / 4 - 5, 25))\
+		.background_(colors.steel)\
+		.font_(fonts.lucida9)\
+		.stringColor_(colors.orange)\
+		.items_([\cf4 "map 1"\cf0 , \cf4 "map 2"\cf0 , \cf4 "map 3"\cf0 , \cf4 "map 4"\cf0 , \cf4 "map 5"\cf0 , \cf4 "map 6"\cf0 ])\
+		.action_(\{\cf2 |menu|\cf0 \
+			menu.value.switch(\
+				0, \{\
+					~trigmap = [\
+						(\cf3 \\on\cf0 : 0.3, \cf3 \\off\cf0 : 0.1, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.4, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.5, \cf3 \\off\cf0 : 0.3, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.0, \cf3 \\off\cf0 : 1.0, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.8, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.7, \cf3 \\off\cf0 : 0.5, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						\
+						(\cf3 \\on\cf0 : 0.0, \cf3 \\off\cf0 : 0.1, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.2, \cf3 \\off\cf0 : 0.3, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.3, \cf3 \\off\cf0 : 0.5, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.5, \cf3 \\off\cf0 : 0.7, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.7, \cf3 \\off\cf0 : 0.8, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.8, \cf3 \\off\cf0 : 0.9, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 1.0, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  )\
+					]\
+				\},\
+				1, \{\
+					~trigmap = [\
+						(\cf3 \\on\cf0 : 0.2, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.4, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.8, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.9, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.1, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.8, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.4, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+			\
+						(\cf3 \\on\cf0 : 0.4, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.8, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.1, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.9, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.8, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.4, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.2, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  )\
+					]\
+				\},\
+				2, \{\
+					~trigmap = [\
+						(\cf3 \\on\cf0 : 0.3, \cf3 \\off\cf0 : 0.1, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.4, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.5, \cf3 \\off\cf0 : 0.3, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.7, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.8, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.7, \cf3 \\off\cf0 : 0.5, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+			\
+						(\cf3 \\on\cf0 : 0.0, \cf3 \\off\cf0 : 0.1, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.2, \cf3 \\off\cf0 : 0.3, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.3, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.4, \cf3 \\off\cf0 : 0.5, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.5, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.7, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.7, \cf3 \\off\cf0 : 0.8, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  )\
+					]						\
+				\},\
+				3, \{\
+					~trigmap = [\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.3, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.2, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.3, \cf3 \\off\cf0 : 0.5, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.4, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.7, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.8, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.7, \cf3 \\off\cf0 : 0.5, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+			\
+						(\cf3 \\on\cf0 : 0.2, \cf3 \\off\cf0 : 0.0, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.3, \cf3 \\off\cf0 : 0.1, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.4, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.5, \cf3 \\off\cf0 : 0.3, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.7, \cf3 \\off\cf0 : 0.5, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.8, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.7, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  )\
+					]						\
+				\},\
+				4, \{\
+					~trigmap = [\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.8, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.8, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.8, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.8, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  )\
+					]						\
+				\},\
+				5, \{\
+					~trigmap = [\
+						(\cf3 \\on\cf0 : 0.45, \cf3 \\off\cf0 : 0.55, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.55, \cf3 \\off\cf0 : 0.45, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.35, \cf3 \\off\cf0 : 0.65, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.65, \cf3 \\off\cf0 : 0.35, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.65, \cf3 \\off\cf0 : 0.35, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.35, \cf3 \\off\cf0 : 0.65, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.55, \cf3 \\off\cf0 : 0.45, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.45, \cf3 \\off\cf0 : 0.55, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+\
+						(\cf3 \\on\cf0 : 0.45, \cf3 \\off\cf0 : 0.55, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.55, \cf3 \\off\cf0 : 0.45, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.35, \cf3 \\off\cf0 : 0.65, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.65, \cf3 \\off\cf0 : 0.35, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.65, \cf3 \\off\cf0 : 0.35, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.35, \cf3 \\off\cf0 : 0.65, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.55, \cf3 \\off\cf0 : 0.45, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+						(\cf3 \\on\cf0 : 0.45, \cf3 \\off\cf0 : 0.55, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  )\
+					]						\
+				\}				\
+			)\
+		\});		\
+		\
+	\cf2 SCPopUpMenu\cf0 (panel, \cf2 Rect\cf0 (300, 305, panel.bounds.width / 4 - 5, 25))\
+		.background_(colors.steel)\
+		.font_(fonts.lucida9)\
+		.stringColor_(colors.orange)\
+		.items_([\cf4 "bogino-duu"\cf0 , \cf4 "ghana"\cf0 , \cf4 "morinkhuur"\cf0 , \cf4 "urtinduu"\cf0 ])\
+		.action_(\{\cf2 |menu|\cf0 \
+			~wfsection = menu.value * 2\
+		\});\
+		\
+	\cf2 RoundButton\cf0 (panel, \cf2 Rect\cf0 (5, 340, 200, 25))\
+		.font_(fonts.lucida9)\
+		.states_([[\cf4 "switch to zone 1"\cf0 , colors.orange, colors.steel]])\
+		.action_(\{\cf2 |btn|\cf0  \
+\pard\pardeftab720\ql\qnatural
+\cf0 		  ~dronesynth.set(\cf3 \\gate\cf0 , -0.5);\
+		  ~fx.removeGlobalsFunction(\cf3 \\zone2\cf0 );			\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 			~fx.perfGui.selectPanel(1, ~resetNano);\
+		\});	\
+		\
+\cf5 // MAP NANO\cf0 \
+\
+	nanomap = \{\
+		\
+		panel.children.select(\{\cf2 |ctr|\cf0  ctr.isKindOf(\cf2 SCKnob\cf0 ) \}).do(\{\cf2 |knob, i|\cf0 \
+			~nano.knobs[0][i].action_(\{\cf2 |slider|\cf0 \
+				knob.value = slider.value;\
+				knob.doAction;\
+			\})\
+		\});\
+				\
+		~nano.buttons[0][18].action_(\{\cf2 |btn|\cf0 \
+			mainbuttons[0].value = btn.value;\
+			if (btn.value == 1) \{\
+				mainbuttons[0].doAction\
+			\}\
+		\});\
+		\
+		mainbuttons.drop(1).do(\{\cf2 |btn, i|\cf0 \
+			~nano.buttons[0][i + 19].action_(\{\cf2 |nbtn|\cf0 \
+				btn.value = nbtn.value;\
+				btn.doAction;\
+			\})\
+		\});\
+		\
+		nanobuttons.do(\{\cf2 |btn, i|\cf0 \
+			~nano.buttons[0][i].action_(\{\cf2 |nbtn|\cf0 \
+				if (nbtn.value == 1) \{ btn.value = (btn.value + 1).wrap(0, 1); btn.doAction \}\
+			\})\
+		\});\
+		\
+		nanosliders.do(\{\cf2 |slider, i|\cf0 \
+			~nano.sliders[0][i].action_(\{\cf2 |nslider|\cf0 \
+				slider.value = nslider.value;\
+				slider.doAction;\
+			\})\
+		\});\
+		\
+		gui.post(\cf4 "nano kontrol for zone 2 mapped"\cf0 );		\
+	\
+	\};\
+	\
+		\
+\cf5 // INITIALIZE\cf0 \
+\
+	~wfspath = \cf4 "/Users/alo/sounds/wfsfx/"\cf0 ;\
+\
+	~wfsbufs = [\cf4 "bogino-duu"\cf0 , \cf4 "ghana"\cf0 , \cf4 "morinkhuur"\cf0 , \cf4 "urtinduu"\cf0 ].stutter(2);\
+	\
+	[\cf4 "L"\cf0 , \cf4 "R"\cf0 ].lace(8).do(\{\cf2 |str, i|\cf0 \
+		~wfsbufs[i] = \cf2 Buffer\cf0 .read(~serv, ~wfspath ++ ~wfsbufs[i] ++ \cf4 "-gverb"\cf0  ++ str ++ \cf4 ".aif"\cf0 );\
+	\});\
+	\
+	~startWfs = \{\cf2 |section, dur|\cf0   \cf5 // 0,2,4,6\cf0 \
+		\cf2 var\cf0  synth, bufL, bufR;\
+		#bufL, bufR = ~wfsbufs[section..section+1];\
+		synth = \cf2 Synth\cf0 .tail(~agrp, \cf3 \\zone3_doublemono\cf0 , [\cf3 \\out\cf0 , ~abus, \cf3 \\efx\cf0 , ~rbus, \cf3 \\amp\cf0 , 1.0, \
+			\cf3 \\eamp\cf0 , 0.5, \cf3 \\bufL\cf0 , bufL, \cf3 \\bufR\cf0 , bufR, \cf3 \\azm\cf0 , 0, \cf3 \\wid\cf0 , 0.5pi, \cf3 \\elv\cf0 , 0, \cf3 \\dur\cf0 , dur,\
+			\cf3 \\xang\cf0 , 0, \cf3 \\yang\cf0 , 0, \cf3 \\zang\cf0 , 0])\
+			.setn(\cf3 \\env\cf0 , \cf2 Env\cf0 ([0.1, 1.0, 0.0], [1, 0.01], [4, 0]).asArray);\
+	\};\
+	\
+	~wfsection = 0;\
+	\
+	~loopind = (0..15);\
+	\
+	~pointbufs = \cf4 "/Users/alo/sounds/zones/*"\cf0 .pathMatch.collect(\{\cf2 |path|\cf0  \cf2 Buffer\cf0 .read(~serv, path) \});\
+	\
+	~indices = ((0,2..15) ++ (1,3..15) ++ (16,20..47) ++ (17,21..47) \
+			++ (18,22..47) ++ (19,23..47) ++ (48,50..63) ++ (49,51..63)).clump(4);\
+\
+	~rvb = \cf2 Bus\cf0 .audio(~serv);	\
+	\
+	~trigmap = [\
+		(\cf3 \\on\cf0 : 0.3, \cf3 \\off\cf0 : 0.1, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.4, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.5, \cf3 \\off\cf0 : 0.3, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.0, \cf3 \\off\cf0 : 1.0, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.8, \cf3 \\off\cf0 : 0.6, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.7, \cf3 \\off\cf0 : 0.5, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.6, \cf3 \\off\cf0 : 0.4, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		\
+		(\cf3 \\on\cf0 : 0.0, \cf3 \\off\cf0 : 0.1, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.1, \cf3 \\off\cf0 : 0.2, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.2, \cf3 \\off\cf0 : 0.3, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.3, \cf3 \\off\cf0 : 0.5, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.5, \cf3 \\off\cf0 : 0.7, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.7, \cf3 \\off\cf0 : 0.8, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.8, \cf3 \\off\cf0 : 0.9, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  ),\
+		(\cf3 \\on\cf0 : 0.9, \cf3 \\off\cf0 : 1.0, \cf3 \\last\cf0 : 0, \cf3 \\active\cf0 : \cf2 false\cf0  )\
+	];\
+	\
+	~z3synths = \cf2 Array\cf0 .newClear(16);\
+\
+	~z3map = (\
+		\cf3 \\aamp\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (4.0, 0.4)),\
+		\cf3 \\str\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0, 0.5)),\
+		\cf3 \\end\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.5, 1.0)),\
+		\cf3 \\wrp\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.125/4 , 1.0/4, step: 2**(1/5) )),\
+		\cf3 \\frq\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.125, 2.0 )),\
+		\cf3 \\wsz\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (0.0625/2, 0.5/2, step: 2**(1/5) )),\
+		\cf3 \\dns\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (1, 8, step: 2**(1/5) )),\
+		\cf3 \\rnd\cf0 : \cf2 ExponentialWarp\cf0 (\cf2 ControlSpec\cf0 (0.001, 0.1)),\
+		\cf3 \\xang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) )),\
+		\cf3 \\yang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) )),\
+		\cf3 \\zang\cf0 : \cf2 LinearWarp\cf0 (\cf2 ControlSpec\cf0 (pi, -pi, step: 2**(1/5) ))\
+	);\
+\
+	~z3pmaps = (\
+		kck: (\
+			fr: \cf2 ControlSpec\cf0 (20.0, 40.0, step: 2**(1/24)),\
+			at: \cf2 ControlSpec\cf0 (0.01, 0.1),\
+			dr: \cf2 ControlSpec\cf0 (0.01, 0.2),\
+			cr: \cf2 ControlSpec\cf0 (0, -8),\
+			ea: \cf2 ControlSpec\cf0 (0.01, 0.05),\
+			am: \cf2 ControlSpec\cf0 (0.7, 2)\
+		),\
+		\
+		snr: (\
+			fr: \cf2 ControlSpec\cf0 (40.0, 70.0, step: 2**(1/24)),\
+			at: \cf2 ControlSpec\cf0 (0.008, 0.1),\
+			dr: \cf2 ControlSpec\cf0 (0.01, 0.1),\
+			cr: \cf2 ControlSpec\cf0 (-2, -10),\
+			am: \cf2 ControlSpec\cf0 (10, 20, step: 1)\
+		),\
+		\
+		hh: (\
+			dr: \cf2 ControlSpec\cf0 (0.01, 0.06),\
+			fr: \cf2 ControlSpec\cf0 (2000, 4000, step: 2**(1/24)),\
+			am: \cf2 ControlSpec\cf0 (20, 30)\
+		),\
+		\
+		bss: (\
+			fr: \cf2 ControlSpec\cf0 (30, 60, step: 2**(1/24)),\
+			dr: \cf2 ControlSpec\cf0 (0.02, 0.1),\
+			am: \cf2 ControlSpec\cf0 (3.0, 5.0)\
+		),\
+		\
+		clck: (\
+			am: \cf2 ControlSpec\cf0 (6.0, 10.0, step: 1),\
+			dr: \cf2 ControlSpec\cf0 (1.0, 4.0, step: 1),\
+			bt: \cf2 ControlSpec\cf0 (1, 1),\
+			ea: \cf2 ControlSpec\cf0 (0.05, 0.2)\
+		),\
+		\
+		nzsnr: (\
+			am: \cf2 ControlSpec\cf0 (3, 6),\
+			fr: \cf2 ControlSpec\cf0 (500, 1000, step: 2**(1/24)),\
+			dr: \cf2 ControlSpec\cf0 (0.05, 0.3)\
+		),\
+		\
+		pnk: (\
+			dr: \cf2 ControlSpec\cf0 (0.03, 0.1),\
+			am: \cf2 ControlSpec\cf0 (3.0, 6.0)\
+		),\
+		\
+		fmsnth: (\
+			dr: \cf2 ControlSpec\cf0 (0.02, 0.2),\
+			gd: \cf2 ControlSpec\cf0 (0.005, 0.05),\
+			cf: \cf2 ControlSpec\cf0 (300, 600, step: 2**(1/24)),\
+			mf: \cf2 ControlSpec\cf0 (0.25, 2.0, step: 0.25),\
+			in: \cf2 ControlSpec\cf0 (6, 24, step: 2),\
+			am: \cf2 ControlSpec\cf0 (1.0, 3.0)\
+		),\
+		\
+		hgls: (\
+			dr: \cf2 ControlSpec\cf0 (0.05, 0.3),\
+			fr: \cf2 ControlSpec\cf0 (5000, 10000, step: 2**(1/5)), \
+			wd: \cf2 ControlSpec\cf0 (0.2, 0.5), \
+			ws: \cf2 ControlSpec\cf0 (0.01, 0.05), \
+			wr: \cf2 ControlSpec\cf0 (0.01, 0.05), \
+			gr: \cf2 ControlSpec\cf0 (8, 12), \
+			am: \cf2 ControlSpec\cf0 (0.1, 0.4)\
+		),\
+		\
+		dbkck: (\
+			dr: \cf2 ControlSpec\cf0 (0.05, 0.3),\
+			ea: \cf2 ControlSpec\cf0 (0.01, 0.05),\
+			gd: \cf2 ControlSpec\cf0 (0.01, 0.06),\
+			am: \cf2 ControlSpec\cf0 (0.7, 1.3)\
+		),\
+		\
+		dbclp: (\
+			at: \cf2 ControlSpec\cf0 (0.01, 0.1),\
+			cr: \cf2 ControlSpec\cf0 (-2, -6),\
+			dr: \cf2 ControlSpec\cf0 (0.04, 0.4),\
+			co: \cf2 ControlSpec\cf0 (1.9, 1.99),\
+			ds: \cf2 ControlSpec\cf0 (25, 50),\
+			ea: \cf2 ControlSpec\cf0 (0, 0.01),\
+			am: \cf2 ControlSpec\cf0 (0.75, 1.5)\
+		),\
+		\
+		gndy: (\
+			at: \cf2 ControlSpec\cf0 (0.01, 0.2),\
+			cr: \cf2 ControlSpec\cf0 (-6, 6),\
+			dr: \cf2 ControlSpec\cf0 (0.2, 0.05),\
+			sf: \cf2 ControlSpec\cf0 (200, 300, step: 2**(1/12)),\
+			ef: \cf2 ControlSpec\cf0 (400, 800, step: 2**(1/24)),\
+			am: \cf2 ControlSpec\cf0 (1.0, 2.0)\
+		),\
+		\
+		bpst: (\
+			at: \cf2 ControlSpec\cf0 (0.1, 0.01),\
+			cr: \cf2 ControlSpec\cf0 (-4, 4),\
+			dr: \cf2 ControlSpec\cf0 (0.05, 0.2),\
+			fr: \cf2 ControlSpec\cf0 (10000, 20000, step: 2**(1/24)),\
+			am: \cf2 ControlSpec\cf0 (1.0, 2.0)\
+		),\
+		\
+		lrnz: (\
+			nf: \cf2 ControlSpec\cf0 (200, 400),\
+			xf: \cf2 ControlSpec\cf0 (400, 1600),\
+			at: \cf2 ControlSpec\cf0 (0.01, 0.2),\
+			cr: \cf2 ControlSpec\cf0 (-2, -8),\
+			am: \cf2 ControlSpec\cf0 (3, 8),\
+			dr: \cf2 ControlSpec\cf0 (0.05, 0.2)			\
+		),\
+		\
+		stnd: (\
+			nf: \cf2 ControlSpec\cf0 (200, 2000),\
+			xf: \cf2 ControlSpec\cf0 (800, 8000),\
+			pr: \cf2 ControlSpec\cf0 (0.2, 2.0),\
+			at: \cf2 ControlSpec\cf0 (0.01, 0.2),\
+			cr: \cf2 ControlSpec\cf0 (-6, 2),\
+			am: \cf2 ControlSpec\cf0 (2.0, 0.5),\
+			dr: \cf2 ControlSpec\cf0 (0.05, 0.2)			\
+		),\
+		\
+		latoo: (\
+			nf: \cf2 ControlSpec\cf0 (200, 300, step: 25),\
+			xf: \cf2 ControlSpec\cf0 (800, 1600, step: 100),\
+			at: \cf2 ControlSpec\cf0 (0.1, 0.01),\
+			cr: \cf2 ControlSpec\cf0 (-2, -8),\
+			am: \cf2 ControlSpec\cf0 (5.0, 10.0),\
+			dr: \cf2 ControlSpec\cf0 (0.05, 0.2)			\
+		)\
+		\
+	);\
+	\
+	~playBeat = 1.0;\
+	\
+	~eamp = 0.0;\
+	~sdur = 0.1;\
+		\
+	~addSynth = \{\cf2 |index, values|\cf0 \
+		\cf2 var\cf0  states = \cf2 Pseq\cf0 (values.states[~indices[index]], \cf2 inf\cf0 ).asStream;\
+		\
+		if (~beatsActive)\
+		\{\
+			\cf2 Synth\cf0 .head(~agrp, ~z3defs[index].name, \
+				~z3pmaps[~z3defs[index].name.asSymbol].collect(\{\cf2 |spec|\cf0  spec.map(states.next) \}).asKeyValuePairs\
+				++ [\cf3 \\az\cf0 , [-pi, pi].asSpec.map(states.next), \cf3 \\ou\cf0 , ~abus, \cf3 \\ef\cf0 , ~rvb ]);\
+		\};\
+				\
+		states = \cf2 Pseq\cf0 (values.states[~indices[index]], \cf2 inf\cf0 ).asStream;\
+		\
+		if (~synthsActive)\
+		\{\
+					\
+			~z3synths[index] = \cf2 Synth\cf0 .head(~agrp, \cf3 \\rwarpfldatk\cf0 , \
+				[\cf3 \\out\cf0 , ~abus, \cf3 \\efx\cf0 , ~rbus, \cf3 \\gate\cf0 , 1.0,\
+				\cf3 \\eamp\cf0 , ~eamp, \cf3 \\maxdel\cf0 , 0.1, \cf3 \\dur\cf0 , ~sdur, \cf3 \\buf\cf0 , ~pointbufs[~loopind[index]],\
+				] ++ ~z3map.collect(\{\cf2 |spec|\cf0  spec.map(states.next) \}).asKeyValuePairs )\
+					.setn(\cf3 \\env\cf0 , \cf2 Env\cf0 ([1, 1, 0], [0.8, 0.2], \cf3 \\lin\cf0 , 2, 1).asArray)\
+					.setn(\cf3 \\delays\cf0 , \cf2 Array\cf0 .geom(4, [0.005, 0.01].asSpec.map(states.next), 1.618 ))\
+					.setn(\cf3 \\shifts\cf0 , [1, 0.5, 0.25, 1])\
+					.setn(\cf3 \\wins\cf0 , \cf2 Array\cf0 .geom(4, [0.01, 0.05].asSpec.map(states.next), 1.618 ))\
+					.setn(\cf3 \\amps\cf0 , \cf2 Array\cf0 .geom(4, 1.0, 8/13));\
+		\}\
+\
+	\};\
+	\
+	~release = -0.5;\
+\
+	~removeSynth = \{\cf2 |index|\cf0 \
+		~z3synths[index].set(\cf3 \\gate\cf0 , ~release);\
+		~z3synths[index] = \cf2 nil\cf0 ;	\
+	\};		\
+	\
+	~z2mapParams = \{\cf2 |invalues|\cf0 \
+		~indices.do(\{ \cf2 |index, i|\cf0 \
+			\cf2 var\cf0  map, states, params = invalues.states[index];\
+			map = ~trigmap[i];\
+						\
+			if (map.on > map.off) \{\
+				if ((map.active.not).and(params[0] > map.off).and(params[0] < map.on))\
+				\{\
+					~addSynth.value(i, invalues);\
+					map.active = \cf2 true\cf0 ;\
+				\};\
+				if ((map.active).and((params[0] < map.off).or(params[0] > map.on) ))\
+				\{\
+					~removeSynth.value(i);\
+					map.active = \cf2 false\cf0 ;\
+				\}\
+			\}\
+			\{\
+				if ((map.active.not).and(params[0] < map.off).and(params[0] > map.on))\
+				\{\
+					~addSynth.value(i, invalues);\
+					map.active = \cf2 true\cf0 ;\
+				\};\
+				if ((map.active).and((params[0] > map.off).or(params[0] < map.on) ))\
+				\{\
+					~removeSynth.value(i);\
+					map.active = \cf2 false\cf0 ;\
+				\}\
+			\
+			\}	\
+		\})\
+\pard\pardeftab720\ql\qnatural
+\cf0  	\};\
+ 	\
+ 	~tlimit = \cf2 Pseq\cf0 ([24, 12, 12], \cf2 inf\cf0 ).asStream;\
+ 	~current = 12;\
+ 	~tcount = 12;\
+ 	\
+ 	~z2trigger = \{\cf2 |values|\cf0 \
+	 	\cf2 var\cf0  bufL, bufR;\
+	 	if (~tcount == ~current)\
+	 	\{\
+		 	#bufL, bufR = ~wfsbufs[[0, 1]];\
+			~dronesynth.set(\cf3 \\gate\cf0 , -0.2);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 			    ~dronesynth = \cf2 Synth\cf0 .tail(~agrp, \cf3 \\zone3_doublemono\cf0 , [\cf3 \\out\cf0 , ~abus, \cf3 \\efx\cf0 , ~rbus, \cf3 \\amp\cf0 , 1.0, \
+\pard\pardeftab720\ql\qnatural
+\cf0 		 		\cf3 \\eamp\cf0 , 0.5, \cf3 \\start\cf0 , bufL.sampleRate * 4, \
+		 		\cf3 \\bufL\cf0 , bufL, \cf3 \\bufR\cf0 , bufR, \cf3 \\azm\cf0 , [-pi, pi].asSpec.map(values.avgstate), \
+		 		\cf3 \\wid\cf0 , 0.1pi, \cf3 \\elv\cf0 , 0, \cf3 \\dur\cf0 , 4, \cf3 \\xang\cf0 , rrand(-pi, pi), \cf3 \\yang\cf0 , 0, \cf3 \\zang\cf0 , 0])\
+				.setn(\cf3 \\env\cf0 , \cf2 Env\cf0 ([0.5, 1.0, 0.0], [1, 0.01], [4, 0], 2, 1).asArray);			\
+			~current = 0;\
+			~tcount = ~tlimit.next\
+		\}\
+		\{\
+			~current = ~current + 1 \
+		\}\
+	\};\
+	\
+ 	~switchToDrone = \{\
+	 	\
+	 	\cf2 Routine\cf0 (\{\
+	 	\
+		 	\cf2 var\cf0  synth, bufL, bufR;\
+		 	\
+		 	~fx.removeStatesFunction(\cf3 \\zone2\cf0 );\
+		 	~fx.removeTriggerFunction(\cf3 \\zone2\cf0 );\
+		 	~fx.deactivatePatch(\cf3 \\mesh\cf0 , 0);\
+		 	mainbuttons[2].value = 0;\
+		 	~fx.wait(2);\
+		 	~fx.activatePatch(\cf3 \\horizons\cf0 , 0);\
+		 	~kckrv.free;\
+		 			 	\
+		 	#bufL, bufR = ~wfsbufs[~wfsection..~wfsection+1];\
+		 	~dronesynth = \cf2 Synth\cf0 .tail(~agrp, \cf3 \\zone3_doublemono\cf0 , [\cf3 \\out\cf0 , ~abus, \cf3 \\efx\cf0 , ~rbus, \cf3 \\amp\cf0 , 1.0, \
+		 		\cf3 \\eamp\cf0 , 0.5, \cf3 \\bufL\cf0 , bufL, \cf3 \\bufR\cf0 , bufR, \cf3 \\azm\cf0 , 0, \cf3 \\wid\cf0 , 0.5pi, \cf3 \\elv\cf0 , 0, \cf3 \\dur\cf0 , 20,\
+		 		\cf3 \\xang\cf0 , 0, \cf3 \\yang\cf0 , 0, \cf3 \\zang\cf0 , 0])\
+				.setn(\cf3 \\env\cf0 , \cf2 Env\cf0 ([0.1, 1.0, 1.0, 0.0], [0.9, 0.09, 0.01], [4, 0], 2, 1).asArray);\
+				\
+		 	~fx.addGlobalsFunction(\cf3 \\zone2\cf0 , \{\cf2 |values|\cf0 \
+				\cf2 var\cf0  specs;\
+				specs = (\
+					xang: \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi)),\
+					yang: \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi)),\
+					zang: \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (-pi, pi)),\
+					wid: \cf2 CyclicWarp\cf0 (\cf2 ControlSpec\cf0 (0.1pi, 0.5pi))\
+				);\
+\
+				~dronesynth.set(\
+					\cf3 \\xang\cf0 , specs.xang.map(values.avglbf + values.avgltf / 2),\
+					\cf3 \\yang\cf0 , specs.yang.map(values.avgrbf + values.avgrtf / 2),\
+					\cf3 \\zang\cf0 , specs.zang.map(values.avgrbb + values.avgrtb / 2),\
+					\cf3 \\wid\cf0 , specs.wid.map(values.avglbb + values.avgltb / 2)\
+				)\
+			\});\
+\
+	 	\}).play\
+	\};\
+	\
+	~switchToBeats = \{\
+		\
+		\cf2 Routine\cf0 (\{\
+		\
+			~fx.removeGlobalsFunction(\cf3 \\zone2\cf0 );\
+			~fx.deactivatePatch(\cf3 \\horizons\cf0 , 0);\
+			~dronesynth.set(\cf3 \\gate\cf0 , -0.5);\
+			mainbuttons[1].value = 0;\
+			~fx.wait(2);\
+			~fx.activatePatch(\cf3 \\mesh\cf0 , 0);\
+			\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 				~synthsActive = \cf2 false\cf0 ;\
+				~beatsActive = \cf2 true\cf0 ;			\
+\pard\pardeftab720\ql\qnatural
+\cf0 			\
+			~kckrv = \cf2 Synth\cf0 .after(~agrp, \cf3 \\kckrv\cf0 , [\cf3 \\ou\cf0 , ~abus, \cf3 \\in\cf0 , ~rvb, \cf3 \\rt\cf0 , 1.5, \cf3 \\am\cf0 , 1.0, \cf3 \\az\cf0 , 0.5pi]);\
+			\
+			~fx.addStatesFunction(\cf3 \\zone2\cf0 , ~z2mapParams);\
+			\
+			~fx.addTriggerFunction(\cf3 \\zone2\cf0 , ~z2trigger);\
+			\
+		\}).play\
+	\};		\
+	\
+	nanomap	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 	\
+\}}

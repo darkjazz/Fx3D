@@ -98,7 +98,7 @@ if (~serv.serverRunning.not)\
 		\cf2 Out\cf0 .ar(efx, sig * eamp);\
 		bf = \cf2 BFEncode1\cf0 .ar(sig, azm, elv, rho);\
 		\cf2 Out\cf0 .ar(out, bf * aamp);\
-	\}).memStore;\
+	\}).add;\
 \};\
 \
 ~mdef = \{\cf2 |name, maxpart, func|\cf0 \
@@ -125,7 +125,7 @@ if (~serv.serverRunning.not)\
 		\cf2 Out\cf0 .ar(efx, sig * eamp);\
 		bf = \cf2 BFEncode1\cf0 .ar(sig, azm, elv, rho);\
 		\cf2 Out\cf0 .ar(out, bf * aamp);\
-	\}).store;\
+	\}).add;\
 \};\
 \
 ~adef = \{\cf2 |name, afunc, maxpart|\cf0 \
@@ -144,7 +144,7 @@ if (~serv.serverRunning.not)\
 		\cf2 Out\cf0 .ar(efx, sig * eamp);\
 		bf = \cf2 BFEncode1\cf0 .ar(sig, azm, elv, rho);\
 		\cf2 Out\cf0 .ar(out, bf * aamp);\
-	\}).store;\
+	\}).add;\
 	name\
 \};\
 \
@@ -355,6 +355,7 @@ if (~serv.serverRunning.not)\
 ~agrp = \cf2 Group\cf0 ();\
 ~rev = \cf2 Synth\cf0 .after(~agrp, \cf4 \\verb\cf0 , [\cf4 \\in\cf0 , ~rbus, \cf4 \\rtime\cf0 , 2, \cf4 \\damp\cf0 , 0.5, \cf4 \\inbw\cf0 , 0.5, \cf4 \\spr\cf0 , 10, \
 	\cf4 \\dry\cf0 , 0.0, \cf4 \\early\cf0 , 0.4, \cf4 \\tail\cf0 , 1.0, \cf4 \\amp\cf0 , 0.5]);	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf5 //~decode = Synth.after(~rev, \\bf2decode, [\\bus, ~abus, \\amp, 1.0]);\cf0 \
 ~decode = \cf2 Synth\cf0 .after(~rev, \cf4 \\bfcollect\cf0 , [\cf4 \\bus\cf0 , ~abus, \cf4 \\amp\cf0 , 1.0]);\
 ~bps = 140 / 60;\

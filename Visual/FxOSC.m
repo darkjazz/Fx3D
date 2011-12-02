@@ -200,19 +200,19 @@ float state;
 
 -(void) sendMessage: (float*) states: (int) size {
 	
-	int i;
-	float *arr;
+//	int i;
+//	float *arr;
 	
-	arr = malloc(sizeof(float) * (int)size);
+//	arr = malloc(sizeof(float) * (int)size);
 	
-	for (i = 0; i < size; i++) {
-		arr[i] = states[i];
-	}
+//	for (i = 0; i < size; i++) {
+//		arr[i] = states[i];
+//	}
 
-	lo_blob data = lo_blob_new(sizeof(float) * size, arr);
+	lo_blob data = lo_blob_new(sizeof(float) * size, states);
 	lo_send(addr, "/fx/states", "b", data);
 	
-	free(arr);
+//	free(arr);
 
 }
 
