@@ -387,7 +387,7 @@
 	 \});	\
 \
 	[ \cf4 "elastic"\cf0 , \cf4 "axial"\cf0 , \cf4 "add"\cf0 , \cf4 "transz"\cf0 , \cf4 "angle"\cf0 , \cf4 "rotX"\cf0 , \cf4 "rotY"\cf0 , \cf4 "rotZ"\cf0 , \cf4 "frame"\cf0  ].do(\{\cf2 |txt, i|\cf0 \
-		\cf2 SCStaticText\cf0 (panel, \cf2 Rect\cf0 (i * 65 + 8, 105, 30, 29))\
+		\cf2 StaticText\cf0 (panel, \cf2 Rect\cf0 (i * 65 + 8, 105, 30, 29))\
 			.font_(fonts.skia)\
 			.stringColor_(colors.orange)\
 			.align_(\cf3 \\center\cf0 )\
@@ -442,16 +442,16 @@
 		gui.post(\cf4 "zone 1 loops change complete"\cf0 );						\
 		\},\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 		\cf3 \\oop_rand\cf0 : \{  \
+\cf0 		\cf3 \\fb_0_7\cf0 : \{  \
 			\cf2 Routine\cf0 (\{\
-			~subloops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf4 "monooop"\cf0 ) \});\
+			~subloops = ~loops.select(\{\cf2 |it|\cf0  it.path.contains(\cf4 "fbloop"\cf0 ) \});\
 \pard\pardeftab720\ql\qnatural
 \cf0 			~zone1synths.do(\{\cf2 |syn, i|\cf0 \
 				if (syn.notNil)\
 				\{\
 					syn.src.set(\cf3 \\buffer\cf0 , ~subloops.choose);\
 					(\cf4 "loop at "\cf0  ++ i.asString ++ \cf4 " changed"\cf0 ).postln;\
-					2.wait;\
+					1.wait;\
 				\}\
 			\});		\
 			gui.post(\cf4 "zone 1 loops change complete"\cf0 );						\
@@ -540,7 +540,7 @@
 \cf0 		\}\
 	);\
 		\
-	~z1pm = \cf2 SCPopUpMenu\cf0 (panel, \cf2 Rect\cf0 (5, 305, panel.bounds.width / 4 - 5, 25))\
+	~z1pm = \cf2 PopUpMenu\cf0 (panel, \cf2 Rect\cf0 (5, 305, panel.bounds.width / 4 - 5, 25))\
 		.background_(colors.steel)\
 		.font_(fonts.lucida9)			\
 		.stringColor_(colors.orange)\
@@ -606,6 +606,7 @@
 	\
 	\};\
 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf5 //	~paramspecs = (\cf0 \
 \cf5 //		\\aamp: Array.fill(8, \{|i| CyclicWarp([i * 0.03 + 0.2, 2.0 - (i * 0.1)].asSpec) \}).reverse,\cf0 \
 \cf5 //		\\str: Array.fill(8, \{|i| CyclicWarp([0.0, 0.5].asSpec) \}),\cf0 \

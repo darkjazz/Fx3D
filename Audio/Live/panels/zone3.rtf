@@ -38,11 +38,11 @@
 					1.wait;\
 					\
 					~fx.visualdict.globals[\cf4 \\alpha\cf2 ] = 1.0;\
-					~fx.visualdict.globals[\cf4 \\clear\cf2 ] = 0.05;\
-					~fx.visualdict.globals[\cf4 \\add\cf2 ] = 0.96;\
+					~fx.visualdict.globals[\cf4 \\clear\cf2 ] = 0.0;\
+					~fx.visualdict.globals[\cf4 \\add\cf2 ] = 0.97;\
 					~fx.visualdict.globals[\cf4 \\transx\cf2 ] = 0.0;\
 					~fx.visualdict.globals[\cf4 \\transy\cf2 ] = 0.0;\
-					~fx.visualdict.globals[\cf4 \\transz\cf2 ] = -20.0;\
+					~fx.visualdict.globals[\cf4 \\transz\cf2 ] = -16.0;\
 					~fx.visualdict.globals[\cf4 \\angle\cf2 ] = -0.25;\
 					~fx.visualdict.globals[\cf4 \\rotX\cf2 ] = 0.0;\
 					~fx.visualdict.globals[\cf4 \\rotY\cf2 ] = 1.0;\
@@ -95,13 +95,14 @@
 					gui.post(\cf5 "zone 3 synths running"\cf2 );\
 				\}\
 				\{\
-					~zone3synths.do(\{\cf3 |synth|\cf2  synth.set(\cf4 \\gate\cf2 , -30.0) \});\
+					~zone3synths.do(\{\cf3 |synth|\cf2  synth.set(\cf4 \\gate\cf2 , -25.0) \});\
 					\cf3 SystemClock\cf2 .sched(30, \{ \
-						~zone3synths.do(\cf3 _\cf2 .free);\
+\cf6 //						~zone3synths.do(_.free);\cf2 \
 						~zone3tbus.do(\cf3 _\cf2 .free);\
 						~zone3synths = \cf3 nil\cf2 ; \
 						~zone3tbus = \cf3 nil\cf2 ;\
-						\cf3 nil\cf2  \});\
+						\cf3 nil\cf2  \
+					\});\
 					gui.post(\cf5 "zone 3 synths will free in 30 seconds"\cf2 );\
 				\}\
 			\})\
@@ -132,6 +133,59 @@
 	\
 	mainbuttons.put(3,		\
 		\cf3 RoundButton\cf2 (panel, button)\
+			.states_([[\cf5 "nz OFF"\cf2 , colors.orange, colors.steel ], \
+				[\cf5 "nz ON"\cf2 , colors.steel, colors.orange ]])\
+			.font_(fonts.lucida9)\
+			.action_(\{\cf3 |bt|\cf2 \
+				if (bt.value == 1)\
+				\{					\
+					~zone3nzsynths = \cf3 Array\cf2 .newClear(8);\
+					8.do(\{\cf3 |i|\cf2 \
+						\cf3 var\cf2  args, states;\
+						states = \cf3 Pseq\cf2 (~fx.invalues.states.clump(8)[i], 2).asStream;\
+						args = ~zone3nzmap.collect(\cf3 _\cf2 .map(states.next));\
+						~zone3nzsynths.put(i, \
+							\cf3 Synth\cf2 .tail(~agrp, \cf4 \\zone3loop\cf2 , [\
+								\cf4 \\out\cf2 , ~abus, \cf4 \\buf\cf2 , ~zone3nzloops[i], \cf4 \\amp\cf2 , 0, \cf4 \\aamp\cf2 , 0, \cf4 \\gate\cf2 , 1,\
+								\cf4 \\rate\cf2 , 0.25/0.333, \cf4 \\start\cf2 , 0\
+								] ++ args.asKeyValuePairs\
+							).setn(\cf4 \\env\cf2 , \cf3 Env\cf2 ([0.001, 1.0, 1.0, 0.001], [0.0, 1.0, 0.0], \cf4 \\sine\cf2 , 2, 1).asArray)\
+						);\
+					\});\
+					~fx.addStatesFunction(\cf4 \\zone3dnz\cf2 , ~zone3mapNz);\
+					gui.post(\cf5 "zone 3 nz synths running"\cf2 );\
+				\}\
+				\{\
+					~zone3nzsynths.do(\{\cf3 |synth|\cf2  synth.set(\cf4 \\gate\cf2 , -20) \});\
+					\cf3 SystemClock\cf2 .sched(20, \{\
+						~fx.removeStatesFunction(\cf4 \\zone3dnz\cf2 );\
+						~zone3nzsynths = \cf3 nil\cf2 ;\
+						gui.post(\cf5 "zone 3 nz synths freed"\cf2 );\
+						\cf3 nil\cf2 	\
+					\})\
+				\}\
+			\})\
+	);\
+\
+	mainbuttons.put(4,	\
+		\cf3 RoundButton\cf2 (panel, button.copy.left_(px=px+85))\
+			.states_([[\cf5 "WSZ <"\cf2 , colors.orange, colors.steel ], \
+				[\cf5 "WSZ >"\cf2 , colors.steel, colors.orange ]])\
+			.font_(fonts.lucida9)\
+			.action_(\{\cf3 |bt|\cf2 \
+				if (bt.value == 1)\
+				\{\
+					~zone3wsz = \cf3 Array\cf2 .geom(8, 0.0825, 2**(1/6));\
+				\}\
+				\{		\
+					~zone3wsz = \cf3 Array\cf2 .geom(8, 0.020625, 2**(1/6));\
+				\}\
+			\})\
+	);\
+	\
+	mainbuttons.put(5,\
+		\
+		\cf3 RoundButton\cf2 (panel, button.copy.left_(px=px+85))\
 			.states_([[\cf5 "det OFF"\cf2 , colors.orange, colors.steel ], \
 				[\cf5 "det ON"\cf2 , colors.steel, colors.orange ]])\
 			.font_(fonts.lucida9)\
@@ -155,43 +209,13 @@
 					gui.post(\cf5 "zone 3 synths running"\cf2 );\
 				\}\
 				\{\
-					~zone3synths.do(\{\cf3 |synth|\cf2  synth.set(\cf4 \\gate\cf2 , -20) \});\
+					~zone3detsynths.do(\{\cf3 |synth|\cf2  synth.set(\cf4 \\gate\cf2 , -20) \});\
 					\cf3 SystemClock\cf2 .sched(20, \{\
 						~fx.removeStatesFunction(\cf4 \\zone3d\cf2 );\
-						~zone3synths = \cf3 nil\cf2 ;\
+						~zone3detsynths = \cf3 nil\cf2 ;\
 						gui.post(\cf5 "zone 3 det synths freed"\cf2 );\
 						\cf3 nil\cf2 	\
 					\})\
-				\}\
-			\})\
-	);\
-\
-	mainbuttons.put(4,	\
-		\cf3 RoundButton\cf2 (panel, button.copy.left_(px=px+85))\
-			.states_([[\cf5 "WSZ <"\cf2 , colors.orange, colors.steel ], \
-				[\cf5 "WSZ >"\cf2 , colors.steel, colors.orange ]])\
-			.font_(fonts.lucida9)\
-			.action_(\{\cf3 |bt|\cf2 \
-				if (bt.value == 1)\
-				\{\
-					~zone3wsz = \cf3 Array\cf2 .geom(8, 0.020625, 2**(1/6));\
-				\}\
-				\{		\
-					~zone3wsz = \cf3 Array\cf2 .geom(8, 0.0825, 2**(1/6));\
-				\}\
-			\})\
-	);\
-	\
-	mainbuttons.put(5,\
-		\
-		\cf3 RoundButton\cf2 (panel, button.copy.left_(px=px+85))\
-			.states_([[\cf5 "PAT03 >>"\cf2 , colors.orange, colors.steel]])\
-			.font_(fonts.lucida9)\
-			.action_(\{\cf3 |bt|\cf2 \
-				\cf3 var\cf2  args;\
-				if (~pat03synth.notNil) \{\
-					args = ~pat03paramseq.collect(\cf3 _\cf2 .next).asKeyValuePairs;\
-					~pat03synth.set(*args)\
 				\}\
 			\})\
 \pard\pardeftab720\ql\qnatural
@@ -327,12 +351,14 @@
 				~zone3synths[i].set(\cf4 \\aamp\cf2 , ~faderwarp.map(slider.value))\
 			\}\
 			\{\
-				~zone3detsynths[i].set(\cf4 \\aamp\cf2 , ~faderwarp.map(slider.value))\
+				~zone3nzsynths[i].set(\cf4 \\aamp\cf2 , ~faderwarp.map(slider.value))\
 			\}\
 		\}\
 	\}) ++ [\
 		\{\cf3 |slider|\cf2 \
-			~fx.sendPatchCmd(\cf4 \\blinds\cf2 , \cf4 \\param\cf2 , slider.value, slider.value, 0)\
+			if (~zone3detsynths.notNil) \{\
+				~zone3detsynths.do(\cf3 _\cf2 .set(\cf4 \\aamp\cf2 , ~faderwarp.map(slider.value)))\
+			\}\
 		\}\
 	];\
 	\
@@ -374,7 +400,7 @@
 			.string_(txt)\
 	\});	\
 \
-	[\cf5 "grid"\cf2 , \cf5 "blinds"\cf2 ].do(\{\cf3 |str, i|\cf2 \
+	[\cf5 "grid"\cf2 , \cf5 "blinds"\cf2 , \cf5 "gr col"\cf2 , \cf5 "gr alp"\cf2 , \cf5 "bl col"\cf2 , \cf5 "bl alp"\cf2 ].do(\{\cf3 |str, i|\cf2 \
 	\
 		\cf3 StaticText\cf2 (panel, \cf3 Rect\cf2 (i * 65 + 3, 165, 35, 15))\
 			    .align_(\cf4 \\center\cf2 )\
@@ -386,12 +412,12 @@
 \cf2 	\
 	\});\
 	\
-	[\cf5 "g cmap"\cf2 , \cf5 "g amap"\cf2 , \cf5 "b cmap"\cf2 , \cf5 "b amap"\cf2 , \cf5 "radial"\cf2 , \cf5 "reset"\cf2 ].do(\{\cf3 |str, i|\cf2 \
+	8.do(\{\cf3 |i|\cf2 \
 			\cf3 StaticText\cf2 (panel, \cf3 Rect\cf2 (i * 65 + 3, 235, 35, 15))\
 				.align_(\cf4 \\center\cf2 )\
 				.font_(fonts.lucida9)\
 				.stringColor_(\cf3 Color\cf2 .grey(0.7))\
-				.string_(str)\
+				.string_(\cf5 "%"\cf2 .format(i+1).padLeft(2, \cf5 "0"\cf2 ))\
 	\
 	\});			\
 \
@@ -470,13 +496,16 @@
 		.states_([[\cf5 "send"\cf2 , colors.orange, colors.steel]])\
 		.action_(\{\
 			~z3items[~z3pm.items[~z3pm.value].asSymbol].value\
-		\});\
+		\});		\
 \
 	~reset = \cf3 PopUpMenu\cf2 (panel, \cf3 Rect\cf2 (panel.bounds.width / 4 + 5 * 2 + 15, 305, panel.bounds.width / 4 - 5, 25))\
 		.background_(colors.steel)\
 		.font_(fonts.lucida9)\
 		.stringColor_(colors.orange)\
-		.items_(~fx.weightPresets.keys(\cf3 Array\cf2 ).sort);\
+		.items_(~fx.weightPresets.keys(\cf3 Array\cf2 ).sort)\
+		.action_(\{\
+			\
+		\});\
 \
 	nanomap = \{\
 		\
@@ -539,9 +568,10 @@
 		\cf4 \\yang\cf2 : \cf3 ControlSpec\cf2 (0.5pi, -1.5pi),\
 		\cf4 \\zang\cf2 : \cf3 ControlSpec\cf2 (0, 2pi)\
 	);\
-	\
+			\
 	~zone3detmap = (\
 		\cf4 \\amp\cf2 : \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (0.1, 2.0)),\
+		\cf4 \\pow\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.8, 0.3, step: 0.1)),\
 		\cf4 \\xang\cf2 : \cf3 ControlSpec\cf2 (-pi, pi),\
 		\cf4 \\yang\cf2 : \cf3 ControlSpec\cf2 (-pi, pi),\
 		\cf4 \\zang\cf2 : \cf3 ControlSpec\cf2 (-pi, pi),\
@@ -549,23 +579,46 @@
 		\cf4 \\ypush\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (0.25pi, -0.25pi)),\
 		\cf4 \\zpush\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-0.25pi, 0.25pi))\
 	);\
+	\
+	~zone3nzmap = (\
+		\cf4 \\amp\cf2 : \cf3 ExponentialWarp\cf2 (\cf3 ControlSpec\cf2 (0.1, 2.0)),\
+		\cf4 \\pow\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (0.8, 0.3, step: 0.1)),\
+		\cf4 \\xang\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (pi, pi.neg)),\
+		\cf4 \\yang\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (pi, pi.neg)),\
+		\cf4 \\zang\cf2 : \cf3 LinearWarp\cf2 (\cf3 ControlSpec\cf2 (pi, pi.neg)),\
+		\cf4 \\xpush\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-0.25pi, 0.25pi)),\
+		\cf4 \\ypush\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (0.25pi, -0.25pi)),\
+		\cf4 \\zpush\cf2 : \cf3 CyclicWarp\cf2 (\cf3 ControlSpec\cf2 (-0.25pi, 0.25pi))\
+	);	\
 \
-	~zone3frq = \cf3 Array\cf2 .geom(4, 0.0625, 2) ++ \cf3 Array\cf2 .geom(4, 2, 2);\
+	~zone3frq = \cf3 Array\cf2 .geom(4, 0.0625, 2) ++ \cf3 Array\cf2 .geom(4, 35/36**3, 36/35);\
 	\
 	~zone3dns = \cf3 Array\cf2 .geom(8, 0.5, 2**(1/4));\
 	\
-	~zone3wsz = \cf3 Array\cf2 .geom(8, 0.1, 2**(1/5));	\
+	~zone3wsz = \cf3 Array\cf2 .geom(8, 0.020625, 2**(1/6));\
 	\
 	~zone3tdur = \cf3 Array\cf2 .geom(8, 0.165, 2**(1/6)).reverse;\
 	\
 	~zone3rates = [3, 6, 12, 24].dup.flat;\
+\
+	~zone3mapNz = \{\cf3 |values|\cf2 \
+		\cf3 var\cf2  states, args;\
+		if (~zone3nzsynths.notNil) \{\
+			states = values.states.clump(8);\
+			~zone3nzsynths.do(\{\cf3 |synth, i|\cf2 \
+				\cf3 var\cf2  vals = \cf3 Pseq\cf2 (states[i], \cf3 inf\cf2 ).asStream;\
+				args = ~zone3nzmap.collect(\cf3 _\cf2 .map(vals.next));\
+				synth.set(*args.asKeyValuePairs)\
+			\})\
+		\}\
+	\};\
 	\
 	~zone3mapDet = \{\cf3 |values|\cf2 \
 		\cf3 var\cf2  states, args;\
 		if (~zone3detsynths.notNil) \{\
 			states = values.states.clump(8);\
 			~zone3detsynths.do(\{\cf3 |synth, i|\cf2 \
-				\cf3 var\cf2  vals = \cf3 Pseq\cf2 (states[i], 1).asStream;\
+				\cf3 var\cf2  vals = \cf3 Pseq\cf2 (states[i], \cf3 inf\cf2 ).asStream;\
 				args = ~zone3detmap.collect(\cf3 _\cf2 .map(vals.next));\
 				synth.set(*args.asKeyValuePairs)\
 			\})\
@@ -580,15 +633,15 @@
 		\{\
 			states = values.states.clump(8);\
 			~zone3synths.do(\{\cf3 |synth, i|\cf2 \
-				\cf3 var\cf2  args, vals = \cf3 Pseq\cf2 (states[i], 2).asStream;\
+				\cf3 var\cf2  args, vals = \cf3 Pseq\cf2 (states[i], \cf3 inf\cf2 ).asStream;\
 				args = ~zone3map.collect(\cf3 _\cf2 .map(vals.next));\
 				args.frq = args.frq * ~zone3frq[i];\
 				args.dns = args.dns * ~zone3dns[i];\
 				args.wsz = args.wsz * ~zone3wsz[i];\
 				synth.set(*args.asKeyValuePairs)\
 			\});\
-			~zone3trigs.do(\{\cf3 |trg|\cf2 \
-				if (trg.next == 1) \{\
+			~zone3trigs.do(\{\cf3 |trg, i|\cf2 \
+				if (trg.next == 1 and: \{ 0.1.coin \}) \{\
 					~zone3tbus[i].set(1.0)\
 				\}\
 			\})\
@@ -597,22 +650,26 @@
 	\};	\
 \
 	~zone3trigs = [\
-		\cf3 Pseq\cf2 ([[0], [0, 0, 0, 1]].lace(8), \cf3 inf\cf2 ).asStream,\
-		\cf3 Pseq\cf2 ([[0], [0, 1, 0, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
-		\cf3 Pseq\cf2 ([[0], [0, 0, 1, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
-		\cf3 Pseq\cf2 ([[0], [1, 0, 0, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
-		\cf3 Pseq\cf2 ([[0], [1, 0, 0, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
-		\cf3 Pseq\cf2 ([[0], [0, 0, 1, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
-		\cf3 Pseq\cf2 ([[0], [0, 1, 0, 0]].lace(8), \cf3 inf\cf2 ).asStream,\
-		\cf3 Pseq\cf2 ([[0], [0, 0, 0, 1]].lace(8), \cf3 inf\cf2 ).asStream\
+		\cf3 Pseq\cf2 ([[0], [0], [0, 0, 0, 1]].lace(16), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0], [0, 1, 0, 0]].lace(16), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0], [0, 0, 1, 0]].lace(16), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0], [1, 0, 0, 0]].lace(16), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0], [1, 0, 0, 0]].lace(16), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0], [0, 0, 1, 0]].lace(16), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0], [0, 1, 0, 0]].lace(16), \cf3 inf\cf2 ).asStream,\
+		\cf3 Pseq\cf2 ([[0], [0], [0, 0, 0, 1]].lace(16), \cf3 inf\cf2 ).asStream\
 	];\
 	\
 	~zone3loops = ~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf5 "fxloop_"\cf2 ) \});\
+\
+	~zone3nzloops = (1..8).collect(\{\cf3 |ind|\cf2 \
+		~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf5 "fbloop_"\cf2  ++ ind.asString.padLeft(2, \cf5 "0"\cf2 ) ++ \cf5 ".aif"\cf2 ) \}).first\
+	\});\
 	\
 	~zone3detloops = [8, 9, 10, 11, 12, 14, 15, 17].collect(\{\cf3 |ind|\cf2 \
 		~loops.select(\{\cf3 |loop|\cf2  loop.path.contains(\cf5 "detloop_"\cf2  ++ ind.asString ++ \cf5 ".aif"\cf2 ) \}).first\
 	\});\
-			\
+				\
 	nanomap				\
 \
 \}}

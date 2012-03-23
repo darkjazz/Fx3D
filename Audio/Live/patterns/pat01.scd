@@ -10,7 +10,8 @@ Routine({
 		\ds: { BPF.ar(BrownNoise.ar(10).clip(-0.9, 0.9), 200, 0.2, 10) },
 		\nf: { VarSaw.ar(IRand(10000, 15000).round(5000), 0.25, 0.01, 20).clip(-0.9, 0.9) },
 		\pm: { LFPulse.ar(20 + LFPulse.ar(10)).distort },
-		\dd: { Dust2.ar(200, 2, SinOsc.ar(Rand(8000, 16000).round(2**(1/5)))) }
+		\dt: { Dust2.ar(200, 2, SinOsc.ar(Rand(8000, 16000).round(2**(1/5)))) },
+		\gs: { LFGauss.ar(1/60, XLine.kr(0.1, 0.01, 0.2)) }
 	);
 	
 	makedef = {|name, func, env|
@@ -51,15 +52,15 @@ Routine({
 	Server.default.sync;
 	
 	~pat01pats = (
-		\kc: [1, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 1, 0, 0, 0],
+		\kc: [1, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0],
 		\cl: [0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0],
 		\hi: [0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0, 0, 0, 0],
 		\sw: [0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 1, 0],
 		\ds: [0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 1, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0],
 		\nf: [0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 1, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0],
-		\pm: [0, 0, 0, 0, 1, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0],
-		\dd: [0, 0, 0, 0, 0, 0, 0, 1,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0]
-	);
+		\pm: [0, 0, 0, 0, 0, 1, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0],
+		\dt: [0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0],
+		\gs: [0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 1, 0, 0, 0]	);
 	
 	~pat01args = (
 		\kc: (\dur: ControlSpec(0.05, 0.1), \emp: ControlSpec(0.0, 0.0),
@@ -76,9 +77,10 @@ Routine({
 			\xang: ControlSpec(-pi, pi), \yang: ControlSpec(-pi, pi), \zang: ControlSpec(-pi, pi)),
 		\pm: (\dur: ControlSpec(0.2, 0.2), \emp: ControlSpec(0.0, 0.0),
 			\xang: ControlSpec(-pi, pi), \yang: ControlSpec(-pi, pi), \zang: ControlSpec(-pi, pi)),
-		\dd: (\dur: ControlSpec(0.1, 0.1), \emp: ControlSpec(0.0, 0.0),
-			\xang: ControlSpec(-pi, pi), \yang: ControlSpec(-pi, pi), \zang: ControlSpec(-pi, pi))
-	);
+		\dt: (\dur: ControlSpec(0.1, 0.1), \emp: ControlSpec(0.0, 0.0),
+			\xang: ControlSpec(-pi, pi), \yang: ControlSpec(-pi, pi), \zang: ControlSpec(-pi, pi)),
+		\gs: (\dur: ControlSpec(0.1, 0.2), \emp: ControlSpec(0.0, 0.0),
+			\xang: ControlSpec(-pi, pi), \yang: ControlSpec(-pi, pi), \zang: ControlSpec(-pi, pi))	);
 		
 	~pat01amps = ~pat01pats.collect({ (active: 0, amp: 0) });
 		
@@ -103,7 +105,7 @@ Routine({
 	~pat01ampctr = FaderWarp();
 	~pat01font = Font("Courier", 10);
 	~pat01win = Window("_o_o_o_o 03 o_o_o_o_", Rect(10, 500, 32*20+200,~pat01pats.size*20+20)).background_(Color.grey(0.1)).alpha_(0.99).front;
-	#[kc,cl,hi,sw,ds,nf,pm,dd].do({|key, i|
+	#[kc,cl,hi,sw,ds,nf,pm,dt,gs].do({|key, i|
 		StaticText(~pat01win, Rect(5,i*20+5,20,20))
 			.align_(\center)
 			.font_(~pat01font)

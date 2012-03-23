@@ -9,13 +9,16 @@
 #import <Cocoa/Cocoa.h>
 #import "FxView.h"
 
-#define DEBUG				FALSE
+#define DEBUG				TRUE
 #define FULLSCREEN			FALSE
 
 #define FRAME_RATE			18
 
-#define WIDTH				1024
-#define HEIGHT				768
+#define WIDTH				800
+#define HEIGHT				600
+
+//#define WIDTH				1024
+//#define HEIGHT			768
 
 #define FULLWIDTH			1440
 #define FULLHEIGHT			900
